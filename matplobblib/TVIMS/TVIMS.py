@@ -731,6 +731,90 @@ print(f'EX_Y = {EX_Y},\nEY_X = {EY_X},\nVarX_Y = {VarX_Y},\nVarY_X = {VarY_X},\n
     return [task,answer]
     
 
+def describe_text():
+    t="import pandas as pd\n\
+    import matplotlib.pyplot as plt\n\
+    import numpy as np\n\
+    import scipy.stats\n\
+    from statsmodels.distributions.empirical_distribution import ECDF\n\
+    \n\
+    def from_big_text(data:str,splitter:str):\n\
+        \n\
+        index = pd.Index('''Объем выборки до удаления пропущенных данных\n\
+    Количество пропущенных данных (NA)\n\
+    Объем выборки после удаления пропущенных данных\n\
+    Минимальное значение в вариационном ряду\n\
+    Максимальное значение в вариационном ряду\n\
+    Размах выборки\n\
+    Значение первой квартили (Q1)\n\
+    Значение медианы (Q2)\n\
+    Значение третьей квартили (Q3)\n\
+    Квартильный размах\n\
+    Среднее выборочное значение\n\
+    Стандартное отклонение (S) корень из дисп.в (исправленной)\n\
+    Исправленная дисперсия \n\
+    Эксцесс\n\
+    Коэффициент асимметрии\n\
+    Ошибка выборки\n\
+    Значение 63%-квантили\n\
+    Мода\n\
+    Как часто встречается 'мода'\n\
+    Верхняя граница нормы (Xst_max)\n\
+    Нижняя граница нормы (Xst_min)\n\
+    Количество выбросов ниже нижней нормы\n\
+    Количество выбросов выше верхней нормы\n\
+    '''.split('\n'))\n\
+    \n\
+    data_list=[]\n\
+    df=pd.DataFrame([float(i) if i!='NA' and i!='-NA' else np.nan for i in data.split(splitter)])\n\
+    \n\
+    length_before=df.size\n\
+    data_list.append(length_before)\n\
+    \n\
+    df=df.dropna()\n\
+    length_after=df.size\n\
+    data_list.extend([length_after-length_before,length_after])\n\
+    \n\
+    minn=df.describe().loc['min'].values[0]\n\
+    maxx=df.describe().loc['max'].values[0]\n\
+    data_list.extend([minn,maxx,maxx-minn])\n\
+    \n\
+    Q1=df.describe().loc['25%'].values[0]\n\
+    Q2=df.describe().loc['50%'].values[0]\n\
+    Q3=df.describe().loc['75%'].values[0]\n\
+    \n\
+    mean = df.describe().loc['mean'].values[0]\n\
+    \n\
+    data_list.extend([Q1,Q2,Q3,Q3-Q1,mean,df.std(ddof=1)[0],df.var(ddof=1)[0],df.kurt()[0],df.skew()[0]])\n\
+    \n\
+    data_list.append(data_list[11]/data_list[2]**0.5)\n\
+    data_list.extend(df.quantile(0.63))\n\
+    \n\
+    if df.mode().count()[0] == df.count().iloc[0]:\n\
+        data_list.append(0)\n\
+        data_list.append(0)\n\
+    else:\n\
+        data_list.append(df.mode().iloc[0,0])\n\
+        data_list.append(df.value_counts()[df.mode().iloc[0,0]])\n\
+    \n\
+    data_list.extend([data_list[8]+1.5*data_list[9],data_list[6]-1.5*data_list[9]])\n\
+    data_list.extend([len(df[df.iloc[:,0]<data_list[20]]),len(df[df.iloc[:,0]>data_list[19]])])\n\
+    \n\
+    df.boxplot()\n\
+    plt.xlabel('Ящик с усами до очистки')\n\
+    plt.show()\n\
+    \n\
+    clean_df=df[(df.iloc[:,0]>data_list[20]) & (df.iloc[:,0]<data_list[19])]\n\
+    clean_df.boxplot()\n\
+    plt.xlabel('Ящик с усами после очистки (Без NA и выбросов)')\n\
+    plt.show()\n\
+    \n\
+    \n\
+    return pd.DataFrame(data_list,index[:len(data_list)])"
+    
+    return t
+
+
 themes = {'Непрерывные случайные величины': ['CRV_1()',CRV_1()[0],'CRV_2()',CRV_2()[0]],
               'Нормальные случайные векторы': ['NRV_1()',NRV_1()[0], 'NRV_2()',NRV_2()[0],'NRV_3()', NRV_3()[0]],
               'Формулы полной вероятности и Байеса':['FPB_1()',FPB_1()[0],'FPB_2()',FPB_2()[0],'FPB_3()',FPB_3()[0],'FPB_4()',FPB_4()[0]],
@@ -739,7 +823,8 @@ themes = {'Непрерывные случайные величины': ['CRV_1(
               'Приближенное вычисление вероятности методом Монте-Карло':['ACMK_1()',ACMK_1()[0],'ACMK_2()',ACMK_2()[0],'ACMK_3()',ACMK_3()[0],'ACMK_4()',ACMK_4()[0]],
               'Портфельный анализ': ['PAN_1()',PAN_1()[0]],
               'Для теста 5': ['ft5_4_1()',ft5_4_1()[0],'ft5_4_2()',ft5_4_2()[0],'ft5_4_3()',ft5_4_3()[0], 'ft5_5()',ft5_5()[0]],
-              'Включить функцию для добавления в буфер обмена': ['enable_ppc']
+              'Включить функцию для добавления в буфер обмена': ['enable_ppc'],
+              'Описательная статистика': ['describe_text()']
               }
 
 def description(dict_to_show = themes, show_only_keys:bool = False,show_tasks=True):
