@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.1.26',
+    version='0.1.27',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
