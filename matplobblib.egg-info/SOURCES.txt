@@ -13,6 +13,7 @@ matplobblib/aisd/additional_funcs.py
 matplobblib/aisd/data_structures.py
 matplobblib/aisd/search_algorythms.py
 matplobblib/tvims/CRV.py
+matplobblib/tvims/NRV.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
 matplobblib/tvims/describe_text.py

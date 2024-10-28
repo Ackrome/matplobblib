@@ -1,6 +1,7 @@
 from  inspect import getsource
-from .CRV import *
-from .describe_text import *
+from .CRV import *                      # Непрерывные случайные величины
+from .NRV import *                      # Нормальные случайные векторы
+from .describe_text import *            # Описательная статистика
 
 def imports():
     return '''
@@ -22,47 +23,7 @@ def write(name):
     pyperclip.copy(name) #Копирует в буфер обмена информацию
     pyperclip.paste()'''
 
-#NormalRandomVectors
-def NRV_1():
-    task = 'Для нормального случайного вектора (X,Y)∼N(−8;16;49;1;0,8) найдите вероятность P((X−3)(Y−7)<0).'
-    answer = "\nN = {'muX': -8, 'muY': 16, 'sigmaX2': 49, 'sigmaY2': 1, 'rho': 0.8}\nmu = np.array([N['muX'], N['muY']])\nCov = np.array([[N['sigmaX2'], N['rho']*math.sqrt(N['sigmaX2'])*math.sqrt(N['sigmaY2'])],\n                [N['rho']*math.sqrt(N['sigmaX2'])*math.sqrt(N['sigmaY2']), N['sigmaY2']]])\nW = multivariate_normal(mu, Cov)\nX = norm(N['muX'], math.sqrt(N['sigmaX2']))\nY = norm(N['muY'], math.sqrt(N['sigmaY2']))\nPx = 3\nPy = 7\nPa=X.cdf(Px)-W.cdf([Px,Py])\nPb=Y.cdf(Py)-W.cdf([Px,Py])\nPa+Pb\n"
-    return [task,answer]
-
-def NRV_2():
-    task = 'Для нормального случайного вектора (X,Y)∼N(−4;4;64;81;−0,31) найдите вероятность P((X−8)(X−10)(Y−1)<0).'
-    answer = "\n#Смотрим на распределение, которое задано\nmuX = -4\nmuY = 4\nsigmaX = 64**0.5\nsigmaY = 81**0.5\nrho = -0.31\n#Смотрим на вероятность, которую хотят от нас\nxminus1 = 8\nxminus2 = 10\nyminus = 1\nmu = np.array([muX,muY])\nCov = np.array([[sigmaX**2, rho*sigmaX*sigmaY], [rho*sigmaX*sigmaY, sigmaY**2]])\nX = norm(muX, sigmaX)\nY = norm(muY, sigmaY)\nW = multivariate_normal(mu, Cov)\nPa = W.cdf([xminus1, yminus])\nPb = X.cdf(xminus2) - X.cdf(xminus1) - (W.cdf([xminus2, yminus]) - W.cdf([xminus1, yminus]))\nPc = Y.cdf(yminus) - W.cdf([xminus2, yminus])\nPa+Pb+Pc\n"
-    return [task,answer]
-
-def NRV_3():
-    task = 'Случайный вектор (X,Y) имеет плотность распределения fX,Y(x,y)=(18e^(−30x2−48xy+8x−30y2−5y−8524))\π\nНайдите:\n- математическое ожидание E(X)\n-математическое ожидание E(Y)\n-дисперсию  Var(X)\n-дисперсию  Var(Y)\n-ковариацию  Cov(X,Y)\n-коэффициент корреляции  ρ(X,Y)'
-    answer = '''
-            #после выноса -1/2!!!!!!
-        coefs = {
-            'x^2': 60,
-            'x': -16,
-            'xy': 96,
-            'y': 10,
-            'y^2': 60,
-        }
-        C = sympy.Matrix([[coefs['x^2'], int(coefs['xy']/2)], [int(coefs['xy']/2), coefs['y^2']]])
-        C1 = C**(-1)
-        VarX = C1[0, 0]
-        sigmaX = sympy.sqrt(VarX)
-        VarY = C1[1, 1]
-        sigmaY = sympy.sqrt(VarY)
-        CovXY = C1[0, 1]
-        roXY = CovXY/(sigmaX*sigmaY)
-        EX, EY = sympy.symbols('EX, EY')
-        equations = (
-            sympy.Eq(int(coefs['x^2'])*EX + int(coefs['xy']/2)*EY, int(coefs['x']*(-1/2))),
-            sympy.Eq(int(coefs['xy']/2)*EX + int(coefs['y^2'])*EY, int(coefs['y']*(-1/2)))
-        )
-        sol = sympy.solve(equations, (EX, EY))
-        print(f'EX = {sol[EX]}, EY = {sol[EY]}, VarX = {VarX}, VarY = {VarY}, CovXY = {CovXY}, roXY = {roXY}')
-        '''
-    return [task,answer]
-
-#FullProbabilityAndBayesianFormulas
+# Формулы полной вероятности и Байеса
 def FPB_1():
     task = 'Имеется 37 монет, из которых 6 бракованные: вследствие заводского брака на этих монетах с обеих сторон отчеканен герб. Наугад выбранную монету, не разглядывая, бросают несколько раз. 1) Какова вероятность, что при 4 бросках она ляжет гербом вверх? 2) При 4 бросках монета легла гербом вверх. Какова вероятность того, что была выбрана монета с двумя гербами?'
     answer ='''
@@ -727,7 +688,7 @@ print(f'EX_Y = {EX_Y},\nEY_X = {EY_X},\nVarX_Y = {VarX_Y},\nVarY_X = {VarY_X},\n
     return [task,answer]
 
 themes = {    'Непрерывные случайные величины': ['CRV_1()','CRV_2()'],
-              'Нормальные случайные векторы': ['NRV_1()',NRV_1()[0], 'NRV_2()',NRV_2()[0],'NRV_3()', NRV_3()[0]],
+              'Нормальные случайные векторы': ['NRV_1()', 'NRV_2()','NRV_3()'],
               'Формулы полной вероятности и Байеса':['FPB_1()',FPB_1()[0],'FPB_2()',FPB_2()[0],'FPB_3()',FPB_3()[0],'FPB_4()',FPB_4()[0]],
               'Специальные дискретные случайные величины':['SDRV_1()',SDRV_1()[0],'SDRV_2()',SDRV_2()[0],'SDRV_3()',SDRV_3()[0],'SDRV_4()',SDRV_4()[0]],
               'Условные характеристики относительно группы событий':['CCE_1()',CCE_1()[0],'CCE_2()',CCE_2()[0]],
