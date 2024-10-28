@@ -1,8 +1,10 @@
 from  inspect import getsource
+from .CRV import *
+from .describe_text import *
 
 def imports():
     return '''
-    from scipy.stats import *
+    
     from scipy.integrate import quad
     import math
     import numpy a np
@@ -12,33 +14,25 @@ def imports():
     '''
     
 def enable_ppc():
-    return '''    import pyperclip
+    return'''
+import pyperclip
 
-    #Делаем функцию которая принимает переменную text
-    def write(name):
-        pyperclip.copy(name) #Копирует в буфер обмена информацию
-        pyperclip.paste()'''
-        
-#ContinuousRandomVariables
-def CRV_1():
-    task = 'Абсолютно непрерывная случайная величина  X  может принимать значения только в отрезке [a, b]. На этом отрезке плотность распределения случайной величины  X  имеет вид: f(x)=C(1+a^0.1+2b^0.2+3c^0.3)^1.1, где С - положительная константа. Найти:\n- константу C математическое ожидание E(X)\n- стандартное отклонение σX\n- квантиль уровня k распределения X'
-    answer = '\n#условие\n# [a,b]\na,b = 4,9\n# F = f(x) без C\nF = lambda x: (1 + 7*x**(0.5) + 8*x**(0.7) + 4*x**(0.9))**(1.3)\nC = 1 / integrate.quad(F, a, b)[0]\ndef f(x):\n    return C * F(x)\nclass dist_f_C(rv_continuous):\n  #функция вероятности\n  def _pdf(self,x):\n    return f(x) if (a<= x <=b) else 0\n  #функция значений\n  def _expect(self,x):\n    return x\n#зададим распределение\nf_C = dist_f_C(a = a, b = b)\n#1\nprint(f"C = {C}")\n#2\nprint(f"E = {f_C.mean()}")\n#3\nprint(f"sigma = {f_C.std()}")\n#4\nprint(f"q = {f_C.ppf(0.9)}")\n'
-
-    return [task,answer]
-def CRV_2():
-    task = 'Случайная величина X равномерно распределена на отрезке [a,b]. Случайная величина Y выражается через X следующим образом: Y = (1+a^0.1+2b^0.2+3c^0.3)^1.1. Найдите:\n- математическое ожидание  E(Y)\n- стандартное отклонение σY\n- асимметрию As(Y)\n- квантиль уровня 0,8 распределения Y'
-    answer = '\nF = lambda x: (1 + 6*x**0.5 + 4*x**0.7 + 5 * x**0.9)**1.3\nab = [4, 8]\np = 1/(ab[1]-ab[0])\nEY = p * integrate.quad(F, 4, 8)[0]\nprint(f"EY = {EY}")\nf = lambda x: (F(x))**2\nVarY = p * integrate.quad(f, 4, 8)[0] - EY**2\nQy = math.sqrt(VarY)\nprint(f"Qy = {Qy}")\nf = lambda x: p * (F(x) - EY)**3\nAsY = integrate.quad(f, 4, 8)[0]/Qy**3\nprint(f"AsY = {AsY}")\n#q_l = quantile_level\nq_l = 0.8\n# работает при равномерном случайном распределении!\nq = F(ab[0] + (ab[1] - ab[0])*q_l)\nprint(f"q = {q}")\n'
-    return [task,answer]
+#Делаем функцию которая принимает переменную text
+def write(name):
+    pyperclip.copy(name) #Копирует в буфер обмена информацию
+    pyperclip.paste()'''
 
 #NormalRandomVectors
 def NRV_1():
     task = 'Для нормального случайного вектора (X,Y)∼N(−8;16;49;1;0,8) найдите вероятность P((X−3)(Y−7)<0).'
     answer = "\nN = {'muX': -8, 'muY': 16, 'sigmaX2': 49, 'sigmaY2': 1, 'rho': 0.8}\nmu = np.array([N['muX'], N['muY']])\nCov = np.array([[N['sigmaX2'], N['rho']*math.sqrt(N['sigmaX2'])*math.sqrt(N['sigmaY2'])],\n                [N['rho']*math.sqrt(N['sigmaX2'])*math.sqrt(N['sigmaY2']), N['sigmaY2']]])\nW = multivariate_normal(mu, Cov)\nX = norm(N['muX'], math.sqrt(N['sigmaX2']))\nY = norm(N['muY'], math.sqrt(N['sigmaY2']))\nPx = 3\nPy = 7\nPa=X.cdf(Px)-W.cdf([Px,Py])\nPb=Y.cdf(Py)-W.cdf([Px,Py])\nPa+Pb\n"
     return [task,answer]
+
 def NRV_2():
     task = 'Для нормального случайного вектора (X,Y)∼N(−4;4;64;81;−0,31) найдите вероятность P((X−8)(X−10)(Y−1)<0).'
     answer = "\n#Смотрим на распределение, которое задано\nmuX = -4\nmuY = 4\nsigmaX = 64**0.5\nsigmaY = 81**0.5\nrho = -0.31\n#Смотрим на вероятность, которую хотят от нас\nxminus1 = 8\nxminus2 = 10\nyminus = 1\nmu = np.array([muX,muY])\nCov = np.array([[sigmaX**2, rho*sigmaX*sigmaY], [rho*sigmaX*sigmaY, sigmaY**2]])\nX = norm(muX, sigmaX)\nY = norm(muY, sigmaY)\nW = multivariate_normal(mu, Cov)\nPa = W.cdf([xminus1, yminus])\nPb = X.cdf(xminus2) - X.cdf(xminus1) - (W.cdf([xminus2, yminus]) - W.cdf([xminus1, yminus]))\nPc = Y.cdf(yminus) - W.cdf([xminus2, yminus])\nPa+Pb+Pc\n"
     return [task,answer]
+
 def NRV_3():
     task = 'Случайный вектор (X,Y) имеет плотность распределения fX,Y(x,y)=(18e^(−30x2−48xy+8x−30y2−5y−8524))\π\nНайдите:\n- математическое ожидание E(X)\n-математическое ожидание E(Y)\n-дисперсию  Var(X)\n-дисперсию  Var(Y)\n-ковариацию  Cov(X,Y)\n-коэффициент корреляции  ρ(X,Y)'
     answer = '''
@@ -731,103 +725,8 @@ VarY_X=sigmaY**2*(1-roXY**2)
 print(f'EX_Y = {EX_Y},\nEY_X = {EY_X},\nVarX_Y = {VarX_Y},\nVarY_X = {VarY_X},\nEX = {sol[EX]},\nEY = {sol[EY]},\nVarX = {VarX},\nVarY = {VarY},\nCovXY = {CovXY},\nroXY = {roXY}')    
     '''
     return [task,answer]
-    
 
-def describe_text(data:str,splitter:str,g:float = 0.9):
-    
-    index = pd.Index(f'''Объем выборки до удаления пропущенных данных
-Количество пропущенных данных (NA)
-Объем выборки после удаления пропущенных данных
-Минимальное значение в вариационном ряду
-Максимальное значение в вариационном ряду
-Размах выборки
-Значение первой квартили (Q1)
-Значение медианы (Q2)
-Значение третьей квартили (Q3)
-Квартильный размах
-Среднее выборочное значение
-Стандартное отклонение (S) корень из дисп.в (исправленной)
-Исправленная дисперсия 
-Эксцесс
-Коэффициент асимметрии
-Ошибка выборки
-Значение 63%-квантили
-Мода
-Как часто встречается "мода"
-Верхняя граница нормы (Xst_max)
-Нижняя граница нормы (Xst_min)
-Количество выбросов ниже нижней нормы
-Количество выбросов выше верхней нормы
-Введите левую границу {g}-доверительного интервала для E(X)
-Введите правую границу {g}-доверительного интервала для E(X)
-Введите левую границу {g}-доверительного интервала для Var(X)
-Введите правую границу {g}-доверительного интервала для Var(X)
-'''.split('\n'))
-    
-    data_list=[]
-    df=pd.DataFrame([float(i) if i!='NA' and i!='-NA' else np.nan for i in data.split(splitter)])
-    
-    length_before=df.size
-    data_list.append(length_before)
-    
-    df=df.dropna()
-    length_after=df.size
-    data_list.extend([abs(length_after-length_before),length_after])
-    
-    minn=df.describe().loc['min'].values[0]
-    maxx=df.describe().loc['max'].values[0]
-    data_list.extend([minn,maxx,maxx-minn])
-    
-    Q1=df.describe().loc['25%'].values[0]
-    Q2=df.describe().loc['50%'].values[0]
-    Q3=df.describe().loc['75%'].values[0]
-    
-    mean = df.describe().loc['mean'].values[0]
-    
-    data_list.extend([Q1,Q2,Q3,Q3-Q1,mean,df.std(ddof=1,axis=0)[0],df.var(ddof=1)[0],df.kurt()[0],df.skew()[0]])
-    
-    data_list.append(data_list[11]/data_list[2]**0.5)
-    data_list.extend(df.quantile(0.63))
-    
-    if df.mode().count()[0] == df.count().iloc[0]:
-        data_list.append(np.Nan)
-        data_list.append(0)
-    else:
-        data_list.append(df.mode().iloc[0,0])
-        data_list.append(df.value_counts()[df.mode().iloc[0,0]])
-        
-    data_list.extend([data_list[8]+1.5*data_list[9],data_list[6]-1.5*data_list[9]])
-    data_list.extend([len(df[df.iloc[:,0]<data_list[20]]),len(df[df.iloc[:,0]>data_list[19]])])
-    
-    z = scipy.stats.t.ppf((g+1)/2,length_after-1)
-    sigma = df.std(ddof=1,axis=0)[0]
-    delta = z * sigma/np.sqrt(length_after)
-
-    data_list.extend([(mean-delta),(mean+delta)])
-
-    z = scipy.stats.t.ppf((g+1)/2,length_after-1)
-    sigma = df.std(ddof=1,axis=0)[0]
-    var = sigma**2
-    delta_R = length_after*var/scipy.stats.chi2.ppf((1-g)/2,length_after)
-    delta_L = length_after*var/scipy.stats.chi2.ppf((1+g)/2,length_after)
-
-    data_list.extend([delta_L,delta_R])
-
-    df.boxplot()
-    plt.xlabel('Ящик с усами до очистки')
-    plt.show()
-
-    clean_df=df[(df.iloc[:,0]>data_list[20]) & (df.iloc[:,0]<data_list[19])]
-    clean_df.boxplot()
-    plt.xlabel('Ящик с усами после очистки (Без NA и выбросов)')
-    plt.show()
-    
-    res_df = pd.DataFrame(data_list,index[:len(data_list)], dtype=str)
-    
-    return res_df
-
-
-themes = {'Непрерывные случайные величины': ['CRV_1()',CRV_1()[0],'CRV_2()',CRV_2()[0]],
+themes = {    'Непрерывные случайные величины': ['CRV_1()','CRV_2()'],
               'Нормальные случайные векторы': ['NRV_1()',NRV_1()[0], 'NRV_2()',NRV_2()[0],'NRV_3()', NRV_3()[0]],
               'Формулы полной вероятности и Байеса':['FPB_1()',FPB_1()[0],'FPB_2()',FPB_2()[0],'FPB_3()',FPB_3()[0],'FPB_4()',FPB_4()[0]],
               'Специальные дискретные случайные величины':['SDRV_1()',SDRV_1()[0],'SDRV_2()',SDRV_2()[0],'SDRV_3()',SDRV_3()[0],'SDRV_4()',SDRV_4()[0]],
