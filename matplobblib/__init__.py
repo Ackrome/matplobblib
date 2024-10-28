@@ -2,8 +2,8 @@ import importlib as _importlib
 
 
 submodules = [
-    'TVIMS',
-    'AISD'
+    'tvims',
+    'aisd'
 ]
 def __dir__():
     return submodules
