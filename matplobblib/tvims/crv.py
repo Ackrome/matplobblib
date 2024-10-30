@@ -125,7 +125,4 @@ def CRV_2(a,b,betas,powers,all_power,q_l=0.9):
     
     return (EY,Qy,AsY,q)
 #######################################################################################################################
-<<<<<<< HEAD:matplobblib/tvims/CRV.py
 CRV = [CRV_1,CRV_2]
-=======
->>>>>>> f0400eaa1d73468eb2fb8c450d2573ad2ad06ad1:matplobblib/tvims/crv.py
