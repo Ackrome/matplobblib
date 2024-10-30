@@ -15,6 +15,7 @@ matplobblib/aisd/search_algorythms.py
 matplobblib/tvims/CRV.py
 matplobblib/tvims/FPB.py
 matplobblib/tvims/NRV.py
+matplobblib/tvims/SDRV.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
 matplobblib/tvims/describe_text.py
