@@ -166,7 +166,4 @@ def FPB_4(wt1, bl1, wt2, bl2, take1, take2):
     
     return answer
 #######################################################################################################################
-<<<<<<< HEAD:matplobblib/tvims/FPB.py
 FPB = [FPB_1,FPB_2,FPB_3,FPB_4]
-=======
->>>>>>> f0400eaa1d73468eb2fb8c450d2573ad2ad06ad1:matplobblib/tvims/fpb.py
