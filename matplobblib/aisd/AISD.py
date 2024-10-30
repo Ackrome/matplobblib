@@ -15,7 +15,7 @@ themes = {
         'Дополнительные функции' : list(additional_funcs_dict.keys()),
         'Вывести функцию буфера обмена': ['enable_ppc'],
               }
-
+# Тема -> Выбор структуры -> структура
 def description(dict_to_show = themes, key=None, show_only_keys:bool = True):
     if dict_to_show=='Вывести функцию буфера обмена':
             return print(enable_ppc)
