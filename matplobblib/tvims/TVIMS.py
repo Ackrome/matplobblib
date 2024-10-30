@@ -73,6 +73,7 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
                 
                 for key in dict_to_show.keys():
                     text += f'{key.__name__:<{length1}}'
+                    
                     if not show_only_keys:
                         text +=': '
                         text += f'{dict_to_show[key]};\n'+' '*(length1+2)
