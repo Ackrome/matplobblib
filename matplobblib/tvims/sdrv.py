@@ -173,7 +173,4 @@ def SDRV_4(N,r,b,n):
     
     return answer
 #######################################################################################################################
-<<<<<<< HEAD:matplobblib/tvims/SDRV.py
 SDRV = [SDRV_1,SDRV_2,SDRV_3,SDRV_4]
-=======
->>>>>>> f0400eaa1d73468eb2fb8c450d2573ad2ad06ad1:matplobblib/tvims/sdrv.py
