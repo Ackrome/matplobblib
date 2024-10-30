@@ -1,8 +1,8 @@
 from  inspect import getsource
-from .FPB import *                      # Формулы полной вероятности и Байеса
-from .SDRV import *                     # Специальные дискретные случайные величины
-from .CRV import *                      # Непрерывные случайные величины
-from .NRV import *                      # Нормальные случайные векторы
+from .fpb import *                      # Формулы полной вероятности и Байеса
+from .sdrv import *                     # Специальные дискретные случайные величины
+from .crv import *                      # Непрерывные случайные величины
+from .nrv import *                      # Нормальные случайные векторы
 from .describe_text import *            # Описательная статистика
 
 def imports():
