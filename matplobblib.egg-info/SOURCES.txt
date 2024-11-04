@@ -19,6 +19,7 @@ matplobblib/tvims/anrv.py
 matplobblib/tvims/cce.py
 matplobblib/tvims/crv.py
 matplobblib/tvims/dt.py
+matplobblib/tvims/ec.py
 matplobblib/tvims/fpb.py
 matplobblib/tvims/nrv.py
 matplobblib/tvims/pan.py
