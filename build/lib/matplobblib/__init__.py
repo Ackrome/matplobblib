@@ -3,7 +3,8 @@ import importlib as _importlib
 
 submodules = [
     'tvims',
-    'aisd'
+    'aisd',
+    'econometrics'
 ]
 def __dir__():
     return submodules

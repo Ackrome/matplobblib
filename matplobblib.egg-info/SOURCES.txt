@@ -12,6 +12,10 @@ matplobblib/aisd/__init__.py
 matplobblib/aisd/additional_funcs.py
 matplobblib/aisd/data_structures.py
 matplobblib/aisd/search_algorythms.py
+matplobblib/econometrics/ECONOMETRICS.py
+matplobblib/econometrics/__init__.py
+matplobblib/econometrics/fr.py
+matplobblib/econometrics/rrstr.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
 matplobblib/tvims/acmk.py
