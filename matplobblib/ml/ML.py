@@ -1,27 +1,19 @@
 from  inspect import getsource
 import re
-from .fpb import *                      # Формулы полной вероятности и Байеса
-from .sdrv import *                     # Специальные дискретные случайные величины
-from .crv import *                      # Непрерывные случайные величины
-from .nrv import *                      # Нормальные случайные векторы
-from .anrv import *                     # Нормальные случайные векторы ДОПОЛНИТЕЛЬНЫЙ ПАКЕТ ФУНКЦИЙ
-from .cce import *                      # Условные характеристики относительно группы событий
-from .acmk import *                     # Приближенное вычисление вероятности методом Монте-Карло
-from .pan import *                      # Портфельный анализ с невырожденной ковариационной матрицей
-from .dt import *                       # Описательная статистика
-from .ec import *                       # Эмперические характеристики
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+#######################################################################################################################
+from .rm import *                       # Модификации линейной регрессионной модели
+from .cm import *                       # Модификации модели классификации
+from .additional_funcs import *         # Дополнительные функции
+
 
 files_dict ={
-    'Формулы полной вероятности и Байеса':FPB,
-    'Специальные дискретные случайные величины':SDRV,
-    'Непрерывные случайные величины':CRV,
-    'Нормальные случайные векторы':NRV,
-    'Нормальные случайные векторы ДОПОЛНИТЕЛЬНЫЙ ПАКЕТ ФУНКЦИЙ':ANRV,
-    'Условные характеристики относительно группы событий':CCE,
-    'Приближенное вычисление вероятности методом Монте-Карло':ACMK,
-    'Портфельный анализ с невырожденной ковариационной матрицей':PAN,
-    'Описательная статистика':DT,
-    'Эмперические характеристики':EC
+    'Модификации линейной регрессионной модели': RM,
+    'Модификации модели классификации': CM,
+    'Дополнительные функции' : AF,
+    
 }
 
 names = list(files_dict.keys())
@@ -51,7 +43,7 @@ def invert_dict(d):
     return {value: key for key, value in d.items()}
 
 def get_task_from_func(func,to_search=False):
-    return re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4].replace('\n','').replace(' ','') if to_search else re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4]
+    return re.search(r'"""\s*(.*?)\s*(?=def __init__|Args)',getsource(func),re.DOTALL).group(0)[3:-4].replace('\n','').replace(' ','') if to_search else re.search(r'"""\s*(.*?)\s*(?=def __init__|Args)',getsource(func),re.DOTALL).group(0)[3:-4]
 
 
 funcs_dicts = [dict([(get_task_from_func(i), i) for i in module]) for module in modules]

@@ -16,6 +16,11 @@ matplobblib/econometrics/ECONOMETRICS.py
 matplobblib/econometrics/__init__.py
 matplobblib/econometrics/fr.py
 matplobblib/econometrics/rrstr.py
+matplobblib/ml/ML.py
+matplobblib/ml/__init__.py
+matplobblib/ml/additional_funcs.py
+matplobblib/ml/cm.py
+matplobblib/ml/rm.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
 matplobblib/tvims/acmk.py
