@@ -27,6 +27,7 @@ matplobblib/tvims/__init__.py
 matplobblib/tvims/acmk.py
 matplobblib/tvims/anrv.py
 matplobblib/tvims/cce.py
+matplobblib/tvims/cicc.py
 matplobblib/tvims/crv.py
 matplobblib/tvims/dt.py
 matplobblib/tvims/ec.py

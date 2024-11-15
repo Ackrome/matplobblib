@@ -11,6 +11,9 @@ from matplotlib.colors import ListedColormap
 class DecisionTree:
     def __init__(self, max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini"):
         """
+        Класс дерева решений
+        --------------------------
+        Params:
         :param max_depth: Максимальная глубина дерева
         :param min_samples_leaf: Минимальное количество объектов в листе
         :param max_leaves: Максимальное количество листьев
