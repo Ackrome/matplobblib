@@ -59,7 +59,35 @@ themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len
 
 
 # Тема -> Функция -> Задание
-def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False):
+def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = True, n_symbols:int = 32):
+    """
+    Печатает информацию о заданиях и функциях 
+    
+    Parameters
+    ----------
+    dict_to_show : dict, optional
+        словарь, который будет использоваться для поиска заданий, 
+        по умолчанию themes_list_funcs
+    key : str, optional
+        если dict_to_show - строка, то key - это ключ, 
+        по которому будет найден словарь в themes_list_dicts_full, 
+        если key=None, то будет найден словарь по строке dict_to_show
+    show_only_keys : bool, optional
+        если True, то будет печататься только список keys, 
+        если False, то будет печататься словарь с функциями, 
+        по умолчанию False
+    show_keys_second_level : bool, optional
+        если True, то будет печататься информация о функциях, 
+        если False, то будет печататься только список функций, 
+        по умолчанию False
+    n_symbols : int, optional
+        количество символов, которое будет выведено, если show_keys_second_level=True, 
+        по умолчанию 20
+    
+    Returns
+    -------
+    None
+    """
     if dict_to_show=='Вывести функцию буфера обмена':
             return print(enable_ppc)
     
@@ -92,6 +120,12 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
             if not show_only_keys:
                 text +=': '
                 for f in dict_to_show[key]:
-                    text += f'{f.__name__};\n'+' '*(length1+2)
+                    text += f'{f.__name__}'
+                    if show_keys_second_level:
+                        text += ': '
+                        func_text_len = len(invert_dict(themes_list_dicts[key])[f])
+                        func_text = invert_dict(themes_list_dicts[key])[f]
+                        text += func_text.replace('\n','\n'+' '*(length1 + len(f.__name__))) if func_text_len<n_symbols else func_text[:n_symbols].replace('\n','\n'+' '*(length1 + len(f.__name__)))+'...'
+                    text += ';\n'+' '*(length1+2)
             text += '\n'
         return print(text)

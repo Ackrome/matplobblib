@@ -99,7 +99,7 @@ themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len
 
 
 # Тема -> Функция -> Задание
-def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = False, n_symbols:int = 20):
+def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = True, n_symbols:int = 32):
     """
     Печатает информацию о заданиях и функциях 
     
@@ -163,9 +163,9 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
                     text += f'{f.__name__}'
                     if show_keys_second_level:
                         text += ': '
-                        func_text_len = len(invert_dict(themes_list_dicts[key])[f.__name__])
-                        func_text = invert_dict(themes_list_dicts[key])[f.__name__]
-                        text += func_text if func_text_len<n_symbols else func_text[:n_symbols]+'...'
+                        func_text_len = len(invert_dict(themes_list_dicts[key])[f])
+                        func_text = invert_dict(themes_list_dicts[key])[f]
+                        text += func_text.replace('\n','\n'+' '*(length1 + len(f.__name__))) if func_text_len<n_symbols else func_text[:n_symbols].replace('\n','\n'+' '*(length1 + len(f.__name__)))+'...'
                     text += ';\n'+' '*(length1+2)
             text += '\n'
         return print(text)
