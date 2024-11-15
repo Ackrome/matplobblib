@@ -10,6 +10,7 @@ from .acmk import *                     # Приближенное вычисл�
 from .pan import *                      # Портфельный анализ с невырожденной ковариационной матрицей
 from .dt import *                       # Описательная статистика
 from .ec import *                       # Эмперические характеристики
+from .sffp import *                     # Выборки из конечной совокупности
 
 files_dict ={
     'Формулы полной вероятности и Байеса':FPB,
@@ -21,24 +22,36 @@ files_dict ={
     'Приближенное вычисление вероятности методом Монте-Карло':ACMK,
     'Портфельный анализ с невырожденной ковариационной матрицей':PAN,
     'Описательная статистика':DT,
-    'Эмперические характеристики':EC
+    'Эмперические характеристики':EC,
+    'Выборки из конечной совокупности':SFFP
 }
 
 names = list(files_dict.keys())
 modules = list(files_dict.values())
 
 def imports():
+    """
+    Returns a string containing Python import statements for various scientific libraries. 
+    These libraries are commonly used for mathematical computations, symbolic mathematics, 
+    and combinatorial operations, with SymPy initialized for pretty printing using Unicode 
+    and LaTeX formatting.
+    """
     return '''
     
-    from scipy.integrate import quad
-    import math
-    import numpy a np
-    import sympy
-    import itertools
-    sympy.init_printing(use_unicode=True,use_latex=True)
+from scipy.integrate import quad
+import math
+import numpy as np
+import sympy
+import itertools
+sympy.init_printing(use_unicode=True,use_latex=True)
     '''
     
 def enable_ppc():
+    """
+    Returns a string containing a Python script that uses the pyperclip module to
+    define a function named `write`. The `write` function takes a single argument `name`,
+    copies it to the system clipboard, and pastes it using pyperclip.
+    """
     return'''
 import pyperclip
 
@@ -48,9 +61,30 @@ def write(name):
     pyperclip.paste()'''
     
 def invert_dict(d):
+    """
+    Returns a new dictionary with the keys and values of the input dictionary swapped.
+    
+    Example:
+        >>> invert_dict({1: 'a', 2: 'b'})
+        {'a': 1, 'b': 2}
+    """
     return {value: key for key, value in d.items()}
 
 def get_task_from_func(func,to_search=False):
+    """
+    Returns the task associated with the given function.
+    
+    Parameters:
+        func : callable
+            The function whose task we want to find.
+        to_search : bool, optional
+            If True, returns a string that can be used to search for the task by name.
+            If False, returns the task itself. Defaults to False.
+    
+    Returns:
+        str or callable
+            The task associated with the function, or a string that can be used to search for it.
+    """
     return re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4].replace('\n','').replace(' ','') if to_search else re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4]
 
 
@@ -65,7 +99,35 @@ themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len
 
 
 # Тема -> Функция -> Задание
-def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False):
+def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = False, n_symbols:int = 20):
+    """
+    Печатает информацию о заданиях и функциях 
+    
+    Parameters
+    ----------
+    dict_to_show : dict, optional
+        словарь, который будет использоваться для поиска заданий, 
+        по умолчанию themes_list_funcs
+    key : str, optional
+        если dict_to_show - строка, то key - это ключ, 
+        по которому будет найден словарь в themes_list_dicts_full, 
+        если key=None, то будет найден словарь по строке dict_to_show
+    show_only_keys : bool, optional
+        если True, то будет печататься только список keys, 
+        если False, то будет печататься словарь с функциями, 
+        по умолчанию False
+    show_keys_second_level : bool, optional
+        если True, то будет печататься информация о функциях, 
+        если False, то будет печататься только список функций, 
+        по умолчанию False
+    n_symbols : int, optional
+        количество символов, которое будет выведено, если show_keys_second_level=True, 
+        по умолчанию 20
+    
+    Returns
+    -------
+    None
+    """
     if dict_to_show=='Вывести функцию буфера обмена':
             return print(enable_ppc)
     
@@ -98,6 +160,12 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
             if not show_only_keys:
                 text +=': '
                 for f in dict_to_show[key]:
-                    text += f'{f.__name__};\n'+' '*(length1+2)
+                    text += f'{f.__name__}'
+                    if show_keys_second_level:
+                        text += ': '
+                        func_text_len = len(invert_dict(themes_list_dicts[key])[f.__name__])
+                        func_text = invert_dict(themes_list_dicts[key])[f.__name__]
+                        text += func_text if func_text_len<n_symbols else func_text[:n_symbols]+'...'
+                    text += ';\n'+' '*(length1+2)
             text += '\n'
         return print(text)
