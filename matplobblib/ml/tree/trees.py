@@ -4,12 +4,11 @@ from graphviz import Digraph
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.colors import ListedColormap
 #######################################################################################################################
 # Реализация дерева решений
 #######################################################################################################################
 class DecisionTree:
-    def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini"):
+    def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini", check_k_threshold=0, min_gain=0.01, class_weights=None):
         """
         Класс дерева решений
         --------------------------
@@ -24,15 +23,34 @@ class DecisionTree:
             - misclassification - критерий ошибок классификации
             - mae - критерий средней абсолютной ошибки
             - mse - критерий средней квадратичной ошибки
+        :param check_k_threshold: Параметр для оценки качества разбиения<br>- k=0 - проверка на всех уникальных объектах в листе<br> - k>=1 - проверка на k уникальных объектах в листе<br>Если значений меньше, чем k, берем все уникальные.
+        :param min_gain: Минимальное улучшение качества разбиения.
+        :param class_weights: Словарь вида {class: weight}, определяющий веса для классов.
         """
         self.model_type = model_type
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
         self.max_leaves = max_leaves
+        
         self.criterion = criterion.lower()  # Приводим к нижнему регистру для унификации
         assert (model_type=='Regressor' and criterion in ['mse','mae']) or (model_type=='Classifier' and criterion in ['gini','entropy','misclassification','mae','mse']), 'Неправильно выбрана функция информативности'
+        
+        self.check_k_threshold = check_k_threshold
+        assert self.check_k_threshold >= 0, 'Параметр check_k_threshold должен быть неотрицательным'
+        if self.check_k_threshold == 0:
+            self.check_k_threshold = np.inf
+        
+        self.min_gain = min_gain
+        if self.min_gain == None:
+            self.min_gain = 0
+        assert self.min_gain >= 0, 'Параметр min_gain должен быть неотрицательным'
+        
         self.tree = None
         self.leaf_count = 0  # Счетчик листьев
+        
+        self.class_weights = class_weights  # Поддержка весов классов
+        assert isinstance(self.class_weights, dict) or self.class_weights is None, 'class_weights должен быть словарем вида {class: weight}'
+        
 
         # Проверяем корректность критерия
         valid_criteria = {"gini", "entropy", "misclassification", "mae", "mse"}
@@ -46,11 +64,20 @@ class DecisionTree:
         Args:
             X (array-like): Матрица признаков, где каждая строка соответствует одному образцу,
                             а каждый столбец - одному признаку.
-            y (array-like): Вектор целевых значений, где каждый элемент соответствует целевому
+            y (array-like): Вектор целевых значений, где каждый элемент соответствует целевому 
                             значению для соответствующей строки в X.
 
         Построение дерева начинается с вызова рекурсивной функции `build_tree`.
         """
+        # Проверяем корректность весов
+        if self.class_weights==None:
+            self.class_weights = {cls: 1 for cls in np.unique(y)}
+        else:
+            unique_classes = np.unique(y)
+            for cls in unique_classes:
+                if cls not in list(self.class_weights.keys()):
+                    raise ValueError(f"Класс {cls} отсутствует в class_weights.")
+            
         # Построение дерева начинается с вызова рекурсивной функции `build_tree`
         self.leaf_count = 0  # Сбрасываем счетчик листьев перед обучением
         self.tree = self.build_tree(X, y)
@@ -59,14 +86,14 @@ class DecisionTree:
         """
         Построение дерева решений
         --------------------------
-
+        
         Рекурсивная функция, которая строит дерево решений.
-
+        
         Args:
             X (array-like): Матрица признаков.
             y (array-like): Вектор целевых значений.
             depth (int, optional): Текущая глубина дерева. Defaults to 0.
-
+        
         Returns:
             dict: Словарь, содержащий информацию о текущей вершине дерева.
         """
@@ -85,7 +112,7 @@ class DecisionTree:
         if feature is None:
             self.leaf_count += 1  # Если деление невозможно, создаем лист
             return self.majority_class(y)
-
+        
         # Разделить данные на левое и правое поддеревья
         left_indices = X[:, feature] < threshold
         right_indices = X[:, feature] >= threshold
@@ -102,7 +129,7 @@ class DecisionTree:
 
         Args:
             X (array-like): Матрица признаков, где каждая строка представляет объект, а каждый столбец - признак.
-
+                            
             y (array-like): Целевые значения, соответствующие каждому объекту в X.
 
         Returns:
@@ -110,21 +137,29 @@ class DecisionTree:
         """
 
         best_feature, best_threshold = None, None
-
+        
         # Устанавливаем начальное значение метрики в зависимости от типа критерия
         if self.criterion in {"gini", "entropy", "mae", "mse"}:
             best_metric = float("inf")  # Минимизируем
         elif self.criterion == "misclassification":
             best_metric = -float("inf")  # Максимизируем
-
+        
         n_samples, n_features = X.shape
 
         for feature in range(n_features):
-            thresholds = np.unique(X[:, feature])
+            unique_values = np.unique(X[:, feature])
+            
+            if len(unique_values) <= self.check_k_threshold:
+                thresholds = unique_values  # Если значений меньше, чем k, берем все.
+            else:
+                thresholds = np.linspace(unique_values.min(), unique_values.max(), self.check_k_threshold)
+    
+            
+            
             for threshold in thresholds:
                 left_indices = X[:, feature] < threshold
                 right_indices = X[:, feature] >= threshold
-
+                
                 # Проверяем минимальное количество объектов в листе
                 if (
                     len(left_indices[left_indices]) < self.min_samples_leaf
@@ -138,7 +173,7 @@ class DecisionTree:
                 if (
                     (self.criterion in {"gini", "entropy", "mae", "mse"} and metric < best_metric)
                     or (self.criterion == "misclassification" and metric > best_metric)
-                ):
+                ) and abs(metric-best_metric) >= self.min_gain:
                     best_metric, best_feature, best_threshold = metric, feature, threshold
 
         return best_feature, best_threshold
@@ -147,11 +182,11 @@ class DecisionTree:
     def split_metric(self, left_y, right_y):
         """
         Вычисляет критерий для разделения.
-
+        
         Args:
             left_y (array-like): Вектор целевых значений для левого поддерева.
             right_y (array-like): Вектор целевых значений для правого поддерева.
-
+        
         Returns:
             numerical: Критерий для разделения.
         """
@@ -166,6 +201,7 @@ class DecisionTree:
         elif self.criterion == "mse":
             return self.mean_squared_error(left_y, right_y)
 
+    
     def gini_index(self, left_y, right_y):
         """
         Вычисляет критерий Джини для измерения неоднородности
@@ -179,10 +215,14 @@ class DecisionTree:
         """
         def gini(y):
             counts = Counter(y)
-            return 1 - sum((count / len(y)) ** 2 for count in counts.values())
+            total = sum(self.class_weights.get(cls, 1) * count for cls, count in counts.items())
+            return 1 - sum((self.class_weights.get(cls, 1) * count / total) ** 2 for cls, count in counts.items())
 
         n = len(left_y) + len(right_y)
-        return (len(left_y) / n) * gini(left_y) + (len(right_y) / n) * gini(right_y)
+        left_weighted = (len(left_y) / n) * gini(left_y)
+        right_weighted = (len(right_y) / n) * gini(right_y)
+        return left_weighted + right_weighted
+    
 
     def entropy_index(self, left_y, right_y):
         """
@@ -195,13 +235,18 @@ class DecisionTree:
         Returns:
             numerical: Энтропийный индекс.
         """
-
         def entropy(y):
             counts = Counter(y)
-            return -sum((count / len(y)) * np.log2(count / len(y)) for count in counts.values() if count > 0)
+            total = sum(self.class_weights.get(cls, 1) * count for cls, count in counts.items())
+            return -sum((self.class_weights.get(cls, 1) * count / total) * 
+                        np.log2((self.class_weights.get(cls, 1) * count / total))
+                        for cls, count in counts.items() if count > 0)
 
         n = len(left_y) + len(right_y)
-        return (len(left_y) / n) * entropy(left_y) + (len(right_y) / n) * entropy(right_y)
+        left_weighted = (len(left_y) / n) * entropy(left_y)
+        right_weighted = (len(right_y) / n) * entropy(right_y)
+        return left_weighted + right_weighted
+
 
     def misclassification_error(self, left_y, right_y):
         """
@@ -214,13 +259,22 @@ class DecisionTree:
         Returns:
             numerical: Критерий ошибки классификации.
         """
-        def error(y):
+        def misclass_error(y):
+            # Считаем количество объектов каждого класса
             counts = Counter(y)
-            majority_count = max(counts.values())
-            return 1 - (majority_count / len(y))
+            # Учитываем веса классов
+            total_weight = sum(self.class_weights.get(cls, 1) * count for cls, count in counts.items())
+            # Определяем частоту самого популярного класса с учетом весов
+            max_class_weighted_freq = max(self.class_weights.get(cls, 1) * count / total_weight for cls, count in counts.items())
+            # Ошибка классификации = 1 - частота самого популярного класса
+            return 1 - max_class_weighted_freq
 
-        n = len(left_y) + len(right_y)
-        return (len(left_y) / n) * error(left_y) + (len(right_y) / n) * error(right_y)
+        n = len(left_y) + len(right_y)  # Общее число объектов
+        # Взвешенная ошибка классификации для левого и правого подмножеств
+        left_weighted = (len(left_y) / n) * misclass_error(left_y)
+        right_weighted = (len(right_y) / n) * misclass_error(right_y)
+        return left_weighted + right_weighted
+
 
     def mean_absolute_error(self, left_y, right_y):
         """
@@ -258,6 +312,7 @@ class DecisionTree:
         n = len(left_y) + len(right_y)
         return (len(left_y) / n) * mse(left_y) + (len(right_y) / n) * mse(right_y)
 
+     
     def majority_class(self, y):
         """
         Определяет большинственный класс
@@ -268,8 +323,10 @@ class DecisionTree:
         Returns:
             object: Большинственный класс
         """
+        counts = Counter(y)
+        weighted_counts = {cls: count * self.class_weights.get(cls, 1) for cls, count in counts.items()}
+        return max(weighted_counts, key=weighted_counts.get) if self.model_type == "Classifier" else np.mean(y)
 
-        return Counter(y).most_common(1)[0][0] if self.model_type == "Classifier" else np.mean(y)
 
     def predict(self, X):
         """
@@ -324,7 +381,7 @@ class DecisionTree:
             dot (graphviz.Digraph): Граф, в который добавляются узлы и ребра.
             tree (dict or object): Информация о текущей вершине дерева.
                 Если это листовой узел, то tree - объект, представляющий класс.
-                Если это внутренний узел, то tree - словарь, содержащий
+                Если это внутренний узел, то tree - словарь, содержащий 
                     "feature" (int): индекс признака, по которому происходит разбиение,
                     "threshold" (float): порог разбиения,
                     "left" (dict or object): левое поддерево,
@@ -358,7 +415,7 @@ class DecisionTree:
     def plot_decision_boundaries(self, X, y, feature_indices=(0, 1), resolution=100, figsize=(8, 6)):
         """
         Визуализирует области пространства, принадлежащие различным классам (поддержка нескольких классов).
-
+        
         Параметры:
         ----------
         X : ndarray
@@ -416,7 +473,24 @@ class DecisionTree:
             ]
             legend2 = plt.legend(handles=class_patches, title="Classes (Background)", loc="lower right")
             plt.gca().add_artist(legend2)
-
+        
         plt.show()
-#######################################################################################################################
-TREES = [DecisionTree]
+    
+    def plot_regr(self, y_true, y_pred):
+        """
+        Нарисовать график рассеяния истинных и предсказанных значений для моделей регрессии.
+
+        Аргументы:
+            y_true (array-like): истинные целевые значения.
+            y_pred (array-like): предсказанные целевые значения.
+
+        Примечания:
+            Эта функция применяется только для моделей регрессии (т.е., `self.model_type == 'Regressor'`).
+
+        Возвращает:
+            None
+        """
+        assert self.model_type == 'Regressor', 'Эта функция только для регрессии'
+        plt.scatter(y_true, y_pred)
+        plt.scatter(y_true, y_true)
+        plt.show()

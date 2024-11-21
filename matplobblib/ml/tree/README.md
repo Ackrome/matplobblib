@@ -21,8 +21,62 @@
   - Регрессия: `mae`, `mse`.
 - **`check_k_threshold`**: Количество уникальных значений признака, которые проверяются для порогов разбиения.
 - **`min_gain`**: Минимальное улучшение качества для принятия разбиения.
+- `class_weights`:  Словарь вида {class: weight}, определяющий веса для классов. Если `None` - веса равны.
 
 ---
+
+### Примеры использования
+
+#### Классификация
+
+```python
+from sklearn.datasets import make_classification
+
+
+X, Y = make_classification(10000,n_features=2,n_informative=2,n_redundant = 0, n_classes=2)
+# Обучение дерева
+tree = DecisionTree(max_depth=10)
+tree.fit(X, Y)
+
+# Прогноз
+predictions = tree.predict(X)
+
+print('Акураси = ',(Y==predictions).sum()/Y.size)
+
+tree.plot_decision_boundaries(X, Y)
+```
+
+Акураси =  0.9774
+
+![1732183291803](image/README/1732183291803.png)
+
+#### Регрессия
+
+```python
+from sklearn.datasets import make_regression
+from sklearn.metrics import r2_score
+
+X, Y = make_regression(10000,n_features=4)
+
+# Обучение дерева
+tree = DecisionTree('Regressor', criterion='mse', max_depth=10)
+tree.fit(X, Y)
+
+# Прогноз
+predictions = tree.predict(X)
+
+print('R2 = ',r2_score(Y,predictions))
+
+
+tree.plot_decision_boundaries(X, Y)
+
+tree.plot_regr(Y, predictions)
+```
+
+R2 =  0.9768931916957224
+![1732183431372](image/README/1732183431372.png)
+
+![1732183442813](image/README/1732183442813.png)
 
 ### **Основные методы**
 

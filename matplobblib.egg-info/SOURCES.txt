@@ -17,9 +17,10 @@ matplobblib/econometrics/__init__.py
 matplobblib/econometrics/fr.py
 matplobblib/econometrics/rrstr.py
 matplobblib/ml/__init__.py
-matplobblib/ml/additional_funcs.py
 matplobblib/ml/cm.py
 matplobblib/ml/rm.py
+matplobblib/ml/additional_funcs/__init__.py
+matplobblib/ml/additional_funcs/additional_funcs.py
 matplobblib/ml/tree/__init__.py
 matplobblib/ml/tree/trees.py
 matplobblib/tvims/TVIMS.py
