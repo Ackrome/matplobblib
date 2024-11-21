@@ -9,25 +9,28 @@ from matplotlib.colors import ListedColormap
 # Реализация дерева решений
 #######################################################################################################################
 class DecisionTree:
-    def __init__(self, max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini"):
+    def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini"):
         """
         Класс дерева решений
         --------------------------
         Params:
+        :param model_type: `'Classifier'` or `'Regressor'`
         :param max_depth: Максимальная глубина дерева
         :param min_samples_leaf: Минимальное количество объектов в листе
         :param max_leaves: Максимальное количество листьев
-        :param criterion: Критерий для оценки качества разбиения
+        :param criterion: Критерий для оценки качества разбиения из [`gini`,`entropy`,`misclassification`,`mae`,`mse`]
             - gini - критерий Жини
             - entropy - критерий энтропии
             - misclassification - критерий ошибок классификации
             - mae - критерий средней абсолютной ошибки
             - mse - критерий средней квадратичной ошибки
         """
+        self.model_type = model_type
         self.max_depth = max_depth
         self.min_samples_leaf = min_samples_leaf
         self.max_leaves = max_leaves
         self.criterion = criterion.lower()  # Приводим к нижнему регистру для унификации
+        assert (model_type=='Regressor' and criterion in ['mse','mae']) or (model_type=='Classifier' and criterion in ['gini','entropy','misclassification','mae','mse']), 'Неправильно выбрана функция информативности'
         self.tree = None
         self.leaf_count = 0  # Счетчик листьев
 
@@ -43,7 +46,7 @@ class DecisionTree:
         Args:
             X (array-like): Матрица признаков, где каждая строка соответствует одному образцу,
                             а каждый столбец - одному признаку.
-            y (array-like): Вектор целевых значений, где каждый элемент соответствует целевому 
+            y (array-like): Вектор целевых значений, где каждый элемент соответствует целевому
                             значению для соответствующей строки в X.
 
         Построение дерева начинается с вызова рекурсивной функции `build_tree`.
@@ -56,14 +59,14 @@ class DecisionTree:
         """
         Построение дерева решений
         --------------------------
-        
+
         Рекурсивная функция, которая строит дерево решений.
-        
+
         Args:
             X (array-like): Матрица признаков.
             y (array-like): Вектор целевых значений.
             depth (int, optional): Текущая глубина дерева. Defaults to 0.
-        
+
         Returns:
             dict: Словарь, содержащий информацию о текущей вершине дерева.
         """
@@ -82,7 +85,7 @@ class DecisionTree:
         if feature is None:
             self.leaf_count += 1  # Если деление невозможно, создаем лист
             return self.majority_class(y)
-        
+
         # Разделить данные на левое и правое поддеревья
         left_indices = X[:, feature] < threshold
         right_indices = X[:, feature] >= threshold
@@ -99,7 +102,7 @@ class DecisionTree:
 
         Args:
             X (array-like): Матрица признаков, где каждая строка представляет объект, а каждый столбец - признак.
-                            
+
             y (array-like): Целевые значения, соответствующие каждому объекту в X.
 
         Returns:
@@ -107,13 +110,13 @@ class DecisionTree:
         """
 
         best_feature, best_threshold = None, None
-        
+
         # Устанавливаем начальное значение метрики в зависимости от типа критерия
         if self.criterion in {"gini", "entropy", "mae", "mse"}:
             best_metric = float("inf")  # Минимизируем
         elif self.criterion == "misclassification":
             best_metric = -float("inf")  # Максимизируем
-        
+
         n_samples, n_features = X.shape
 
         for feature in range(n_features):
@@ -121,7 +124,7 @@ class DecisionTree:
             for threshold in thresholds:
                 left_indices = X[:, feature] < threshold
                 right_indices = X[:, feature] >= threshold
-                
+
                 # Проверяем минимальное количество объектов в листе
                 if (
                     len(left_indices[left_indices]) < self.min_samples_leaf
@@ -144,11 +147,11 @@ class DecisionTree:
     def split_metric(self, left_y, right_y):
         """
         Вычисляет критерий для разделения.
-        
+
         Args:
             left_y (array-like): Вектор целевых значений для левого поддерева.
             right_y (array-like): Вектор целевых значений для правого поддерева.
-        
+
         Returns:
             numerical: Критерий для разделения.
         """
@@ -265,8 +268,8 @@ class DecisionTree:
         Returns:
             object: Большинственный класс
         """
-        
-        return Counter(y).most_common(1)[0][0]
+
+        return Counter(y).most_common(1)[0][0] if self.model_type == "Classifier" else np.mean(y)
 
     def predict(self, X):
         """
@@ -321,7 +324,7 @@ class DecisionTree:
             dot (graphviz.Digraph): Граф, в который добавляются узлы и ребра.
             tree (dict or object): Информация о текущей вершине дерева.
                 Если это листовой узел, то tree - объект, представляющий класс.
-                Если это внутренний узел, то tree - словарь, содержащий 
+                Если это внутренний узел, то tree - словарь, содержащий
                     "feature" (int): индекс признака, по которому происходит разбиение,
                     "threshold" (float): порог разбиения,
                     "left" (dict or object): левое поддерево,
@@ -355,7 +358,7 @@ class DecisionTree:
     def plot_decision_boundaries(self, X, y, feature_indices=(0, 1), resolution=100, figsize=(8, 6)):
         """
         Визуализирует области пространства, принадлежащие различным классам (поддержка нескольких классов).
-        
+
         Параметры:
         ----------
         X : ndarray
@@ -402,17 +405,18 @@ class DecisionTree:
         plt.ylabel(f"Feature {feature2}")
         plt.title("Decision Boundaries")
 
-        # Добавляем легенду
-        legend1 = plt.legend(*scatter.legend_elements(), title="Classes (Points)", loc="upper right")
-        plt.gca().add_artist(legend1)
+        if self.model_type!='Regressor':
+            # Добавляем легенду
+            legend1 = plt.legend(*scatter.legend_elements(), title="Classes (Points)", loc="upper right")
+            plt.gca().add_artist(legend1)
 
-        # Добавляем таблицу цветов фона
-        class_patches = [
-            Patch(color=cmap_background(i), label=f"Class {i}") for i in range(n_classes)
-        ]
-        legend2 = plt.legend(handles=class_patches, title="Classes (Background)", loc="lower right")
-        plt.gca().add_artist(legend2)
-        
+            # Добавляем таблицу цветов фона
+            class_patches = [
+                Patch(color=cmap_background(i), label=f"Class {i}") for i in range(n_classes)
+            ]
+            legend2 = plt.legend(handles=class_patches, title="Classes (Background)", loc="lower right")
+            plt.gca().add_artist(legend2)
+
         plt.show()
 #######################################################################################################################
 TREES = [DecisionTree]
