@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 # Реализация дерева решений
 #######################################################################################################################
 class DecisionTree:
-    def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini", check_k_threshold=0, min_gain=0.01, class_weights=None):
+    """Класс дерева решений
+    """
+    def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini", check_k_threshold=0, min_gain=0.01, class_weights=None, chek_k_features=0):
         """
         Класс дерева решений
         --------------------------
@@ -23,9 +25,10 @@ class DecisionTree:
             - misclassification - критерий ошибок классификации
             - mae - критерий средней абсолютной ошибки
             - mse - критерий средней квадратичной ошибки
-        :param check_k_threshold: Параметр для оценки качества разбиения<br>- k=0 - проверка на всех уникальных объектах в листе<br> - k>=1 - проверка на k уникальных объектах в листе<br>Если значений меньше, чем k, берем все уникальные.
+        :param check_k_threshold: Параметр для оценки качества разбиения<br>- k=0 - проверка на всех уникальных объектах в листе<br> - k>=1 - проверка на k уникальных объектах в листе.
         :param min_gain: Минимальное улучшение качества разбиения.
         :param class_weights: Словарь вида {class: weight}, определяющий веса для классов.
+        :param chek_k_features: Сколько случайных столбцов проверять при каждом разделении.
         """
         self.model_type = model_type
         self.max_depth = max_depth
@@ -50,6 +53,8 @@ class DecisionTree:
         
         self.class_weights = class_weights  # Поддержка весов классов
         assert isinstance(self.class_weights, dict) or self.class_weights is None, 'class_weights должен быть словарем вида {class: weight}'
+        
+        self.chek_k_features = chek_k_features
         
 
         # Проверяем корректность критерия
@@ -77,7 +82,11 @@ class DecisionTree:
             for cls in unique_classes:
                 if cls not in list(self.class_weights.keys()):
                     raise ValueError(f"Класс {cls} отсутствует в class_weights.")
-            
+        
+        if self.chek_k_features>X.shape[1]:
+            self.chek_k_features=X.shape[1]
+            print(f'chek_k_features({self.chek_k_features}) не может быть больше, чем столбцов в X. chek_k_features взято за количество столбцов в X ')
+        
         # Построение дерева начинается с вызова рекурсивной функции `build_tree`
         self.leaf_count = 0  # Сбрасываем счетчик листьев перед обучением
         self.tree = self.build_tree(X, y)
@@ -146,11 +155,16 @@ class DecisionTree:
         
         n_samples, n_features = X.shape
 
-        for feature in range(n_features):
+        if self.chek_k_features==0:
+            features = list(range(n_features))
+        else:
+            features = np.random.choice(list(range(n_features)),self.chek_k_features,False)
+            
+        for feature in features:
             unique_values = np.unique(X[:, feature])
             
-            if len(unique_values) <= self.check_k_threshold:
-                thresholds = unique_values  # Если значений меньше, чем k, берем все.
+            if self.check_k_threshold==0:
+                thresholds = unique_values  # Если k = 0, берем все.
             else:
                 thresholds = np.linspace(unique_values.min(), unique_values.max(), self.check_k_threshold)
     
@@ -494,3 +508,5 @@ class DecisionTree:
         plt.scatter(y_true, y_pred)
         plt.scatter(y_true, y_true)
         plt.show()
+#######################################################################################################################
+TREES = [DecisionTree]
