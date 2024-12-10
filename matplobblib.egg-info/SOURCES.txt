@@ -3,6 +3,7 @@ MANIFEST.in
 README.md
 setup.py
 matplobblib/__init__.py
+matplobblib/forall.py
 matplobblib.egg-info/PKG-INFO
 matplobblib.egg-info/SOURCES.txt
 matplobblib.egg-info/dependency_links.txt
@@ -15,7 +16,6 @@ matplobblib/aisd/search_algorythms.py
 matplobblib/econometrics/ECONOMETRICS.py
 matplobblib/econometrics/__init__.py
 matplobblib/econometrics/fr.py
-matplobblib/econometrics/rrstr.py
 matplobblib/ml/__init__.py
 matplobblib/ml/additional_funcs/__init__.py
 matplobblib/ml/additional_funcs/additional_funcs.py
@@ -37,7 +37,6 @@ matplobblib/tvims/ec.py
 matplobblib/tvims/fpb.py
 matplobblib/tvims/nrv.py
 matplobblib/tvims/pan.py
-matplobblib/tvims/rrstr.py
 matplobblib/tvims/sdrv/__init__.py
 matplobblib/tvims/sdrv/sdrv.py
 matplobblib/tvims/sffp/__init__.py

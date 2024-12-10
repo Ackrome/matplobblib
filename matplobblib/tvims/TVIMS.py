@@ -1,5 +1,5 @@
-from  inspect import getsource
 import re
+from ..forall import *
 from .fpb import *                      # Формулы полной вероятности и Байеса
 from .sdrv import *                     # Специальные дискретные случайные величины
 from .crv import *                      # Непрерывные случайные величины

@@ -1,6 +1,7 @@
 from .data_structures import *
 from  .search_algorythms import *
 from .additional_funcs import *
+from ..forall import *
 
 data1 = text1.split('abracadabrabibidi')
 data_structures_dict = dict([(x.split('\n')[1].replace("# ",''),x) for x in data1])
