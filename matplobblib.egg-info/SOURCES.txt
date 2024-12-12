@@ -27,7 +27,6 @@ matplobblib/ml/tree/__init__.py
 matplobblib/ml/tree/trees.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
-matplobblib/tvims/acmk.py
 matplobblib/tvims/anrv.py
 matplobblib/tvims/cce.py
 matplobblib/tvims/cicc.py
@@ -37,6 +36,8 @@ matplobblib/tvims/ec.py
 matplobblib/tvims/fpb.py
 matplobblib/tvims/nrv.py
 matplobblib/tvims/pan.py
+matplobblib/tvims/acmk/__init__.py
+matplobblib/tvims/acmk/acmk.py
 matplobblib/tvims/sdrv/__init__.py
 matplobblib/tvims/sdrv/sdrv.py
 matplobblib/tvims/sffp/__init__.py

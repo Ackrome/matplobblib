@@ -11,5 +11,5 @@ def rrstr(x,n):
     rrstr1 = np.vectorize(one_rrstr)
     res = rrstr1(x,n)
     if res.size ==1:
-        return res[0]
+        return str(res)
     return res
