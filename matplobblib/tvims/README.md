@@ -10,14 +10,15 @@
 
 # Реализованы решения задач по темам:
 
-- Формулы полной вероятности и Байеса
+- [Формулы полной вероятности и Байеса](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/fpb#readme)
 - [Специальные дискретные случайные величины](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/sdrv#readme)
-- Непрерывные случайные величины
-- Нормальные случайные векторы
-- Условные характеристики относительно группы событий
+- [Непрерывные случайные величины](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/crv#readme)
+- [Нормальные случайные векторы](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/nrv#readme)
+- [Нормальные случайные векторы [дополнительный пакет функций]](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/anrv#readme)
+- [Условные характеристики относительно группы событий](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/cce#readme)
 - [Приближенное вычисление вероятности методом Монте-Карло](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/acmk#readme)
-- Портфельный анализ с невырожденной ковариационной матрицей
-- Описательная статистика
-- Эмперические характеристики
+- [Портфельный анализ с невырожденной ковариационной матрицей](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/pan#readme)
+- [Описательная статистика](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/dt#readme)
+- [Эмперические характеристики](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/ec#readme)
 - [Выборки из конечной совокупности](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/sffp#readme)
-- Доверительный интервал для коэффициента корреляции
+- [Доверительный интервал для коэффициента корреляции](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/cicc#readme)
