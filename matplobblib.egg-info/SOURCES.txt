@@ -18,7 +18,10 @@ matplobblib/econometrics/__init__.py
 matplobblib/econometrics/fr.py
 matplobblib/ml/__init__.py
 matplobblib/ml/additional_funcs/__init__.py
-matplobblib/ml/additional_funcs/additional_funcs.py
+matplobblib/ml/additional_funcs/b2_visual/__init__.py
+matplobblib/ml/additional_funcs/b2_visual/b2_visual.py
+matplobblib/ml/additional_funcs/metrics/__init__.py
+matplobblib/ml/additional_funcs/metrics/metrics.py
 matplobblib/ml/cm/__init__.py
 matplobblib/ml/cm/cm.py
 matplobblib/ml/rm/__init__.py
