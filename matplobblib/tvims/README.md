@@ -21,4 +21,5 @@
 - [Описательная статистика](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/dt#readme)
 - [Эмперические характеристики](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/ec#readme)
 - [Выборки из конечной совокупности](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/sffp#readme)
+- [Метод максимального правдоподобия](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/mlm#readme)
 - [Доверительный интервал для коэффициента корреляции](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/cicc#readme)
