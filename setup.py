@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.36',
+    version='0.2.38',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -21,5 +21,7 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
-       
+    package_data={
+        "matplobblib": ["tvims/theory/*"],  # Указываем путь к файлам
+    },
 )

@@ -56,5 +56,11 @@ matplobblib/tvims/sdrv/__init__.py
 matplobblib/tvims/sdrv/sdrv.py
 matplobblib/tvims/sffp/__init__.py
 matplobblib/tvims/sffp/sffp.py
+matplobblib/tvims/theory/__init__.py
+matplobblib/tvims/theory/theory.py
 matplobblib/tvims/tmh/__init__.py
 matplobblib/tvims/tmh/tmh.py
+matplobblib/tvims/tsm/__init__.py
+matplobblib/tvims/tsm/tsm.py
+matplobblib/tvims/tvh/__init__.py
+matplobblib/tvims/tvh/tvh.py

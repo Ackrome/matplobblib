@@ -8,6 +8,10 @@
 
 Также в данный момент доступно использование всех функций модуля без интеграции кода в ваш проект - иными словами, **вы можете решать задачи так же, подставляя аргументы в функции**, но внутреннюю часть этих функций вы видеть не будете. Разве это не замечательно?
 
+## Полезные ссылки
+
+* [Карта разных распределений](https://www.math.wm.edu/~leemis/chart/UDR/UDR.html)
+
 # Реализованы решения задач по темам:
 
 - [Формулы полной вероятности и Байеса](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/fpb#readme)
@@ -23,4 +27,6 @@
 - [Выборки из конечной совокупности](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/sffp#readme)
 - [Метод максимального правдоподобия](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/mlm#readme)
 - [Проверка гипотез о значении среднего](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/tmh#readme)
+- [Проверка гипотез о значении дисперсии](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/tvh#readme)
+- [Проверка гипотезы о состоянии двух и трёх средних](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/tsm#readme)
 - [Доверительный интервал для коэффициента корреляции](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/cicc#readme)
