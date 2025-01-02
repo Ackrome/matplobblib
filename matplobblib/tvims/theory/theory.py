@@ -1,21 +1,18 @@
+from ...forall import *
 import importlib.resources as pkg_resources
-
-# Читаем файл `file1.txt` из пакета
-data = pkg_resources.read_binary("my_package.data", "file1.txt")
-print(data)
 import os
 
-# Получаем текущую директорию, где запущена программа
-current_directory = os.getcwd()
-
-# Список всех файлов и папок в текущей директории
-all_items = os.listdir(current_directory)
-
-# Фильтруем только файлы
-files = [item for item in all_items if os.path.isfile(os.path.join(current_directory, item))]
-
-# Выводим названия файлов
-print("Файлы в директории:")
-for file in files:
-    #if 'ТЕОР' in file.upper():
-        print(file)
+def get_png_files():
+    """
+    Returns a list of paths to PNG files in the MS-11-12 directory.
+    """
+    package = "matplobblib.tvims.theory.pdfs.MS-11-12"
+    png_files = []
+    try:
+        for resource in pkg_resources.contents(package):
+            if resource.endswith(".png"):
+                path = pkg_resources.path(package, resource)
+                png_files.append(str(path))
+    except Exception as e:
+        print(f"Error accessing PNG files: {e}")
+    return png_files
