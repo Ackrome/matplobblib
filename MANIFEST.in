@@ -1,2 +1,2 @@
 include README.md
-recursive-include matplobblib/data *
+recursive-include matplobblib/tvims/theory/pdfs *.png

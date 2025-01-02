@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.42',
+    version='0.2.54',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -21,8 +21,13 @@ setup(
         'Operating System :: OS Independent',
     ],
     python_requires='>=3.6',
-    include_package_data=True,
+    include_package_data=True,  # Include non-Python files specified in MANIFEST.in or package_data
     package_data={
-        "matplobblib.tvims.theory": ["pdfs/MS-11-12/*.png"],
+        # Include all PNG files in pdfs and subdirectories
+        "matplobblib.tvims.theory": ["pdfs/**/*.png"],
     },
+    #install_requires=[
+    #    "Pillow",  # Required for image processing
+    #    # Add any other dependencies here
+    #]
 )

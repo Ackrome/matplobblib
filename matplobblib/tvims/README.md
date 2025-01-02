@@ -14,6 +14,7 @@
 
 # Реализованы решения задач по темам:
 
+- [ТЕОРЕТИЧЕСКИЕ МАТЕРИАЛЫ](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/theory#readme)
 - [Формулы полной вероятности и Байеса](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/fpb#readme)
 - [Специальные дискретные случайные величины](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/sdrv#readme)
 - [Непрерывные случайные величины](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims/crv#readme)
