@@ -57,3 +57,10 @@ def save_pdf_as_images(pdf_path, output_folder = None, dpi=100):
         outpaths.append(output_path)
     return outpaths
 ####################################################################################
+import pyperclip
+
+#Делаем функцию которая принимает переменную text
+def write(name):
+    pyperclip.copy(name) #Копирует в буфер обмена информацию
+    pyperclip.paste()
+####################################################################################

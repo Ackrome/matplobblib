@@ -9,12 +9,14 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.54',
+    version='0.2.62',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
     author_email='ivansergeyevicht@gmail.com',
     url='https://github.com/Ackrome/matplobblib',
+    long_description=readme(),
+    long_description_content_type='text/markdown',
     classifiers=[
         'Programming Language :: Python :: 3',
         'License :: OSI Approved :: MIT License',
@@ -26,8 +28,13 @@ setup(
         # Include all PNG files in pdfs and subdirectories
         "matplobblib.tvims.theory": ["pdfs/**/*.png"],
     },
-    #install_requires=[
+    install_requires=[
+        "numpy",
+        "sympy",
+        "pandas",
+        "scipy",
+        "pyperclip"
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
-    #]
+    ]
 )

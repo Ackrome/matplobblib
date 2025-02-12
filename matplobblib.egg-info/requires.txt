@@ -1,0 +1,5 @@
+numpy
+sympy
+pandas
+scipy
+pyperclip
