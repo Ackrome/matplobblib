@@ -1,5 +1,8 @@
 import numpy as np
+import pandas as pd
 from  inspect import getsource
+import matplotlib.pyplot as plt
+from .ml.additional_funcs import *
 ####################################################################################
 # rrstr (Округление до n знаков)
 ####################################################################################
