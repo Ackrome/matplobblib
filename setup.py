@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.63',
+    version='0.2.71',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -36,5 +36,6 @@ setup(
         "pyperclip"
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
-    ]
+    ],
+    license='LICENSE.txt'
 )

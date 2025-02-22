@@ -1,0 +1,29 @@
+Metadata-Version: 2.1
+Name: matplobblib
+Version: 0.2.71
+Summary: Just a library for some subjects
+Home-page: https://github.com/Ackrome/matplobblib
+Author: Ackrome
+Author-email: ivansergeyevicht@gmail.com
+License: LICENSE.txt
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: numpy
+Requires-Dist: sympy
+Requires-Dist: pandas
+Requires-Dist: scipy
+Requires-Dist: pyperclip
+
+# Описание
+
+Замечательная библиотека разных структур для реализации на языке python
+
+## Модули
+
+* [aisd](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/aisd)
+* [tvims](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims#readme)
+* [ml](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/ml#readme)
