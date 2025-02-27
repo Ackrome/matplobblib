@@ -31,6 +31,8 @@ matplobblib/ml/knn/__init__.py
 matplobblib/ml/knn/knn.py
 matplobblib/ml/logreg/__init__.py
 matplobblib/ml/logreg/cm.py
+matplobblib/ml/randomforrest/__init__.py
+matplobblib/ml/randomforrest/rf.py
 matplobblib/ml/rm/__init__.py
 matplobblib/ml/rm/rm.py
 matplobblib/ml/svc/__init__.py

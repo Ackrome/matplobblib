@@ -61,7 +61,7 @@ class DecisionTree:
         valid_criteria = {"gini", "entropy", "misclassification", "mae", "mse"}
         if self.criterion not in valid_criteria:
             raise ValueError(f"Некорректный критерий '{criterion}'. Выберите из {valid_criteria}.")
-
+        
     def fit(self, X, y):
         """
         Обучает модель дерева решений на заданных данных.
@@ -163,10 +163,11 @@ class DecisionTree:
         for feature in features:
             unique_values = np.unique(X[:, feature])
             
-            if self.check_k_threshold==0:
-                thresholds = unique_values  # Если k = 0, берем все.
+            if np.isinf(self.check_k_threshold):
+                thresholds = unique_values  # Если параметр бесконечен, используем все уникальные значения.
             else:
-                thresholds = np.linspace(unique_values.min(), unique_values.max(), self.check_k_threshold)
+                thresholds = np.linspace(unique_values.min(), unique_values.max(), int(self.check_k_threshold))
+
     
             
             
@@ -307,6 +308,7 @@ class DecisionTree:
 
         n = len(left_y) + len(right_y)
         return (len(left_y) / n) * mae(left_y) + (len(right_y) / n) * mae(right_y)
+
 
     def mean_squared_error(self, left_y, right_y):
         """
