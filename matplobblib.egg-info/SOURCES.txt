@@ -14,9 +14,6 @@ matplobblib/aisd/__init__.py
 matplobblib/aisd/additional_funcs.py
 matplobblib/aisd/data_structures.py
 matplobblib/aisd/search_algorythms.py
-matplobblib/econometrics/ECONOMETRICS.py
-matplobblib/econometrics/__init__.py
-matplobblib/econometrics/fr.py
 matplobblib/ml/__init__.py
 matplobblib/ml/additional_funcs/__init__.py
 matplobblib/ml/additional_funcs/b2_visual/__init__.py
@@ -31,6 +28,8 @@ matplobblib/ml/knn/__init__.py
 matplobblib/ml/knn/knn.py
 matplobblib/ml/logreg/__init__.py
 matplobblib/ml/logreg/cm.py
+matplobblib/ml/nbc/__init__.py
+matplobblib/ml/nbc/nbc.py
 matplobblib/ml/randomforrest/__init__.py
 matplobblib/ml/randomforrest/rf.py
 matplobblib/ml/rm/__init__.py

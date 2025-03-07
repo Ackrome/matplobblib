@@ -11,6 +11,8 @@ from .tree import *                     # Деревья
 from .svc import *                      # Классификатор методом опорных векторов
 from .knn import *                       # K-nn
 from .randomforrest import *            # Случайный лес
+from .nbc import *                      # Наивный байесовский классификатор
+
 pattern = r'"""\s*(.*?)\s*(?=def __init__|Args|Параметры)'
 
 files_dict ={
@@ -20,7 +22,8 @@ files_dict ={
     'Реализация дерева решений' : TREES,
     'Классификатор методом опорных векторов' : SVCS,
     'К-ближайших соседей': KNNS,
-    'Случайный лес': RF
+    'Случайный лес': RF,
+    'Наивный байесовский классификатор': NBC
 }
 
 names = list(files_dict.keys())
@@ -81,7 +84,7 @@ themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len
 
 
 # Тема -> Функция -> Задание
-def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = True, n_symbols:int = 32):
+def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool = False, show_keys_second_level:bool = True, n_symbols:int = 32, to_print=True):
     """
     Печатает информацию о заданиях и функциях 
     
@@ -105,6 +108,8 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
     n_symbols : int, optional
         количество символов, которое будет выведено, если show_keys_second_level=True, 
         по умолчанию 20
+    to_print : bool, optional
+        позволяет вывести строковое значение описания
     
     Returns
     -------
@@ -128,10 +133,10 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
                         text += f'{dict_to_show[key]};\n'+' '*(length1+2)
                     text += '\n'
                     
-                return print(text)
+                return print(text) if to_print else text
         
         elif type(dict_to_show) == str and key in themes_list_dicts_full[dict_to_show].keys():
-            return print(themes_list_dicts_full[dict_to_show][key])
+            return print(themes_list_dicts_full[dict_to_show][key]) if to_print else themes_list_dicts_full[dict_to_show][key]
         
         else:
             show_only_keys=False
@@ -150,4 +155,4 @@ def description(dict_to_show = themes_list_funcs, key=None, show_only_keys:bool 
                         text += func_text.replace('\n','\n'+' '*(length1 + len(f.__name__))) if func_text_len<n_symbols else func_text[:n_symbols].replace('\n','\n'+' '*(length1 + len(f.__name__)))+'...'
                     text += ';\n'+' '*(length1+2)
             text += '\n'
-        return print(text)
+        return print(text) if to_print else text
