@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.84',
+    version='0.2.85',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -33,7 +33,10 @@ setup(
         "sympy",
         "pandas",
         "scipy",
-        "pyperclip"
+        "pyperclip",
+        "pymupdf",
+        "graphviz",
+        "statsmodels",
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
     ],

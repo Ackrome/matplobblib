@@ -3,3 +3,6 @@ sympy
 pandas
 scipy
 pyperclip
+pymupdf
+graphviz
+statsmodels

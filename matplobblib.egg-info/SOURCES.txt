@@ -18,6 +18,7 @@ matplobblib/ml/__init__.py
 matplobblib/ml/additional_funcs/__init__.py
 matplobblib/ml/additional_funcs/b2_visual/__init__.py
 matplobblib/ml/additional_funcs/b2_visual/b2_visual.py
+matplobblib/ml/additional_funcs/file_handling/__init__.py
 matplobblib/ml/additional_funcs/folds/__init__.py
 matplobblib/ml/additional_funcs/folds/folds.py
 matplobblib/ml/additional_funcs/math_funcs/__init__.py
