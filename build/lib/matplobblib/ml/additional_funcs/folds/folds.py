@@ -24,3 +24,5 @@ def Kfold_split(n_samples, n_splits=5, shuffle=True, random_state=None):
             train_indices = np.concatenate([indices[:current], indices[current + fold_size:]])
             yield train_indices, test_indices
             current += fold_size
+
+FOLDS = [Kfold_split]

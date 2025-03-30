@@ -3,6 +3,7 @@ import pandas as pd
 from  inspect import getsource
 import matplotlib.pyplot as plt
 from .ml.additional_funcs import *
+import sys
 ####################################################################################
 # rrstr (Округление до n знаков)
 ####################################################################################

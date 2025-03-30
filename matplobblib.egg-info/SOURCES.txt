@@ -24,6 +24,8 @@ matplobblib/ml/additional_funcs/math_funcs/__init__.py
 matplobblib/ml/additional_funcs/math_funcs/math_funcs.py
 matplobblib/ml/additional_funcs/metrics/__init__.py
 matplobblib/ml/additional_funcs/metrics/metrics.py
+matplobblib/ml/additional_funcs/plot_classification/__init__.py
+matplobblib/ml/additional_funcs/plot_classification/plot_class.py
 matplobblib/ml/knn/__init__.py
 matplobblib/ml/knn/knn.py
 matplobblib/ml/logreg/__init__.py
@@ -38,6 +40,11 @@ matplobblib/ml/svc/__init__.py
 matplobblib/ml/svc/svcs.py
 matplobblib/ml/tree/__init__.py
 matplobblib/ml/tree/trees.py
+matplobblib/nm/__init__.py
+matplobblib/nm/base/__init__.py
+matplobblib/nm/eqs/__init__.py
+matplobblib/nm/interp/__init__.py
+matplobblib/nm/sistems/__init__.py
 matplobblib/tvims/TVIMS.py
 matplobblib/tvims/__init__.py
 matplobblib/tvims/acmk/__init__.py
@@ -67,6 +74,7 @@ matplobblib/tvims/sdrv/sdrv.py
 matplobblib/tvims/sffp/__init__.py
 matplobblib/tvims/sffp/sffp.py
 matplobblib/tvims/theory/__init__.py
+matplobblib/tvims/theory/depr_theory.py
 matplobblib/tvims/theory/theory.py
 matplobblib/tvims/theory/pdfs/MS_11_12/page_1.png
 matplobblib/tvims/theory/pdfs/MS_11_12/page_2.png

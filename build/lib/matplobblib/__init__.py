@@ -4,8 +4,9 @@ from .forall import *
 submodules = [
     'tvims',
     'aisd',
-    'ml'
-]
+    'ml',
+    'nm',
+    ]
 def __dir__():
     return submodules
 

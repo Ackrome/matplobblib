@@ -1,33 +1,42 @@
-from ...forall import *
-import importlib.resources as pkg_resources
+import requests
+from io import BytesIO
 from PIL import Image
 import IPython.display as display
+from ...forall import *
 
 THEORY = []
 
+def list_subdirectories():
+    url = "https://api.github.com/repos/Ackrome/matplobblib/contents/pdfs"
+    response = requests.get(url)
+    if response.status_code == 200:
+        contents = response.json()
+        return [item['name'] for item in contents if item['type'] == 'dir']
+    else:
+        print(f"Ошибка при получении подпапок: {response.status_code}")
+        return []
+
 def get_png_files_from_subdir(subdir):
-    """
-    Returns a list of file paths to PNG files in the given subdirectory.
-    """
-    package = f"matplobblib.tvims.theory.pdfs.{subdir}"
-    png_files = []
-    try:
-        for resource in pkg_resources.contents(package):
-            if resource.endswith(".png"):
-                with pkg_resources.path(package, resource) as file_path:
-                    png_files.append(file_path)
-    except Exception as e:
-        print(f"Error accessing PNG files in {subdir}: {e}")
-    return png_files
+    url = f"https://api.github.com/repos/Ackrome/matplobblib/contents/pdfs/{subdir}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        contents = response.json()
+        png_files = [item['name'] for item in contents if item['name'].endswith('.png')]
+        return [f"https://raw.githubusercontent.com/Ackrome/matplobblib/master/pdfs/{subdir}/{file}" for file in png_files]
+    else:
+        print(f"Ошибка доступа к {subdir}: {response.status_code}")
+        return []
 
 def display_png_files_from_subdir(subdir):
-    """
-    Displays PNG files from a given subdirectory in the Jupyter notebook.
-    """
-    png_files = get_png_files_from_subdir(subdir)
-    for file in png_files:
-        img = Image.open(file)
-        display.display(img)
+    png_urls = get_png_files_from_subdir(subdir)
+    for url in png_urls:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            img = Image.open(BytesIO(response.content))
+            display.display(img)
+        except requests.exceptions.RequestException as e:
+            print(f"Ошибка загрузки {url}: {e}")
 
 # Dynamically create functions for each subdirectory
 def create_subdir_function(subdir):
@@ -57,20 +66,6 @@ def create_subdir_function(subdir):
     globals()[display_function.__name__] = display_function
     THEORY.append(display_function)
 
-def list_subdirectories():
-    """
-    List subdirectories in the 'matplobblib.tvims.theory.pdfs' package.
-    """
-    package = "matplobblib.tvims.theory.pdfs"
-    subdirs = []
-
-    # Iterate through items in the package directory
-    package_path = pkg_resources.files(package)
-    for item in package_path.iterdir():
-        if item.is_dir():  # Check if the item is a directory
-            subdirs.append(item.name)
-    
-    return subdirs
 
 # Get subdirectories dynamically
 subdirs = list_subdirectories()

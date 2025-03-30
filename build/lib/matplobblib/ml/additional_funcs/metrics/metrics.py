@@ -248,3 +248,5 @@ def max_error(y_true, y_pred):
         y_pred = np.array(y_pred)
 
     return np.max(np.abs(y_pred - y_true))
+
+METRICS = [mean_absolute_error,mean_squared_error,mean_absolute_percentage_error,symmetric_mean_absolute_percentage_error,weighted_average_percentage_error,mean_squared_logarithmic_error,root_mean_squared_logarithmic_error,median_absolute_error,max_error]
