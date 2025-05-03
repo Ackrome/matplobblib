@@ -4,7 +4,7 @@
 
 ## Подмодули
 
-### 1. `additional_funcs`
+### 1. [additional_funcs]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/additional_funcs#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/additional_funcs#readme))
 
 Этот модуль  предоставляет набор вспомогательных функций для работы с числовыми данными, включая:
 
@@ -15,7 +15,7 @@
 - Поиск максимального внедиагонального элемента в симметричной матрице (`parallel_max_offdiag`).
 - Поиск ближайших соседей на основе косинусного сходства (`nearest_cosine_neighbors`).
 
-### 2. `base`
+### 2. [base]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/base#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/base#readme))
 
 Этот модуль  содержит функции для демонстрации и анализа различных аспектов численных вычислений, таких как:
 
@@ -26,7 +26,7 @@
 - Потеря значимости (`poterya_znachimosti`).
 - Алгоритм суммирования по Кохану для минимизации ошибок округления (`summirovanie_po_Kohanu`).
 
-### 3. `differential_eqs`
+### 3. [differential_eqs]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/differential_eqs#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/differential_eqs#readme))
 
 Этот модуль  предоставляет функции для численного решения обыкновенных дифференциальных уравнений (ОДУ) и систем ОДУ, включая:
 
@@ -36,7 +36,7 @@
 - Построение фазовых портретов систем ОДУ (`plot_phase_portrait_with_streamplot`, `plot_phase_portrait_3d`, `plot_phase_portrait_4d`).
 - Решение систем ОДУ с задержкой (`euler_delay_system`).
 
-### 4. `eigen`
+### 4. [eigen]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/eigen#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/eigen#readme))
 
 Этот модуль содержит подмодули для вычисления собственных значений и собственных векторов матриц:
 
@@ -44,21 +44,21 @@
 - `qr`: Содержит QR-алгоритм (базовый и со сдвигами).
 - `vectors_from_values`: Функции для вычисления собственных векторов по заданным собственным значениям и построения ортонормированного базиса.
 
-### 5. `eqs`
+### 5. [eqs]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/eqs#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/eqs#readme))
 
 Этот модуль предоставляет численные методы для решения нелинейных уравнений и задач оптимизации, включая:
 
 - Методы поиска корней (бисекция, Ньютона, секущих, Вегстейна, простой итерации).
 - Метод поиска минимума функции (дихотомия).
 
-### 6. `interp`
+### 6. [interp]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/interp#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/interp#readme))
 
 Этот модуль  предоставляет функции для интерполяции данных:
 
 - Полиномиальная интерполяция Лагранжа (`lagrange_interpolation`, `lagrange_interpolation_func_get`).
 - Линейная интерполяция для работы с временными задержками (`get_delayed_value`).
 
-### 7. `matrices`
+### 7. [matrices]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/matrices#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/matrices#readme))
 
 Этот модульпредоставляет функции для работы с матрицами и векторами, оптимизированные с помощью Numba, включая:
 
@@ -67,7 +67,7 @@
 - Транспонирование, создание и инвертирование диагональных матриц.
 - LU- и QR-разложения.
 
-### 8. `sistems`
+### 8. [sistems]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/sistems#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/sistems#readme))
 
 Этот модуль предоставляет методы решения систем уравнений:
 
@@ -76,6 +76,6 @@
 - Метод Ньютона для систем 2x2 (`newton_system`).
 - Метод Гаусса (с Numba) (`solve_gauss_njit`).
 
-### 9. `strassen`
+### 9. [strassen]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme))
 
 Этот модуль содержит реализации алгоритма умножения матриц Штрассена, включая оптимизированные версии с использованием Numba.

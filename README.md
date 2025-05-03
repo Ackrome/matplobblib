@@ -7,3 +7,4 @@
 * [aisd](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/aisd)
 * [tvims](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims#readme)
 * [ml](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/ml#readme)
+* [nm](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm#readme)

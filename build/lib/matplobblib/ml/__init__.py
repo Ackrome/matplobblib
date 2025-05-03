@@ -49,16 +49,6 @@ def write(name):
     pyperclip.copy(name) #Копирует в буфер обмена информацию
     pyperclip.paste()'''
     
-def invert_dict(d):
-    return {value: key for key, value in d.items()}
-
-def get_task_from_func(func, to_search=False):
-    match = re.search(pattern, getsource(func), re.DOTALL)
-    if match:
-        return match.group(0)[3:-4].replace('\n', '').replace(' ', '') if to_search else match.group(0)[3:-4]
-    else:
-        print(f"Warning: No valid docstring found for function {func.__name__}")
-        return None
 
 
 funcs_dicts = [

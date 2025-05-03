@@ -101,26 +101,6 @@ def invert_dict(d):
     """
     return {value: key for key, value in d.items()}
 
-def get_task_from_func(func,to_search=False):
-    """
-    Returns the task associated with the given function.
-    
-    Parameters:
-        func : callable
-            The function whose task we want to find.
-        to_search : bool, optional
-            If True, returns a string that can be used to search for the task by name.
-            If False, returns the task itself. Defaults to False.
-    
-    Returns:
-        str or callable
-            The task associated with the function, or a string that can be used to search for it.
-    """
-    try:
-        return re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4].replace('\n','').replace(' ','') if to_search else re.search(r'""".*?Args',getsource(func),re.DOTALL).group(0)[3:-4]
-    except:
-        return func.__doc__.replace('\n','').replace(' ','') if to_search else func.__doc__
-
 funcs_dicts = [dict([(get_task_from_func(i), i) for i in module]) for module in modules]
 funcs_dicts_ts = [dict([(get_task_from_func(i,True), i) for i in module]) for module in modules]
 funcs_dicts_full = [dict([(i.__name__, getsource(i)) for i in module]) for module in modules]
