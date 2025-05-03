@@ -76,6 +76,6 @@
 - Метод Ньютона для систем 2x2 (`newton_system`).
 - Метод Гаусса (с Numba) (`solve_gauss_njit`).
 
-### 9. [strassen]([https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme))
+### 9. [strassen](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme)
 
 Этот модуль содержит реализации алгоритма умножения матриц Штрассена, включая оптимизированные версии с использованием Numba.
