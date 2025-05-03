@@ -155,4 +155,89 @@ def lagrange_interpolation_func_get(x_values, y_values):
     
     return _lagrange
 ####################################################################################
-INTER = [lagrange_interpolation,lagrange_interpolation_func_get]
+def get_delayed_value(history, delay_time, t0):
+    """
+    Получает значение из истории с линейной интерполяцией для заданного времени, 
+    с возможностью экстраполяции на границах. Используется для восстановления 
+    значений в системах с задержкой по времени.
+
+    Теоретическое описание:
+    Линейная интерполяция вычисляет промежуточные значения между двумя известными точками 
+    на основе предположения о линейной зависимости функции на этом участке. Формула:
+    f(x) = y0 + (x - x0)*(y1 - y0)/(x1 - x0). При экстраполяции вне диапазона 
+    используются крайние значения истории. Это стандартный метод для численного 
+    восстановления данных в системах с временной задержкой [[2]][[5]].
+
+    Практическая реализация:
+    1. Проверяет корректность входных данных (непустая история, допустимый диапазон времени).
+    2. Использует бинарный поиск (bisect_right) для определения соседних точек.
+    3. Выполняет линейную интерполяцию между соседними точками или экстраполяцию на границах.
+
+    Parameters
+    ----------
+    history : list[tuple[float, float]]
+        История изменений в формате списка кортежей (время, значение). 
+        Должна быть отсортирована по возрастанию времени.
+    delay_time : float
+        Время, для которого требуется получить значение (обычно t_current - tau).
+    t0 : float
+        Начальное время системы (используется для обработки случаев delay_time < t0).
+
+    Returns
+    -------
+    float
+        Интерполированное значение для времени delay_time. 
+        Возвращает первое значение из истории, если delay_time <= t0 или меньше минимального времени.
+        Возвращает последнее значение из истории, если delay_time больше максимального времени.
+
+    Examples
+    --------
+    >>> history = [(0.0, 1.0), (2.0, 3.0), (4.0, 2.0)]
+    >>> get_delayed_value(history, 1.0, 0.0)
+    2.0  # Интерполяция между (0,1) и (2,3): y = 1 + (1-0)*(3-1)/(2-0) = 2
+    >>> get_delayed_value(history, 5.0, 0.0)
+    2.0  # Экстраполяция за пределами истории
+
+    Notes
+    -----
+    1. История должна быть предварительно отсортирована по времени для корректной работы [[1]].
+    2. Метод линейной интерполяции подходит для гладких функций, но может давать погрешность 
+       при резких скачках данных [[5]].
+    3. Для улучшения точности можно использовать полиномиальные методы интерполяции.
+
+    References
+    ----------
+    .. [1] "Linear interpolation - Wikipedia" - (https://en.wikipedia.org/wiki/Linear_interpolation)
+    .. [2] "Linear Interpolation Formula - BYJU'S" - (https://byjus.com/linear-interpolation-formula/)
+    .. [5] "Linear Interpolation Formula: Definition, Formula, Solved Examples" - (https://www.toppr.com/guides/maths-formulas/linear-interpolation-formula/)
+    .. [8] "numpy.interp — NumPy v2.2 Manual" - (https://numpy.org/doc/stable/reference/generated/numpy.interp.html)
+    """
+    from bisect import bisect_right
+    if len(history) == 0:
+        raise ValueError("История пуста")
+    
+    if delay_time <= t0:
+        return history[0][1]
+    
+    times = [t for t, _ in history]
+    values = [v for _, v in history]
+    
+    idx = bisect_right(times, delay_time)
+    
+    if idx == 0:
+        return values[0]
+    elif idx >= len(times):
+        return values[-1]
+    else:
+        t0_interp = times[idx - 1]
+        t1_interp = times[idx]
+        v0_interp = values[idx - 1]
+        v1_interp = values[idx]
+        
+        alpha = (delay_time - t0_interp) / (t1_interp - t0_interp)
+        return v0_interp * (1 - alpha) + v1_interp * alpha
+####################################################################################
+INTER = [
+    lagrange_interpolation,
+    lagrange_interpolation_func_get,
+    get_delayed_value]

@@ -338,8 +338,82 @@ def parallel_max_offdiag(A, n):
             global_j = max_j[i]
     return global_max, global_i, global_j
 ####################################################################################
+def nearest_cosine_neighbors(W_test: np.ndarray, W: np.ndarray) -> np.ndarray:
+    """
+    Находит индексы столбцов матрицы W с максимальным косинусным сходством для каждого столбца W_test.
+
+    Теоретическое описание:
+    Косинусное сходство измеряет схожесть между векторами через угол между ними: 
+    cosθ = (a·b)/(||a|| ||b||). Алгоритм нормализует все векторы до единичной длины, 
+    что позволяет использовать скалярное произведение для вычисления сходства. 
+    Реализация оптимизирована для работы с матрицами через векторизованные операции NumPy.
+
+    Практическая реализация:
+    1. Нормализует все столбцы матрицы W заранее до единичных векторов.
+    2. Для каждого столбца из W_test вычисляет косинусные сходства с нормализованными столбцами W.
+    3. Возвращает индекс максимального сходства. Нулевые векторы в W_test обрабатываются через индекс 0.
+
+    Parameters
+    ----------
+    W_test : np.ndarray
+        Матрица тестовых векторов размерности (r, m), где r - размерность признаков, m - количество тестовых векторов.
+    W : np.ndarray
+        Матрица эталонных векторов размерности (r, n), где n - количество эталонных векторов.
+
+    Returns
+    -------
+    np.ndarray
+        Массив индексов формы (m,) с номерами наиболее похожих эталонных векторов.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> W_test = np.array([[1, 0], [0, 1]], dtype=np.float64)
+    >>> W = np.array([[1, 0], [0, 1]], dtype=np.float64)
+    >>> nearest_cosine_neighbors(W_test, W)
+    array([0, 1], dtype=int64)
+
+    Notes
+    -----
+    1. Предварительная нормализация эталонных векторов (W_unit = W / ||W||) ускоряет вычисления.
+    2. Нулевые векторы в W_test обрабатываются через прямое назначение индекса 0 [[1]].
+    3. Использование матричного умножения (wi_unit @ W_unit) обеспечивает высокую производительность [[2]].
+
+    References
+    ----------
+    .. [1] "Cosine similarity: what is it and how does it enable effective ……" - (https://www.algolia.com/blog/engineering/cosine-similarity-for-vector-search/)
+    .. [2] "kNNTutorial/kNN-Cosine.ipynb at master - GitHub" - (https://github.com/example/knn-cosine)
+    .. [7] "1.6. Nearest Neighbors - Scikit-learn" - (https://scikit-learn.org/stable/modules/neighbors.html)
+    """
+    r, m = W_test.shape
+    _, n = W.shape
+    
+    # Нормируем все столбцы заранее
+    W_norm = np.linalg.norm(W, axis=0)
+    W_safe = np.where(W_norm < 1e-15, 1e-15, W_norm)
+    W_unit = W / W_safe
+
+    idxs = np.empty(m, dtype=int)
+    for i in range(m):
+        wi = W_test[:, i]
+        ni = np.linalg.norm(wi)
+        if ni < 1e-15:
+            # если нулевой вектор, считаем совпадение с первым
+            idxs[i] = 0
+            continue
+        wi_unit = wi / ni
+        sims = wi_unit @ W_unit  # вектор косинус сходств длины n
+        idxs[i] = int(np.argmax(sims))
+    return idxs
 ####################################################################################
 ####################################################################################
 ####################################################################################
 ####################################################################################
-AF=[generate_perturbed_array,quadratic_interpolate,next_power_of_two,pad_matrix,parallel_max_offdiag]
+AF=[
+    generate_perturbed_array,
+    quadratic_interpolate,
+    next_power_of_two,
+    pad_matrix,
+    parallel_max_offdiag,
+    nearest_cosine_neighbors
+    ]

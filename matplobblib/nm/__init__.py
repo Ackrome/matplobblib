@@ -8,15 +8,15 @@ from .eigen import EIGEN
 from .strassen import STRASSEN
 from .matrices import MATRICES
 from .matrices.householder import HOUSEHOLDER
-
-
+from .matrices.SVD import SVDF
+from .differential_eqs import DF
 
 
 
 from .additional_funcs import AF
 
 
-MATRICES += HOUSEHOLDER
+MATRICES = MATRICES + HOUSEHOLDER + SVDF
 
 def printcolab():
     """Выводит ссылку на знакомый гугл колаб(google colab)"""
@@ -34,7 +34,7 @@ files_dict ={
     'Интерполяция' : INTER,
     'Перемножение Штрассена' : STRASSEN,
     'Поиск собственных' : EIGEN,
-    #'Преобразования Хаусхолдера':'',
+    'Дифференциальные ур-я': DF,
     
     
     #############################
