@@ -1,4 +1,6 @@
-![image](icon.png "icon")
+<center>
+    <img src="icon.png" alt="icon" width="400" />
+</center>
 
 # matplobblib
 
