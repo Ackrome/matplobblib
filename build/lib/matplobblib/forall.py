@@ -62,7 +62,6 @@ def get_task_from_func(func, to_search=False):
         except:
             return doc
 ####################################################################################
-from .ml.additional_funcs import *
 #from .nm.additional_funcs import *
 ####################################################################################
 # rrstr (Округление до n знаков)
@@ -367,3 +366,5 @@ def invert_dict(d):
     .. [2] Beazley, D.M. "Python Essential Reference", 4th edition.
     """
     return {value: key for key, value in d.items()}
+####################################################################################
+from .ml.additional_funcs import *

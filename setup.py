@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.86',
+    version='0.2.89',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -37,6 +37,8 @@ setup(
         "pymupdf",
         "graphviz",
         "statsmodels",
+        "fitz",
+        "cvxopt"
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
     ],

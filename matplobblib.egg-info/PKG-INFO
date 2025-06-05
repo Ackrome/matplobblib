@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: matplobblib
-Version: 0.2.86
+Version: 0.2.88
 Summary: Just a library for some subjects
 Home-page: https://github.com/Ackrome/matplobblib
 Author: Ackrome
@@ -30,3 +30,4 @@ Requires-Dist: statsmodels
 * [aisd](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/aisd)
 * [tvims](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/tvims#readme)
 * [ml](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/ml#readme)
+* [nm](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm#readme)
