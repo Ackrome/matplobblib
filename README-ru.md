@@ -95,6 +95,6 @@ tvims.description()
 
 ## Контакты
 
-**Автор:** Ackrome
-**Email:** ivansergeyevicht@gmail.com
-**GitHub:** https://github.com/Ackrome/matplobblib
+* **Автор:** Ackrome
+* **Email:** ivansergeyevicht@gmail.com
+* **GitHub:** https://github.com/Ackrome/matplobblib

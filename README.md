@@ -93,6 +93,6 @@ The project is distributed under the MIT license. See the [LICENSE.txt](https://
 
 ## Contacts
 
-**Author:** Ackrome
-**Email:** ivansergeyevicht@gmail.com
-**GitHub:** https://github.com/Ackrome/matplobblib
+* **Author:** Ackrome
+* **Email:** ivansergeyevicht@gmail.com
+* **GitHub:** https://github.com/Ackrome/matplobblib
