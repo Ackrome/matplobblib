@@ -8,8 +8,23 @@ from ...forall import *
 # Это позволяет получить доступ к этим функциям из других модулей, если это необходимо.
 THEORY = []
 
+def check_internet_connection(host="8.8.8.8", port=53, timeout=3):
+    """
+    Проверяет наличие интернет-соединения.
+    """
+    import socket
+    try:
+        socket.setdefaulttimeout(timeout)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
+        return True
+    except socket.error as ex:
+        return False
+
 def list_subdirectories():
     # URL для доступа к API GitHub для получения содержимого каталога 'pdfs'.
+    if not check_internet_connection():
+        print("Ошибка: Для выполнения этой функции требуется интернет-соединение.")
+        return []
     url = "https://api.github.com/repos/Ackrome/matplobblib/contents/pdfs"
     # Отправка GET-запроса к API GitHub.
     response = requests.get(url)
@@ -22,6 +37,9 @@ def list_subdirectories():
 
 def get_png_files_from_subdir(subdir):
     # URL для доступа к API GitHub для получения содержимого указанной поддиректории.
+    if not check_internet_connection():
+        print("Ошибка: Для выполнения этой функции требуется интернет-соединение.")
+        return []
     url = f"https://api.github.com/repos/Ackrome/matplobblib/contents/pdfs/{subdir}"
     response = requests.get(url)
     # Проверка успешности ответа.
@@ -37,6 +55,9 @@ def display_png_files_from_subdir(subdir):
     """
     Отображает все PNG-файлы из указанной поддиректории.
     """
+    if not check_internet_connection():
+        print("Ошибка: Для выполнения этой функции требуется интернет-соединение.")
+        return
     # Получение URL-адресов PNG-файлов из поддиректории.
     png_urls = get_png_files_from_subdir(subdir)
     for url in png_urls:

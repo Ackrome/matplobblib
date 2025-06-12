@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>1. Работа с числами с плавающей точкой.</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-top: 0; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em 0; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        p { margin: 1em 0; }
+        div, section, article { margin-bottom: 1em; }
+        /* Вы можете добавить сюда больше стилей или ссылку на CSS из оригинального документа, если это необходимо */
+    </style>
+</head>
+<body>
+<h1 class="c1" id="h.pwkhnhaelhs9"><span class="c3">1. Работа с числами с плавающей точкой.</span></h1><p class="c11"><span class="c15 c9">Числа с плавающей точкой</span><span class="c2"> (ЧПТ) - стандартный способ представления действительных чисел в компьютерах, аппроксимирующий их в форме: ±m * b^e, где:</span></p><ul class="c4 lst-kix_aqe1djfdtejc-0 start"><li class="c7 li-bullet-0"><span class="c2">m - мантисса (significand/mantissa), дробная часть (обычно нормализованная, 1/b ≤ |m| &lt; 1 для оснований b &gt; 2, или 1 ≤ |m| &lt; b для двоичной системы b=2).</span></li><li class="c7 li-bullet-0"><span class="c2"> b - основание системы счисления (обычно 2).</span></li><li class="c7 li-bullet-0"><span class="c2"> e - экспонента (порядок), целое число.</span></li></ul><p class="c11"><span class="c2">Стандарт IEEE 754 определяет форматы (single precision float: 32 бита, double precision double: 64 бита), распределяя биты на знак, экспоненту и мантиссу. Ключевые особенности и проблемы:</span></p><p class="c11"><span class="c2">Конечная точность и погрешность представления: Большинство действительных чисел не могут быть представлены точно из-за ограниченного числа бит мантиссы. Возникает погрешность округления. Величина машинного эпсилон (ε_mach) - это разница между 1.0 и следующим представимым числом &gt;1.0 - характеризует относительную точность округления (ε_mach ≈ 1.1e^(-16) для double).</span></p><p class="c11"><span class="c2">Диапазон представимых чисел: Ограничен количеством бит экспоненты. Возможны переполнение (overflow, |число| &gt; max_представимое) и исчезновение порядка (underflow, |число| &lt; min_представимое &gt; 0).</span></p><p class="c11"><span class="c2">Арифметические операции: Результат операции над ЧПТ часто требует округления до ближайшего представимого числа, внося погрешность.</span></p><p class="c11"><span class="c2">Потеря значимости (Catastrophic Cancellation): Наиболее опасный эффект. Возникает при вычитании двух очень близких по величине чисел. Значимые разряды в мантиссе сокращаются, а погрешности, которые были в каждом из чисел, остаются и становятся относительно огромными в результате. </span></p><p class="c11"><span class="c2">Пример:</span></p><p class="c17"><span class="c2">a = 1.2345678901234</span></p><p class="c17"><span class="c2">b = 1.2345678900000</span></p><p class="c17"><span class="c2">a - b = 0.0000000001234 = 1.234e^(-10) (теряются многие значащие цифры).</span></p><p class="c11"><span class="c15 c9">Некоммутативность и неассоциативность</span><span class="c2">: Из-за округления операции могут давать разные результаты при изменении порядка: (a + b) + c != a + (b + c), a + b != b + a в некоторых пограничных случаях (хотя коммутативность обычно сохраняется для + и *).</span></p><p class="c11"><span class="c15 c9">Особые значения</span><span class="c2">: ±0, ±∞ (Inf), NaN (Not a Number - результат неопределенных операций типа 0/0, ∞ - ∞).</span></p><p class="c11 c8"><span class="c2"></span></p>
+</body>
+</html>

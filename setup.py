@@ -5,11 +5,16 @@ def readme():
   with open('README.md', 'r', encoding='utf-8') as f:
     return f.read()
 
+with open('version.txt','r') as f:
+    version = f.readline()
 
+package_data={
+        'matplobblib': ['nm/theory/htmls/*.html'],
+    }
 
 setup(
     name='matplobblib',
-    version='0.2.91',
+    version=version,
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -24,10 +29,7 @@ setup(
     ],
     python_requires='>=3.6',
     include_package_data=True,  # Include non-Python files specified in MANIFEST.in or package_data
-    #package_data={
-        # Include all PNG files in pdfs and subdirectories
-        #"matplobblib.tvims.theory": ["pdfs/**/*.png"],
-    #},
+    package_data=package_data,
     install_requires=[
         "numpy",
         "sympy",
@@ -39,7 +41,8 @@ setup(
         "statsmodels",
         "fitz",
         "cvxopt",
-        'tools'
+        "tools",
+        "beautifulsoup4"
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
     ],

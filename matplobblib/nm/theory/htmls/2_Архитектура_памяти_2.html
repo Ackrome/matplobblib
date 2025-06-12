@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. Архитектура памяти.</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-top: 0; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em 0; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        p { margin: 1em 0; }
+        div, section, article { margin-bottom: 1em; }
+        /* Вы можете добавить сюда больше стилей или ссылку на CSS из оригинального документа, если это необходимо */
+    </style>
+</head>
+<body>
+<h1 class="c1" id="h.1dqm0af4mdp6"><span class="c3">2. Архитектура памяти.</span></h1><p class="c11"><span class="c2">Современные компьютеры используют иерархию памяти для баланса между скоростью доступа, объёмом и стоимостью. Уровни иерархии (от быстрых к медленным):</span></p><ul class="c4 lst-kix_9guthzjmyfoa-0 start"><li class="c7 li-bullet-0"><span class="c15 c9">Регистры процессора</span><span class="c2">: Микроскопические, сверхбыстрые ячейки внутри ЦП.</span></li><li class="c7 li-bullet-0"><span class="c15 c9">Кэш-память (L1, L2, L3)</span><span class="c2">: Небольшая быстрая память на кристалле ЦП. L1 — самый быстрый (1-2 такта), L3 — общий для ядер (десятки тактов).</span></li><li class="c7 li-bullet-0"><span class="c15 c9">Оперативная память (RAM)</span><span class="c2">: Основная рабочая память (гигабайты), доступ за 100-300 тактов.</span></li><li class="c7 li-bullet-0"><span class="c15 c9">Диск (SSD/HDD)</span><span class="c2">: Хранение больших данных (терабайты), доступ за миллионы тактов.</span></li></ul><p class="c17"><span class="c2">Ключевые принципы:</span></p><ul class="c4 lst-kix_vgkxzyat5ll8-0 start"><li class="c7 li-bullet-0"><span class="c15 c9">Локализация данных</span><span class="c2">:</span></li></ul><p class="c11 c14"><span class="c2">Временная: Повторный доступ к одним данным → кэширование.</span></p><p class="c11 c14"><span class="c2">Пространственная: Доступ к соседним адресам (например, элементам массива) → загрузка блоков в кэш.</span></p><ul class="c4 lst-kix_3odnrsrtvdll-0 start"><li class="c7 li-bullet-0"><span class="c15 c9">Производительность</span><span class="c2">: Скорость вычислений часто ограничена не ЦП, а задержками памяти ("стена памяти").</span></li></ul><p class="c8 c21"><span class="c13 c26"></span></p>
+</body>
+</html>
