@@ -1,5 +1,6 @@
 import re
 from ..forall import *
+# Импорт модулей и списков функций из соответствующих подпакетов
 from .base import BASE
 from .eqs import EQS
 from .sistems import SISTEMS
@@ -10,12 +11,14 @@ from .matrices import MATRICES
 from .matrices.householder import HOUSEHOLDER
 from .matrices.SVD import SVDF
 from .differential_eqs import DF
+from .theory import THEORY
+from .fourier import FOURIER
 
 
 
 from .additional_funcs import AF
 
-
+# Объединение списков функций, связанных с матрицами
 MATRICES = MATRICES + HOUSEHOLDER + SVDF
 
 def printcolab():
@@ -24,9 +27,10 @@ def printcolab():
     return r'https://colab.research.google.com/drive/1QEu-jq5sgb53x76maYmtV3MvhqeB--zu?usp=sharing'
 
 
-
+# Объединение функции printcolab с дополнительными функциями
 UF = [printcolab] + AF
 
+# Словарь, сопоставляющий названия тем со списками функций
 files_dict ={
     'База':BASE,
     'Решение уравнений': EQS,
@@ -35,23 +39,29 @@ files_dict ={
     'Перемножение Штрассена' : STRASSEN,
     'Поиск собственных' : EIGEN,
     'Дифференциальные ур-я': DF,
-    
+    'Преобразование Фурье':FOURIER,
     
     #############################
     'Дополнительные функции': UF,
+    'Теория':THEORY,
     'Матричные операции' : MATRICES
     
 }
 
+
+# Получение списков названий тем и соответствующих модулей (списков функций)
 names = list(files_dict.keys())
 modules = list(files_dict.values())
 
-
+# Создание словарей функций для каждой темы
+# funcs_dicts: {описание_задачи: функция}
 funcs_dicts = [dict([(get_task_from_func(i), i) for i in module]) for module in modules]
+# funcs_dicts_ts: {описание_задачи_без_пробелов_и_переносов: функция} (ts - to_search)
 funcs_dicts_ts = [dict([(get_task_from_func(i,True), i) for i in module]) for module in modules]
+# funcs_dicts_full: {имя_функции: исходный_код_функции}
 funcs_dicts_full = [dict([(i.__name__, getsource(i)) for i in module]) for module in modules]
 
-
+# Создание словарей, группирующих функции по темам
 themes_list_funcs = dict([(names[i],list(funcs_dicts[i].values()) ) for i in range(len(names))]) # Название темы : список функций по теме
 themes_list_dicts = dict([(names[i],funcs_dicts[i]) for i in range(len(names))])                 # Название темы : словарь по теме, где ЗАДАНИЕ: ФУНКЦИИ
 themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len(names))])       # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ
@@ -119,7 +129,8 @@ def description(
     .. [2] Beazley, D.M. "Python Essential Reference", 4th edition.
     .. [3] Ramalho, L. "Fluent Python: Clear, Concise, and Effective Programming".
     """
-
+    
+    # Если dict_to_show - строка (название темы) и не указан конкретный ключ (key)
     if type(dict_to_show) == str and key == None:
         dict_to_show = themes_list_dicts[dict_to_show]
         dict_to_show = invert_dict(dict_to_show)
@@ -127,27 +138,28 @@ def description(
         length1 = 1 + max([len(x.__name__) for x in list(dict_to_show.keys())])
         
         for key in dict_to_show.keys():
-            text += f'{key.__name__:<{length1}}'
+            text += f'{key.__name__:<{length1}}' # Имя функции, выровненное по левому краю
             
             if not show_only_keys:
                 text += ': '
-                text += f'{dict_to_show[key]};\n' + ' '*(length1+2)
+                text += f'{dict_to_show[key]};\n' + ' '*(length1+2) # Описание задачи
             text += '\n'
             
         if to_print == True:
             return print(text)
         return text
-
+    
+    # Если dict_to_show - строка (название темы) и указан конкретный ключ (имя функции)
     elif type(dict_to_show) == str and key in themes_list_dicts_full[dict_to_show].keys():
-        return print(themes_list_dicts_full[dict_to_show][key])
+        return print(themes_list_dicts_full[dict_to_show][key]) # Вывод исходного кода функции
     
     else:
         show_only_keys = False
     text = ""
-    length1 = 1 + max([len(x) for x in list(dict_to_show.keys())])
+    length1 = 1 + max([len(x) for x in list(dict_to_show.keys())]) # Максимальная длина ключа первого уровня (названия темы)
     
     for key in dict_to_show.keys():
-        text += f'{key:^{length1}}'
+        text += f'{key:^{length1}}' # Название темы, выровненное по центру
         if not show_only_keys:
             text += ': '
             for f in dict_to_show[key]:
@@ -155,11 +167,14 @@ def description(
                 if show_keys_second_level:
                     text += ': '
                     try:
+                        # Получение описания функции из инвертированного словаря
                         func_text_len = len(invert_dict(themes_list_dicts[key])[f])
+                        
+                        # Форматирование описания с переносами строк и ограничением по длине
                         func_text = invert_dict(themes_list_dicts[key])[f]
                         text += func_text.replace('\n','\n'+' '*(length1 + len(f.__name__))) if func_text_len < n_symbols else func_text[:n_symbols].replace('\n','\n'+' '*(length1 + len(f.__name__)))+'...'
                     except:
-                        pass
+                        pass # Пропуск, если описание не найдено
                 text += ';\n' + ' '*(length1+2) # + '\n' + ' '*(length1+2)
         text += '\n'
         
@@ -217,24 +232,30 @@ def search(query: str, to_print: bool = True, data: str = description(n_symbols=
     .. [1] Внутренняя документация проекта, описывающая структуру тем и функций
     .. [2] Python Software Foundation. "Python Language Reference", version 3.11.
     """
+    # Разделение входных данных на отдельные темы
     topics = re.split(r'\n\s*\n', data)
     matches = []
 
     for topic_data in topics:
+        # Пропуск пустых блоков тем
         if not topic_data.strip():
             continue
 
         topic_match = re.match(r'^\s*(.*?):', topic_data)
         if not topic_match:
             continue
-
+        
+        # Извлечение названия темы
         topic = topic_match.group(1).strip()
+        # Поиск всех функций и их описаний в текущей теме
         functions = re.findall(r'(\w+)\s*:\s*([\s\S]*?)(?=\n\s*\w+\s*:|\Z)', topic_data)
 
         for func, description in functions:
+            # Проверка наличия запроса (без учета регистра) в описании функции
             if query.lower() in description.lower():
                 matches.append(f"{topic} : {description.strip()}")
-
+    
+    # Вывод результатов или их возврат списком
     if to_print:
         return print("\n".join(matches))
     return matches

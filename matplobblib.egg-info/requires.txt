@@ -6,3 +6,5 @@ pyperclip
 pymupdf
 graphviz
 statsmodels
+fitz
+cvxopt

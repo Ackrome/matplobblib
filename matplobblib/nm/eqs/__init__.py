@@ -54,9 +54,9 @@ def bisection_method(f, a, b, eps=1e-6, max_iter=1000):
 
     References
     ----------
-    .. [1] "Метод половинного деления (метод дихотомии)" — Википедия, https://example.com/bisection-wiki
+    .. [1] "Метод половинного деления (метод дихотомии)" — Википедия
     .. [2] "Метод бисекции — Википедия", https://en.wikipedia.org/wiki/Bisection_method
-    .. [3] "1.3 Метод половинного деления (метод дихотомии)", https://example.com/dichotomy-method
+    .. [3] "1.3 Метод половинного деления (метод дихотомии)"
     """
     if f(a) * f(b) >= 0:
         raise ValueError("Функция не меняет знак на интервале [a, b]")

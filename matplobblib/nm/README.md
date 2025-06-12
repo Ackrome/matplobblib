@@ -79,3 +79,7 @@
 ### 9. [strassen](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/strassen#readme)
 
 Этот модуль содержит реализации алгоритма умножения матриц Штрассена, включая оптимизированные версии с использованием Numba.
+
+### 10. [fourier](https://github.com/Ackrome/matplobblib/tree/master/matplobblib/nm/fourier#readme)
+
+Преобразование Фурье и спектральный анализ: Дискретное DFT, Обратное IDFT, Быстрое FFT
