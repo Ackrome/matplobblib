@@ -1,22 +1,20 @@
 import re
 from ..forall import *
 # Импорт модулей и списков функций из соответствующих подпакетов
-from .base import BASE
-from .eqs import EQS
-from .sistems import SISTEMS
-from .interp import INTER
-from .eigen import EIGEN
-from .strassen import STRASSEN
-from .matrices import MATRICES
-from .matrices.householder import HOUSEHOLDER
-from .matrices.SVD import SVDF
-from .differential_eqs import DF
-from .theory import THEORY
-from .fourier import FOURIER
+from .base import *
+from .eqs import *
+from .sistems import *
+from .interp import *
+from .eigen import *
+from .strassen import *
+from .matrices import *
+from .matrices.householder import *
+from .matrices.SVD import *
+from .differential_eqs import *
+from .theory import *
+from .fourier import *
+from .additional_funcs import *
 
-
-
-from .additional_funcs import AF
 
 # Объединение списков функций, связанных с матрицами
 MATRICES = MATRICES + HOUSEHOLDER + SVDF

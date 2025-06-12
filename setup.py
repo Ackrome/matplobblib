@@ -9,7 +9,7 @@ def readme():
 
 setup(
     name='matplobblib',
-    version='0.2.90',
+    version='0.2.91',
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -38,7 +38,8 @@ setup(
         "graphviz",
         "statsmodels",
         "fitz",
-        "cvxopt"
+        "cvxopt",
+        'tools'
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
     ],
