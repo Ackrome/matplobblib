@@ -9,7 +9,10 @@ with open('version.txt','r') as f:
     version = f.readline()
 
 package_data={
-        'matplobblib': ['nm/theory/htmls/*.html'],
+        'matplobblib': [
+            'nm/theory/htmls/*.html',
+            'nm/theory/lec/*.png'
+            ],
     }
 
 setup(
@@ -42,7 +45,14 @@ setup(
         "fitz",
         "cvxopt",
         "tools",
-        "beautifulsoup4"
+        "beautifulsoup4",
+        "matplotlib",
+        "numba",
+        "frontend",
+        "IPython",
+        "tqdm",
+        "scikit-learn",
+        "scikit-image", 
     #    "Pillow",  # Required for image processing
     #    # Add any other dependencies here
     ],

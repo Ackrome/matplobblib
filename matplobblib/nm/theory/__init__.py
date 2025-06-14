@@ -1,7 +1,8 @@
 import requests
 import importlib.resources
+from importlib.abc import Traversable # Явный импорт для Traversable
 import pathlib
-from typing import List, Dict, Set,Optional
+from typing import List, Dict, Set,Optional,Union
 from io import BytesIO
 from PIL import Image
 import IPython.display as display
@@ -11,7 +12,7 @@ from bs4 import BeautifulSoup
 
 from ...forall import *
 # Список для хранения динамически созданных функций отображения теории.
-
+####################################################################################################
 def check_internet_connection(host="8.8.8.8", port=53, timeout=3):
     """
     Проверяет наличие интернет-соединения.
@@ -23,9 +24,9 @@ def check_internet_connection(host="8.8.8.8", port=53, timeout=3):
         return True
     except socket.error as ex:
         return False
-
+####################################################################################################
 THEORY = []
-
+####################################################################################################
 def list_subdirectories():
     """
     Получает список подкаталогов из репозитория GitHub, имена которых начинаются с 'NM'.
@@ -41,7 +42,7 @@ def list_subdirectories():
     else:
         print(f"Ошибка при получении подпапок: {response.status_code}")
         return []
-
+####################################################################################################
 def get_png_files_from_subdir(subdir):
     """
     Получает список URL-адресов PNG-файлов из указанного подкаталога в репозитории GitHub.
@@ -58,7 +59,7 @@ def get_png_files_from_subdir(subdir):
     else:
         print(f"Ошибка доступа к {subdir}: {response.status_code}")
         return []
-
+####################################################################################################
 def display_png_files_from_subdir(subdir):
     """
     Отображает PNG-файлы из указанного подкаталога.
@@ -75,7 +76,7 @@ def display_png_files_from_subdir(subdir):
             display.display(img)
         except requests.exceptions.RequestException as e:
             print(f"Ошибка загрузки {url}: {e}")
-
+####################################################################################################
 # Динамическое создание функций для каждого подкаталога
 def create_subdir_function(subdir):
     """
@@ -111,7 +112,7 @@ for subdir in subdirs:
     create_subdir_function(subdir)
     
 
-
+####################################################################################################
 def get_all_packaged_html_files(package_data_config: Dict[str, List[str]]) -> List[str]:
     """
     Составляет список имен всех уникальных HTML-файлов, найденных во всех директориях,
@@ -186,9 +187,82 @@ def get_all_packaged_html_files(package_data_config: Dict[str, List[str]]) -> Li
                 pass
                 
     return sorted(list(all_html_file_names))
+####################################################################################################
+def get_all_packaged_png_files(package_data_config: Dict[str, List[str]]) -> List[str]:
+    """
+    Составляет список имен всех уникальных PNG-файлов, найденных во всех директориях,
+    указанных в конфигурации типа package_data, доступных изнутри установленного пакета.
+    Возвращаются только имена файлов, а не полные пути.
 
+    Args:
+        package_data_config: Словарь, аналогичный параметру `package_data` в setup.py.
+                             Ключи - это имена пакетов верхнего уровня (например, 'matplobblib').
+                             Значения - это списки строк с путями относительно корня пакета,
+                             обычно заканчивающиеся маской, такой как '*.png'.
+                             Пример: {'my_package': ['my_package/images/*.png', 'other_assets/*.png']}
 
+    Returns:
+        Отсортированный список уникальных имен PNG-файлов (например, ['image1.png', 'logo.png']).
+    """
+    all_png_file_names: Set[str] = set()
 
+    for package_name, path_patterns in package_data_config.items():
+        try:
+            # Получаем Traversable для корня пакета
+            package_root_traversable = importlib.resources.files(package_name)
+        except (ModuleNotFoundError, TypeError):
+            # Пакет не найден или не является валидным контейнером ресурсов
+            # Можно добавить логирование предупреждения, если необходимо
+            print(f"Предупреждение: Пакет '{package_name}' не найден или не является корректным контейнером ресурсов.")
+            continue
+
+        for pattern_str in path_patterns:
+            # Нормализуем разделители пути для pathlib
+            normalized_pattern = pattern_str.replace("\\", r'/')
+
+            # Получаем директорию из шаблона пути
+            # Например, для 'sub_pkg/data/htmls/*.html', parent_dir_str будет 'sub_pkg/data/htmls'
+            # Для '*.html', parent_dir_str будет '.'
+            path_obj_for_parent = pathlib.Path(normalized_pattern)
+            parent_dir_str = str(path_obj_for_parent.parent)
+
+            current_traversable = package_root_traversable
+            is_valid_target_dir = True
+
+            # Переходим к целевой директории, если это не корень пакета ('.')
+            if parent_dir_str != '.':
+                path_segments = parent_dir_str.split('/')
+                for segment in path_segments:
+                    if not segment: # Пропускаем пустые сегменты (маловероятно при корректных путях)
+                        continue
+                    try:
+                        current_traversable = current_traversable.joinpath(segment)
+                        # Важно проверять is_dir() после каждого шага, если это промежуточный сегмент
+                        if not current_traversable.is_dir():
+                            is_valid_target_dir = False
+                            break
+                    except (FileNotFoundError, NotADirectoryError):
+                        is_valid_target_dir = False
+                        break
+
+            if not is_valid_target_dir or not current_traversable.is_dir():
+                # Целевая директория не найдена или не является директорией
+                print(f"Предупреждение: Директория '{parent_dir_str}' не найдена или не является директорией в пакете '{package_name}'.")
+                continue
+
+            # Теперь ищем .png файлы в этой директории (current_traversable)
+            try:
+                for item in current_traversable.iterdir():
+                    # item.name содержит имя файла (например, "page.html")
+                    if item.is_file() and item.name.lower().endswith('.png'):
+                        all_png_file_names.add(item.name)
+            except Exception:
+                # Обработка возможных ошибок при итерации по директории
+                print(f"Предупреждение: Ошибка при итерации по директории в пакете '{package_name}', путь '{parent_dir_str}'.")
+                pass
+
+    return sorted(list(all_png_file_names))
+####################################################################################################
 def open_packaged_html_files_in_browser(
     package_name: str,
     relative_html_paths: List[str],
@@ -274,11 +348,89 @@ def open_packaged_html_files_in_browser(
 
     if give_path_back:
         return paths
-    
-    
+####################################################################################################
+def get_traversable_for_packaged_pngs(
+    package_name: str,
+    relative_png_paths: List[str],
+) -> List[Traversable]:
+    """
+    Находит указанные PNG файлы внутри пакета и возвращает для них Traversable объекты.
 
+    Args:
+        package_name: Имя пакета (например, 'my_package').
+        relative_png_paths: Список относительных путей к PNG файлам внутри пакета.
+                             Пути должны быть от корня пакета.
+                             Пример: ['images/logo.png', 'assets/icon.png']
+    Returns:
+        Список Traversable объектов для найденных PNG файлов.
+        Если файл не найден, путь некорректен, или ресурс не является файлом,
+        он будет пропущен, и будет выведено соответствующее сообщение.
+    """
+    found_traversables: List[Traversable] = []
+    try:
+        package_root_traversable = importlib.resources.files(package_name)
+    except (ModuleNotFoundError, TypeError):
+        print(f"Ошибка: Пакет '{package_name}' не найден или не является корректным контейнером ресурсов.")
+        return found_traversables
+
+    for rel_path_str in relative_png_paths:
+        if not rel_path_str.lower().endswith('.png'):
+            print(f"Пропуск (не PNG): '{rel_path_str}' не является PNG файлом (ожидается расширение .png).")
+            continue
+
+        current_traversable_candidate = package_root_traversable
+        # Используем pathlib.Path для корректного разбора пути на сегменты
+        try:
+            path_segments = Path(rel_path_str).parts
+        except TypeError: # Обработка случая, если rel_path_str не может быть преобразован в Path
+            print(f"Пропуск (некорректный формат пути): '{rel_path_str}' не является корректной строкой пути.")
+            continue
+            
+        path_is_valid = True
+
+        if not path_segments or (len(path_segments) == 1 and path_segments[0] == '.'): # Пустой путь или "."
+            print(f"Пропуск (некорректный путь): Относительный путь '{rel_path_str}' некорректен.")
+            continue
+
+        # Итерация по всем сегментам пути.
+        # current_traversable_candidate в итоге будет указывать на целевой ресурс.
+        for i, segment in enumerate(path_segments):
+            if not segment: # Редкий случай с Path.parts, но для надежности
+                path_is_valid = False 
+                print(f"Пропуск (пустой сегмент): Обнаружен пустой сегмент в пути '{rel_path_str}'.")
+                break
+            
+            current_traversable_candidate = current_traversable_candidate.joinpath(segment)
+            
+            # Если это промежуточный сегмент, он должен быть директорией.
+            if i < len(path_segments) - 1:
+                if not current_traversable_candidate.is_dir():
+                    print(f"Ошибка (не директория): Промежуточный путь '{'/'.join(path_segments[:i+1])}' (часть '{rel_path_str}') не является директорией в пакете '{package_name}'.")
+                    path_is_valid = False
+                    break
+        
+        if not path_is_valid:
+            continue
+
+        # После цикла, current_traversable_candidate указывает на целевой ресурс.
+        # Проверяем, является ли он файлом.
+        if current_traversable_candidate.is_file():
+            found_traversables.append(current_traversable_candidate)
+        else:
+            print(f"Предупреждение (не файл): Ресурс по пути '{rel_path_str}' в пакете '{package_name}' не является файлом (или не существует).")
+
+    if not found_traversables and relative_png_paths:
+        print(f"Ни один из указанных PNG файлов не был успешно найден как Traversable объект в пакете '{package_name}'.")
+
+    return found_traversables    
+####################################################################################################
+####################################################################################################
+####################################################################################################
 package_data={
-        'matplobblib': ['nm/theory/htmls/*.html'],
+        'matplobblib': [
+            'nm/theory/htmls/*.html',
+            'nm/theory/lec/*.png'
+            ],
     }
 
 htmls = get_all_packaged_html_files(package_data)
@@ -336,6 +488,76 @@ def open_ticket(num = None, to_print = True):
     else:
         # Предполагается, что 'tags' - это глобальная переменная (список/кортеж)
         print(*tags,sep='\n')
-
-
+####################################################################################################
 THEORY.append(open_ticket)
+####################################################################################################
+####################################################################################################
+####################################################################################################
+pngs = get_all_packaged_png_files(package_data)
+to_open_dct_png = {}
+
+for i in pngs:
+    parts = i.split('_')
+    num = int(parts[1].split('.')[0])
+    to_open_dct_png[num] = get_traversable_for_packaged_pngs('matplobblib',['nm/theory/lec/'+i])[0]
+
+    
+to_open_dct_png = dict(sorted(to_open_dct_png.items()))    
+####################################################################################################
+def open_prez(pages: Union[int, List[int]]):
+    """
+    Функция для просмотра презентации
+    Отображает изображения PNG, соответствующие указанным номерам страниц.
+
+    Функция может принимать один номер страницы, список номеров страниц
+    или диапазон страниц (в виде списка из двух чисел).
+
+    Args:
+        pages: Может быть одним из следующих:
+            - int: Номер одной страницы для отображения.
+            - List[int] с одним элементом: Список, содержащий номер одной страницы.
+            - List[int] с двумя элементами: Список, указывающий начальный и конечный
+              номера страниц (включительно) для отображения диапазона.
+            - List[int] с более чем двумя элементами: Список номеров страниц,
+              каждая из которых будет отображена.
+
+    Raises:
+        KeyError: Если номер страницы, указанный в `pages`, отсутствует
+                  в словаре `to_open_dct_png`.
+        TypeError: Если аргумент `pages` имеет неподдерживаемый тип или
+                   содержит элементы неподходящего типа (не int).
+
+    Notes:
+        Предполагается, что существует глобальный или доступный в области видимости
+        словарь `to_open_dct_png`, где ключи - это номера страниц (int),
+        а значения - это пути к файлам PNG или данные изображения,
+        которые могут быть обработаны `display.Image()`.
+        Также предполагается, что используется `IPython.display.display` и
+        `IPython.display.Image`.
+    """
+    if isinstance(pages, int):
+        display.display(display.Image(to_open_dct_png[pages]))
+    elif isinstance(pages, list):
+        if not all(isinstance(j, int) for j in pages):
+            print('Неправильно предоставленный аргумент: все элементы в списке должны быть целыми числами.')
+            return
+
+        if len(pages) == 1:
+            display.display(display.Image(to_open_dct_png[pages[0]]))
+        elif len(pages) == 2:
+            start_page, end_page = pages[0], pages[1]
+            if start_page > end_page:
+                print('Неправильно предоставленный аргумент: начальная страница диапазона не может быть больше конечной.')
+                return
+            for i in range(start_page, end_page + 1):
+                display.display(display.Image(to_open_dct_png[i]))
+        elif len(pages) > 2:
+            for i in pages:
+                display.display(display.Image(to_open_dct_png[i]))
+        else: # len(pages) == 0
+             print('Неправильно предоставленный аргумент: список страниц не может быть пустым.')
+    else:
+        print('Неправильно предоставленный аргумент: ожидается int или list[int].')
+####################################################################################################
+THEORY.append(open_prez)
+####################################################################################################

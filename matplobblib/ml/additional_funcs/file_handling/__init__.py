@@ -1,8 +1,7 @@
-import fitz 
-import os
-
-
 def pdf_to_png(pdf_path, dpi=110):
+    import fitz 
+    import os
+
     # Создаем выходную папку, если не существует
     output_folder = ''.join(pdf_path.split('.')[:-1])
     os.makedirs(output_folder, exist_ok=True)
