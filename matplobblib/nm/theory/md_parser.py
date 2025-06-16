@@ -2,7 +2,7 @@ import argparse
 import os
 import re
 
-def generate_base_filename(heading_text, unique_id):
+def generate_base_filename(heading_text, unique_id, find_num = True):
     """
     Генерирует безопасное базовое имя файла из текста заголовка.
     heading_text: Текст строки заголовка (например, "# Мой Заголовок").
@@ -32,12 +32,18 @@ def generate_base_filename(heading_text, unique_id):
     if not text or text == '.':
         return f"section_{unique_id}"
 
+    if find_num:
+        text = text.split('.')
+        
+        return text[0], '.'.join(text[1:])
+    
     return text
 
 def split_markdown_by_h1(input_filepath, output_dir="."):
     """
     Разделяет Markdown-файл на части по заголовкам первого уровня (H1).
     """
+    others_list = []
     if not os.path.isfile(input_filepath):
         print(f"Ошибка: Файл '{input_filepath}' не найден или не является файлом.")
         return
@@ -72,17 +78,18 @@ def split_markdown_by_h1(input_filepath, output_dir="."):
         if is_h1:
             if current_h1_title_line and current_h1_content:
                 files_written_count += 1
-                base_name = generate_base_filename(current_h1_title_line, files_written_count)
+                num, others = generate_base_filename(current_h1_title_line, files_written_count,find_num=True)
+                others_list.append(others)
                 
-                filename_candidate = base_name + ".md"
+                filename_candidate = num + ".md"
                 output_path = os.path.join(output_dir, filename_candidate)
                 
                 # Обработка коллизий имен файлов
                 collision_count = 1
-                temp_filename_base = base_name
+                temp_filename_base = num
                 while os.path.exists(output_path):
                     collision_count += 1
-                    filename_candidate = f"{temp_filename_base}_{collision_count}.md"
+                    filename_candidate = f"{num}_{collision_count}.md"
                     output_path = os.path.join(output_dir, filename_candidate)
                 
                 try:
@@ -91,6 +98,8 @@ def split_markdown_by_h1(input_filepath, output_dir="."):
                     print(f"Создан файл: '{output_path}'")
                 except IOError as e:
                     print(f"Ошибка записи файла '{output_path}': {e}")
+                
+                
 
             current_h1_title_line = stripped_line
             current_h1_content = [line]  # Начинаем новый раздел с H1
@@ -100,13 +109,13 @@ def split_markdown_by_h1(input_filepath, output_dir="."):
     # Запись последнего собранного раздела
     if current_h1_title_line and current_h1_content:
         files_written_count += 1
-        base_name = generate_base_filename(current_h1_title_line, files_written_count)
+        num, others = generate_base_filename(current_h1_title_line, files_written_count,find_num=True)
         
-        filename_candidate = base_name + ".md"
+        filename_candidate = num + ".md"
         output_path = os.path.join(output_dir, filename_candidate)
 
         collision_count = 1
-        temp_filename_base = base_name
+        temp_filename_base = num
         while os.path.exists(output_path):
             collision_count += 1
             filename_candidate = f"{temp_filename_base}_{collision_count}.md"
@@ -118,12 +127,23 @@ def split_markdown_by_h1(input_filepath, output_dir="."):
             print(f"Создан файл: '{output_path}'")
         except IOError as e:
             print(f"Ошибка записи файла '{output_path}': {e}")
+        
+        others_list.append(others)
+
 
     if files_written_count == 0:
         if lines: # Файл не пуст, но H1 не найдены
             print(f"В файле '{input_filepath}' не найдено заголовков первого уровня ('# Заголовок'). Файлы не созданы.")
         else: # Исходный файл пуст
             print(f"Файл '{input_filepath}' пуст. Файлы не созданы.")
+    else:
+        
+        try:
+            with open(os.path.join(output_dir, 'h1_names.md'), 'w', encoding='utf-8') as outfile:
+                    outfile.writelines('|||||'.join(others_list))
+            print(f"Создан файл: '{output_path}'")
+        except Exception as e:
+            print(e)
 
 
 
@@ -141,5 +161,5 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
-    split_markdown_by_h1(r"C:\Users\ivant\Downloads\ЧМ ЭКЗАМЕН (1).md",r"C:\Users\ivant\Desktop\proj\matplobblib\matplobblib\nm\theory\ipynbs")
+    # main()
+    split_markdown_by_h1(r"C:\Users\ivant\Downloads\ЧМ_ТЕОР.md",r"C:\Users\ivant\Desktop\proj\matplobblib\matplobblib\nm\theory\ipynbs")

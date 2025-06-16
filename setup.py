@@ -8,6 +8,7 @@ def readme():
 with open('version.txt','r') as f:
     version = f.readline()
 
+# version = '0.3.0'
 package_data={
         'matplobblib': [
             'nm/theory/htmls/*.html',

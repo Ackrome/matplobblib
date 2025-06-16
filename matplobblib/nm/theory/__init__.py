@@ -593,7 +593,8 @@ for i in htmls:
     try:
         to_open_dct[int(parts[0])] = 'nm/theory/htmls/'+i
     except:
-        continue
+
+            continue
 
 with open(open_packaged_html_files_in_browser('matplobblib',['nm/theory/htmls/index.html'],True)[0]  , "r", encoding="utf-8") as actual_file_path:
     
@@ -604,9 +605,12 @@ soup = BeautifulSoup(html_content, "html.parser")
 
 # Извлечение всех заголовков h1
 h1_tags = soup.find_all("h1")
-tags = [h1.get_text(strip=True) for h1 in h1_tags]
+tags = [h1.get_text(strip=True) for h1 in h1_tags] + ['Tanya.html', 'index.html']
 
 to_open_dct = dict(sorted(to_open_dct.items()))    
+
+to_open_dct['Tanya.html'] = 'nm/theory/htmls/'+'Tanya.html'
+to_open_dct['index.html'] = 'nm/theory/htmls/'+'index.html'
 
   
 def open_ticket(num = None, to_print = True):
@@ -625,7 +629,6 @@ def open_ticket(num = None, to_print = True):
                                    По умолчанию True.
     """
     if num:
-        num = int(num)
         if to_print:
             # Предполагается, что open_packaged_html_files_in_browser возвращает список путей,
             # и мы берем первый элемент.
@@ -715,12 +718,27 @@ THEORY.append(open_prez)
 ####################################################################################################
 mds = get_all_packaged_md_files(package_data)
 to_open_dct_md = {}
+to_open_dct_md_nums = {}
 
-for i in mds:  
-    to_open_dct_md[i] = get_traversable_for_packaged_mds('matplobblib',['nm/theory/ipynbs/'+i])[0]
+
+for i in mds:
+    parts = i.split('.')
+    try:
+        to_open_dct_md_nums[int(parts[0])] = get_traversable_for_packaged_mds('matplobblib',['nm/theory/ipynbs/'+i])[0]
+    except:
+        to_open_dct_md[i] = get_traversable_for_packaged_mds('matplobblib',['nm/theory/ipynbs/'+i])[0]
 
     
 to_open_dct_md = dict(sorted(to_open_dct_md.items()))
+to_open_dct_md_nums = dict(sorted(to_open_dct_md_nums.items()))
+
+with io.open(to_open_dct_md['h1_names.md'], encoding='utf-8', errors='ignore') as f:
+    h1_names = f.readlines()[0].split('|||||')
+
+names = []
+for i in range(len(h1_names)):
+    names.append(f'{i} = {h1_names[i]}')
+
 ####################################################################################################
 def open_md(md_num = None):
     """Открывает некоторые преобразованные ipynb
@@ -729,11 +747,16 @@ def open_md(md_num = None):
         md_num (str, optional): название файла
     """
     if md_num:
-        with io.open(to_open_dct_md[md_num], encoding='utf-8', errors='ignore') as f:
+        try:
+            md_num = int(md_num)
+            with io.open(to_open_dct_md_nums[md_num], encoding='utf-8', errors='ignore') as f:
+                display.display(display.Markdown(f.read()))
             
-            display.display(display.Markdown(f.read()))
+        except:       
+            with io.open(to_open_dct_md[md_num], encoding='utf-8', errors='ignore') as f:
+                display.display(display.Markdown(f.read()))
     else:
-        print(*list(to_open_dct_md.keys()), sep='\n')
+        print(*(list(to_open_dct_md.keys()) + names), sep='\n')
 ####################################################################################################
 THEORY.append(open_md)
 ####################################################################################################
