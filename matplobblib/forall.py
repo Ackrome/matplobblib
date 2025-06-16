@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import re
 from inspect import getsource, getdoc
+import inspect
+import ast
 import matplotlib.pyplot as plt
 import sys
 from numba import njit, prange
@@ -366,5 +368,80 @@ def invert_dict(d):
     .. [2] Beazley, D.M. "Python Essential Reference", 4th edition.
     """
     return {value: key for key, value in d.items()}
+####################################################################################
+def getsource_no_docstring(obj):
+    """
+    Возвращает исходный код объекта без его строки документации (docstring).
+    Аналогична inspect.getsource, но удаляет docstring.
+
+    Выбрасывает те же исключения, что и inspect.getsourcelines/inspect.getsource,
+    если исходный код не может быть получен.
+    """
+    try:
+        # sourcelines - это список строк с оригинальными окончаниями
+        # lnum - номер начальной строки в исходном файле (здесь не используется)
+        sourcelines, lnum = inspect.getsourcelines(obj)
+    except (TypeError, OSError) as e:
+        # Если inspect.getsourcelines не смогли получить код
+        raise e # Перевыбрасываем оригинальное исключение
+
+    source_code_str = "".join(sourcelines)
+
+    try:
+        # Парсим весь блок кода, полученный для объекта
+        tree = ast.parse(source_code_str)
+    except SyntaxError:
+        # Если код объекта по какой-то причине не является валидным Python
+        # (маловероятно для вывода getsourcelines, но для полноты)
+        # возвращаем исходный код "как есть".
+        return source_code_str
+
+    docstring_expr_node = None
+    
+    # Узел, содержащий тело, где может быть docstring (модуль, функция, класс)
+    node_with_body = None
+
+    if inspect.ismodule(obj):
+        # Если объект - модуль, то tree это ast.Module. Его тело - tree.body.
+        node_with_body = tree
+    elif tree.body and isinstance(tree.body[0], (ast.FunctionDef, ast.ClassDef, ast.AsyncFunctionDef)):
+        # Если объект - функция или класс, то tree.body[0] - это узел FunctionDef/ClassDef.
+        # Его тело - tree.body[0].body.
+        node_with_body = tree.body[0]
+    else:
+        # Неожиданная структура AST или getsource вернул что-то не то.
+        return source_code_str
+
+    if node_with_body and hasattr(node_with_body, 'body') and node_with_body.body:
+        first_statement_in_body = node_with_body.body[0]
+        if isinstance(first_statement_in_body, ast.Expr):
+            value_node = first_statement_in_body.value
+            # Проверяем, является ли значение строковым литералом
+            is_string_literal = False
+            if isinstance(value_node, ast.Str): # Для Python < 3.8
+                is_string_literal = True
+            elif hasattr(ast, 'Constant') and isinstance(value_node, ast.Constant): # Для Python 3.8+
+                if isinstance(value_node.value, str):
+                    is_string_literal = True
+            
+            if is_string_literal:
+                docstring_expr_node = first_statement_in_body
+
+    if docstring_expr_node:
+        # Номера строк в AST (lineno, end_lineno) 1-базированные и относятся к началу
+        # строки source_code_str (которая соответствует sourcelines).
+        doc_start_line_idx = docstring_expr_node.lineno - 1  # 0-базированный индекс начала
+        doc_end_line_idx = docstring_expr_node.end_lineno - 1    # 0-базированный индекс конца
+
+        # Собираем новый список строк, исключая строки с docstring
+        new_sourcelines = []
+        for i, line_content in enumerate(sourcelines):
+            if not (doc_start_line_idx <= i <= doc_end_line_idx):
+                new_sourcelines.append(line_content)
+        
+        return "".join(new_sourcelines)
+    else:
+        # Docstring не найден в ожидаемом месте или отсутствует.
+        return source_code_str
 ####################################################################################
 from .ml.additional_funcs import *

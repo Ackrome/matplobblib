@@ -58,11 +58,14 @@ funcs_dicts = [dict([(get_task_from_func(i), i) for i in module]) for module in 
 funcs_dicts_ts = [dict([(get_task_from_func(i,True), i) for i in module]) for module in modules]
 # funcs_dicts_full: {имя_функции: исходный_код_функции}
 funcs_dicts_full = [dict([(i.__name__, getsource(i)) for i in module]) for module in modules]
+# funcs_dicts_full_nd: {имя_функции: исходный_код_функции_без_документации}
+funcs_dicts_full_nd = [dict([(i.__name__, getsource_no_docstring(i)) for i in module]) for module in modules]
 
 # Создание словарей, группирующих функции по темам
-themes_list_funcs = dict([(names[i],list(funcs_dicts[i].values()) ) for i in range(len(names))]) # Название темы : список функций по теме
-themes_list_dicts = dict([(names[i],funcs_dicts[i]) for i in range(len(names))])                 # Название темы : словарь по теме, где ЗАДАНИЕ: ФУНКЦИИ
-themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len(names))])       # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ
+themes_list_funcs = dict([(names[i],list(funcs_dicts[i].values()) ) for i in range(len(names))])        # Название темы : список функций по теме
+themes_list_dicts = dict([(names[i],funcs_dicts[i]) for i in range(len(names))])                        # Название темы : словарь по теме, где ЗАДАНИЕ: ФУНКЦИИ
+themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len(names))])              # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ
+themes_list_dicts_full_nd = dict([(names[i],funcs_dicts_full_nd[i]) for i in range(len(names))])        # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ БЕЗ ДОКУМЕНТАЦИИ
 
 
 
@@ -72,7 +75,8 @@ def description(
     show_only_keys: bool = False,
     show_keys_second_level: bool = True,
     n_symbols: int = 32,
-    to_print: bool = True):
+    to_print: bool = True,
+    show_doc = False):
     """
     Форматированный вывод информации о функциях и заданиях из словарей тем.
 
@@ -91,7 +95,8 @@ def description(
         Максимальное количество символов описания для отображения.
     to_print : bool, optional
         Если True - выводить результат через print(), иначе вернуть как строку.
-
+    show_doc : bool, optional
+        Если True - выводить результат поиска функции по теме и названию вместе с ее докстрингом. Иначе без.
     Returns
     -------
     str or None
@@ -149,7 +154,10 @@ def description(
     
     # Если dict_to_show - строка (название темы) и указан конкретный ключ (имя функции)
     elif type(dict_to_show) == str and key in themes_list_dicts_full[dict_to_show].keys():
-        return print(themes_list_dicts_full[dict_to_show][key]) # Вывод исходного кода функции
+        if show_doc:
+            return print(themes_list_dicts_full[dict_to_show][key]) # Вывод исходного кода функции
+        else:
+            return print(themes_list_dicts_full_nd[dict_to_show][key]) # Вывод исходного кода функции
     
     else:
         show_only_keys = False
