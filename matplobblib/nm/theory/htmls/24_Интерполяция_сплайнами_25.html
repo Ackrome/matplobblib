@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>24. Интерполяция сплайнами.</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-top: 0; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em 0; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        p { margin: 1em 0; }
+        div, section, article { margin-bottom: 1em; }
+        /* Вы можете добавить сюда больше стилей или ссылку на CSS из оригинального документа, если это необходимо */
+    </style>
+</head>
+<body>
+<h1 class="c1" id="h.aasv9y1xdjiy"><span class="c34">24. Интерполяция сплайнами.</span></h1><p class="c7"><span class="c3">В целом сплайн-интерполяция очень похожа просто на локальную интерполяцию (см. вопрос 19). Отличается она тем, что требует непрерывности в узлах стыковки локальных многочленов по производным порядка один, два и т.д. (т.н. условие гладкости)</span></p><p class="c7"><span class="c3">График интерполирующей функции при сплайн-интерполяции напоминает гибкую линейку, закрепленную в узловых точках интерполируемой функции. Поэтому сплайн-интерполяцию выгодно применять при небольшом числе узловых точек (до 5 – 7). (для сравнения: обычную многочленную интерполяцию осуществляют максимум по 3-4 узлам)</span></p><p class="c7"><span class="c3">Сплайном степени m дефекта r называется (m − r) раз непрерывно дифференцируемая функция, которая на каждом отрезке [хi − 1, хi], i = 1, 2,... n, представляет собой многочлен степени m.</span></p><p class="c7"><span class="c3">Виды сплайнов: линейные, квадратичные, кубические.</span></p><p class="c7"><span class="c5">Наиболее популярными являются кубические сплайны (см. вопрос 26 (там больше инфы, копипаст из презы))</span></p>
+</body>
+</html>

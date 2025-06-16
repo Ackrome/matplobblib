@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>54. Многошаговые методы решения обыкновенных дифференциальных уравнений.</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-top: 0; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em 0; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        p { margin: 1em 0; }
+        div, section, article { margin-bottom: 1em; }
+        /* Вы можете добавить сюда больше стилей или ссылку на CSS из оригинального документа, если это необходимо */
+    </style>
+</head>
+<body>
+<h1 class="c1" id="h.zc48fgyennld"><span class="c34">54. Многошаговые методы решения обыкновенных дифференциальных уравнений.</span></h1><p class="c7"><span class="c5 c55">Начиная со слайда 533</span></p><p class="c7"><span class="c4">Многошаговые методы </span><span class="c3">— это численные методы, в которых значение y_{n+1} вычисляется не только на основе текущего значения y_n, как в одношаговых методах (например, метод Эйлера), а с использованием нескольких предыдущих значений y_n, y_{n−1}, …</span></p><ul class="c2 lst-kix_eutfztt5kem-0 start"><li class="c20 c66 li-bullet-1"><span class="c3">Методы Адамса-Башфорта - используют интерполяцию для определения значений функции в предыдущих точках:</span></li></ul><p class="c20 c45"><span class="c5">2го порядка: </span><span class="c4">y_{n+1} = y_n + h/2[3f(t_n, y_n) - f(t_{n-1}, y_{n-1}]</span></p><ul class="c2 lst-kix_eutfztt5kem-0"><li class="c20 c66 li-bullet-1"><span class="c3">Методы Адамса-Моултена - корректируют результат используя значение f(x_{n+1}, y_{n+1}), что делает их неявными:</span></li></ul><p class="c20 c45"><span class="c5">2го порядка: </span><span class="c18 c4">y_{n+1} = y_n + h/2[f(t_{n+1}, y_{n+1}) - f(t_n, y_n)]</span></p><p class="c20 c89"><span class="c4">        </span><span class="c5">Также существуют многошаговые методы вида </span><span class="c4">предиктор-корректор. </span><span class="c3">Их суть в следующем: на каждом шаге вычисляются:<br/>                Предиктор - с помощью явного метода вычисляется первое приближение в новом узле y_{n+1}^{(0)};</span></p><p class="c20 c89"><span class="c5">                Корректор - с помощью неявного метода вычисляются последующие приближения функции в новом узле y_{n+1}^{(1)}, y_{n+1}^{(2)}, …</span></p>
+</body>
+</html>

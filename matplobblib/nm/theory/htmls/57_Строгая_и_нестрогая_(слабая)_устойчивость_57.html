@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>57. Строгая и нестрогая (слабая) устойчивость.</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 20px; line-height: 1.6; color: #333; }
+        h1 { color: #111; border-bottom: 2px solid #eee; padding-bottom: 0.3em; margin-top: 0; }
+        img { max-width: 100%; height: auto; display: block; margin: 1em 0; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        p { margin: 1em 0; }
+        div, section, article { margin-bottom: 1em; }
+        /* Вы можете добавить сюда больше стилей или ссылку на CSS из оригинального документа, если это необходимо */
+    </style>
+</head>
+<body>
+<h1 class="c1" id="h.pioppzlkhl7z"><span class="c67">57. Строгая и нестрогая (слабая) устойчивость.</span></h1><p class="c7"><span class="c5">Для того, чтобы определить, какой устойчивостью обладает метод, необходимо проверить его на примере </span><span class="c4">y’ = lambda*y</span><span class="c5">:</span></p><p class="c7"><span class="c5">Аналитическое решение будет иметь вид:<br/>                                </span><span class="c18 c4">y(t) = y0 * exp(lambda * t)</span></p><p class="c7"><span class="c5">Численное решение будет иметь вид:<br/>                                </span><span class="c4">y_{n+1} = R(h*lambda)*y_n<br/>        </span><span class="c5">где </span><span class="c4">y_n</span><span class="c5"> - решение, полученное на n-ой итерации;<br/>        </span><span class="c4">R(z), z = h*lambda</span><span class="c5"> - функция устойчивости метода;<br/>        </span><span class="c4">h </span><span class="c5">- шаг метода;<br/>        </span><span class="c4">lambda </span><span class="c3">- комплексное число, помогающее определить устойчивость при наличии малых возмущений (ошибки округлений, небольшие погрешности в данных).</span></p><p class="c7"><span class="c55 c5">То есть получаем, что у нас есть комплексное число z, имеющее Re(z) и Im(z) части. Для каждой конкретной задачи оно будет разным, так как зависит от выбранного шага h и от заданных условий по возмущениям lambda.</span></p><p class="c26"><span class="c4">Строгая устойчивость</span><span class="c5"> необходима, если мы считаем неопределённое количество шагов по времени. Например, при моделировании долгосрочных процессов Здесь требуется, чтобы </span><span class="c4">||R(z)||&lt;1</span><span class="c3"> - в таком случае ошибки экспоненциально уменьшаются, что хорошо для длительных вычислений.</span></p><p class="c26"><span class="c4">Нестрогая (слабая) устойчивость</span><span class="c5"> применима, если нам нужно сделать лишь несколько шагов по времени. Здесь достаточно, чтобы </span><span class="c4">||R(z)||=1</span><span class="c3">, что допускает небольшой рост ошибок, но не приводит к их чрезмерному росту на коротких интервалах.</span></p><p class="c26"><span class="c3">Примеры функций устойчивости некоторых методов:</span></p><ul class="c2 lst-kix_s2dvitarr8fl-0 start"><li class="c15 c30 li-bullet-0"><span class="c3">Явный Эйлер — R(z) = 1 + z</span></li><li class="c15 c30 li-bullet-0"><span class="c3">Неявный Эйлер — R(z) = 1 / (1-z)</span></li><li class="c15 c30 li-bullet-0"><span class="c3">Рунге-Кутта 4 порядка — R(z) = 1 + z + (z^2)/2 + (z^3)/6 + (z^4)/24 + …</span></li></ul><p class="c7 c40"><span class="c3"></span></p>
+</body>
+</html>

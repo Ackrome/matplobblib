@@ -4,6 +4,7 @@ from importlib.abc import Traversable # Явный импорт для Traversab
 import pathlib
 from typing import List, Dict, Set,Optional,Union
 from io import BytesIO
+import io
 from PIL import Image
 import IPython.display as display
 import webbrowser
@@ -263,6 +264,81 @@ def get_all_packaged_png_files(package_data_config: Dict[str, List[str]]) -> Lis
 
     return sorted(list(all_png_file_names))
 ####################################################################################################
+def get_all_packaged_md_files(package_data_config: Dict[str, List[str]]) -> List[str]:
+    """
+    Составляет список имен всех уникальных md-файлов, найденных во всех директориях,
+    указанных в конфигурации типа package_data, доступных изнутри установленного пакета.
+    Возвращаются только имена файлов, а не полные пути.
+
+    Args:
+        package_data_config: Словарь, аналогичный параметру `package_data` в setup.py.
+                             Ключи - это имена пакетов верхнего уровня (например, 'matplobblib').
+                             Значения - это списки строк с путями относительно корня пакета,
+                             обычно заканчивающиеся маской, такой как '*.md'.
+                             Пример: {'my_package': ['my_package/images/*.md', 'other_assets/*.md']}
+
+    Returns:
+        Отсортированный список уникальных имен md-файлов (например, ['image1.md', 'logo.md']).
+    """
+    all_md_file_names: Set[str] = set()
+
+    for package_name, path_patterns in package_data_config.items():
+        try:
+            # Получаем Traversable для корня пакета
+            package_root_traversable = importlib.resources.files(package_name)
+        except (ModuleNotFoundError, TypeError):
+            # Пакет не найден или не является валидным контейнером ресурсов
+            # Можно добавить логирование предупреждения, если необходимо
+            print(f"Предупреждение: Пакет '{package_name}' не найден или не является корректным контейнером ресурсов.")
+            continue
+
+        for pattern_str in path_patterns:
+            # Нормализуем разделители пути для pathlib
+            normalized_pattern = pattern_str.replace("\\", r'/')
+
+            # Получаем директорию из шаблона пути
+            # Например, для 'sub_pkg/data/htmls/*.html', parent_dir_str будет 'sub_pkg/data/htmls'
+            # Для '*.html', parent_dir_str будет '.'
+            path_obj_for_parent = pathlib.Path(normalized_pattern)
+            parent_dir_str = str(path_obj_for_parent.parent)
+
+            current_traversable = package_root_traversable
+            is_valid_target_dir = True
+
+            # Переходим к целевой директории, если это не корень пакета ('.')
+            if parent_dir_str != '.':
+                path_segments = parent_dir_str.split('/')
+                for segment in path_segments:
+                    if not segment: # Пропускаем пустые сегменты (маловероятно при корректных путях)
+                        continue
+                    try:
+                        current_traversable = current_traversable.joinpath(segment)
+                        # Важно проверять is_dir() после каждого шага, если это промежуточный сегмент
+                        if not current_traversable.is_dir():
+                            is_valid_target_dir = False
+                            break
+                    except (FileNotFoundError, NotADirectoryError):
+                        is_valid_target_dir = False
+                        break
+
+            if not is_valid_target_dir or not current_traversable.is_dir():
+                # Целевая директория не найдена или не является директорией
+                print(f"Предупреждение: Директория '{parent_dir_str}' не найдена или не является директорией в пакете '{package_name}'.")
+                continue
+
+            # Теперь ищем .md файлы в этой директории (current_traversable)
+            try:
+                for item in current_traversable.iterdir():
+                    # item.name содержит имя файла (например, "page.html")
+                    if item.is_file() and item.name.lower().endswith('.md'):
+                        all_md_file_names.add(item.name)
+            except Exception:
+                # Обработка возможных ошибок при итерации по директории
+                print(f"Предупреждение: Ошибка при итерации по директории в пакете '{package_name}', путь '{parent_dir_str}'.")
+                pass
+
+    return sorted(list(all_md_file_names))
+####################################################################################################
 def open_packaged_html_files_in_browser(
     package_name: str,
     relative_html_paths: List[str],
@@ -422,14 +498,90 @@ def get_traversable_for_packaged_pngs(
     if not found_traversables and relative_png_paths:
         print(f"Ни один из указанных PNG файлов не был успешно найден как Traversable объект в пакете '{package_name}'.")
 
-    return found_traversables    
+    return found_traversables
+####################################################################################################
+def get_traversable_for_packaged_mds(
+    package_name: str,
+    relative_md_paths: List[str],
+) -> List[Traversable]:
+    """
+    Находит указанные md файлы внутри пакета и возвращает для них Traversable объекты.
+
+    Args:
+        package_name: Имя пакета (например, 'my_package').
+        relative_md_paths: Список относительных путей к md файлам внутри пакета.
+                             Пути должны быть от корня пакета.
+                             Пример: ['images/logo.md', 'assets/icon.md']
+    Returns:
+        Список Traversable объектов для найденных md файлов.
+        Если файл не найден, путь некорректен, или ресурс не является файлом,
+        он будет пропущен, и будет выведено соответствующее сообщение.
+    """
+    found_traversables: List[Traversable] = []
+    try:
+        package_root_traversable = importlib.resources.files(package_name)
+    except (ModuleNotFoundError, TypeError):
+        print(f"Ошибка: Пакет '{package_name}' не найден или не является корректным контейнером ресурсов.")
+        return found_traversables
+
+    for rel_path_str in relative_md_paths:
+        if not rel_path_str.lower().endswith('.md'):
+            print(f"Пропуск (не md): '{rel_path_str}' не является md файлом (ожидается расширение .md).")
+            continue
+
+        current_traversable_candidate = package_root_traversable
+        # Используем pathlib.Path для корректного разбора пути на сегменты
+        try:
+            path_segments = Path(rel_path_str).parts
+        except TypeError: # Обработка случая, если rel_path_str не может быть преобразован в Path
+            print(f"Пропуск (некорректный формат пути): '{rel_path_str}' не является корректной строкой пути.")
+            continue
+            
+        path_is_valid = True
+
+        if not path_segments or (len(path_segments) == 1 and path_segments[0] == '.'): # Пустой путь или "."
+            print(f"Пропуск (некорректный путь): Относительный путь '{rel_path_str}' некорректен.")
+            continue
+
+        # Итерация по всем сегментам пути.
+        # current_traversable_candidate в итоге будет указывать на целевой ресурс.
+        for i, segment in enumerate(path_segments):
+            if not segment: # Редкий случай с Path.parts, но для надежности
+                path_is_valid = False 
+                print(f"Пропуск (пустой сегмент): Обнаружен пустой сегмент в пути '{rel_path_str}'.")
+                break
+            
+            current_traversable_candidate = current_traversable_candidate.joinpath(segment)
+            
+            # Если это промежуточный сегмент, он должен быть директорией.
+            if i < len(path_segments) - 1:
+                if not current_traversable_candidate.is_dir():
+                    print(f"Ошибка (не директория): Промежуточный путь '{'/'.join(path_segments[:i+1])}' (часть '{rel_path_str}') не является директорией в пакете '{package_name}'.")
+                    path_is_valid = False
+                    break
+        
+        if not path_is_valid:
+            continue
+
+        # После цикла, current_traversable_candidate указывает на целевой ресурс.
+        # Проверяем, является ли он файлом.
+        if current_traversable_candidate.is_file():
+            found_traversables.append(current_traversable_candidate)
+        else:
+            print(f"Предупреждение (не файл): Ресурс по пути '{rel_path_str}' в пакете '{package_name}' не является файлом (или не существует).")
+
+    if not found_traversables and relative_md_paths:
+        print(f"Ни один из указанных md файлов не был успешно найден как Traversable объект в пакете '{package_name}'.")
+
+    return found_traversables 
 ####################################################################################################
 ####################################################################################################
 ####################################################################################################
 package_data={
         'matplobblib': [
             'nm/theory/htmls/*.html',
-            'nm/theory/lec/*.png'
+            'nm/theory/lec/*.png',
+            'nm/theory/ipynbs/*.md'
             ],
     }
 
@@ -560,4 +712,28 @@ def open_prez(pages: Union[int, List[int]]):
         print('Неправильно предоставленный аргумент: ожидается int или list[int].')
 ####################################################################################################
 THEORY.append(open_prez)
+####################################################################################################
+mds = get_all_packaged_md_files(package_data)
+to_open_dct_md = {}
+
+for i in mds:  
+    to_open_dct_md[i] = get_traversable_for_packaged_mds('matplobblib',['nm/theory/ipynbs/'+i])[0]
+
+    
+to_open_dct_md = dict(sorted(to_open_dct_md.items()))
+####################################################################################################
+def open_md(md_num = None):
+    """Открывает некоторые преобразованные ipynb
+
+    Args:
+        md_num (str, optional): название файла
+    """
+    if md_num:
+        with io.open(to_open_dct_md[md_num], encoding='utf-8', errors='ignore') as f:
+            
+            display.display(display.Markdown(f.read()))
+    else:
+        print(*list(to_open_dct_md.keys()), sep='\n')
+####################################################################################################
+THEORY.append(open_md)
 ####################################################################################################

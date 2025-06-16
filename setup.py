@@ -11,7 +11,8 @@ with open('version.txt','r') as f:
 package_data={
         'matplobblib': [
             'nm/theory/htmls/*.html',
-            'nm/theory/lec/*.png'
+            'nm/theory/lec/*.png',
+            'nm/theory/ipynbs/*.md'
             ],
     }
 
