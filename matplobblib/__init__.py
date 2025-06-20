@@ -6,6 +6,7 @@ submodules = [
     'aisd',
     'ml',
     'nm',
+    'tod'
     ]
 def __dir__():
     return submodules

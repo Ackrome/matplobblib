@@ -8,13 +8,6 @@ def readme():
 with open('version.txt','r') as f:
     version = f.readline()
 
-package_data={
-        'matplobblib': [
-            'nm/theory/htmls/*.html',
-            'nm/theory/lec/*.png',
-            'nm/theory/ipynbs/*.md'
-            ],
-    }
 
 setup(
     name='matplobblib',
@@ -33,7 +26,7 @@ setup(
     ],
     python_requires='>=3.6',
     include_package_data=True,  # Include non-Python files specified in MANIFEST.in or package_data
-    package_data=package_data,
+    # spackage_data=package_data,
     install_requires=[
         "numpy",
         "sympy",
