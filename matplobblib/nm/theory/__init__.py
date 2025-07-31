@@ -1,14 +1,9 @@
 import requests
-import importlib.resources
-from importlib.abc import Traversable # Явный импорт для Traversable
-import pathlib
-from typing import List, Dict, Set,Optional,Union
+from typing import List,Union
 from io import BytesIO
-import io
 from PIL import Image
 import IPython.display as display
 import webbrowser
-from pathlib import Path
 from bs4 import BeautifulSoup
 import tempfile
 
@@ -173,8 +168,8 @@ tags = [h1.get_text(strip=True) for h1 in h1_tags if len(h1.get_text(strip=True)
 
 to_open_dct = dict(sorted(to_open_dct.items()))
 
-to_open_dct['Tanya.html'] = index_html_url
-to_open_dct['index.html'] = Tanya_html_url
+to_open_dct['Tanya.html'] = Tanya_html_url
+to_open_dct['index.html'] = index_html_url
 
 def open_ticket(num = None, to_print = True):
     """
