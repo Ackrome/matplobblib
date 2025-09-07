@@ -6,7 +6,7 @@ def readme():
     return f.read()
 
 with open('version.txt','r') as f:
-    version = f.readline()
+    version = f.read().strip()
 
 
 setup(
