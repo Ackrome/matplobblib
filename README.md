@@ -4,9 +4,11 @@
 
 # matplobblib
 
-[![PyPI version](https://badge.fury.io/py/matplobblib.svg)](https://badge.fury.io/py/matplobblib)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/pypi/pyversions/matplobblib.svg)](https://pypi.org/project/matplobblib/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/matplobblib.svg?label=PyPI%20downloads)](
+https://pypi.org/project/matplobblib/)<br>
+[![PyPI version](https://badge.fury.io/py/matplobblib.svg)](https://badge.fury.io/py/matplobblib)<br>
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)<br>
+[![Python Version](https://img.shields.io/pypi/pyversions/matplobblib.svg)](https://pypi.org/project/matplobblib/)<br>
 
 ## Choose language:
 
