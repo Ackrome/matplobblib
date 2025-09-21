@@ -1,4 +1,3 @@
 include README.md
 include LICENSE.txt
 include icon.png
-include .github\workflows\create-release.yml

@@ -60,5 +60,6 @@ jobs:
 
       - name: Push changes and tag
         run: |
-          git push origin
-          git push origin ${{ steps.bump_version.outputs.new_tag }}
+          # Use a PAT to trigger the publishing workflow
+          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/${{ github.repository }}
+          git push --follow-tags
