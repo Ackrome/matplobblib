@@ -1,0 +1,64 @@
+name: Create New Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type to bump (major, minor, or patch)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+        - patch
+        - minor
+        - major
+
+jobs:
+  bump-version:
+    name: Bump version and create tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Needed to push commits and tags
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          # We need to fetch all history and tags for version calculation
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install semver
+        run: python -m pip install semver
+
+      - name: Bump version
+        id: bump_version
+        run: |
+          VERSION_FILE="matplobblib/__init__.py"
+          CURRENT_VERSION=$(grep -oP "__version__ = ['\"]\K[^'\"]+" $VERSION_FILE)
+          BUMP_TYPE=${{ github.event.inputs.version_type }}
+          NEW_VERSION=$(python -c "import semver; print(semver.bump_${BUMP_TYPE}('$CURRENT_VERSION'))")
+          echo "Current version: $CURRENT_VERSION -> New version: $NEW_VERSION"
+          sed -i "s/__version__ = .*/__version__ = \"$NEW_VERSION\"/" $VERSION_FILE
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Commit and Tag
+        run: |
+          git add matplobblib/__init__.py
+          git commit -m "chore: Bump version to ${{ steps.bump_version.outputs.new_version }}"
+          git tag ${{ steps.bump_version.outputs.new_tag }} -m "Release ${{ steps.bump_version.outputs.new_version }}"
+
+      - name: Push changes and tag
+        run: |
+          git push origin
+          git push origin ${{ steps.bump_version.outputs.new_tag }}
