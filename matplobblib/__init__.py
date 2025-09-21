@@ -1,4 +1,4 @@
-__version__ = "0.3.16"
+__version__ = "0.3.17"
 
 import importlib as _importlib
 from .forall import *
