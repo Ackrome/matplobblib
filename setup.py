@@ -33,22 +33,20 @@ setup(
         "pandas",
         "scipy",
         "pyperclip",
-        "pymupdf",
+        "PyMuPDF",
         "graphviz",
         "statsmodels",
         "fitz",
         "cvxopt",
-        "tools",
         "beautifulsoup4",
         "matplotlib",
         "numba",
+        "tools",
         "frontend",
         "IPython",
         "tqdm",
         "scikit-learn",
-        "scikit-image", 
-    #    "Pillow",  # Required for image processing
-    #    # Add any other dependencies here
+        "scikit-image"
     ],
-    license='LICENSE.txt'
+    license='MIT'
 )
