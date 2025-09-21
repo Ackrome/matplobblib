@@ -18,13 +18,14 @@ jobs:
     name: Bump version and create tag
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to push commits and tags
+      contents: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # We need to fetch all history and tags for version calculation
+          # Use the PAT here to allow the push to trigger other workflows
+          token: ${{ secrets.ACTIONS_PAT }}
           fetch-depth: 0
 
       - name: Configure Git
@@ -52,14 +53,9 @@ jobs:
           echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
           echo "new_tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
 
-      - name: Commit and Tag
+      - name: Commit, Tag, and Push
         run: |
           git add matplobblib/__init__.py
           git commit -m "chore: Bump version to ${{ steps.bump_version.outputs.new_version }}"
-          git tag ${{ steps.bump_version.outputs.new_tag }} -m "Release ${{ steps.bump_version.outputs.new_version }}"
-
-      - name: Push changes and tag
-        run: |
-          # Use a PAT to trigger the publishing workflow
-          git remote set-url origin https://x-access-token:${{ secrets.ACTIONS_PAT }}@github.com/${{ github.repository }}
+          git tag ${{ steps.bump_version.outputs.new_tag }}
           git push --follow-tags
