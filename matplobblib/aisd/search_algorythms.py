@@ -1,6 +1,8 @@
-text2 = '''
-# Быстрая сортировка
-def quick_sort(arr):
+#######################################################################################################################
+# Алгоритмы поиска и сортировки
+#######################################################################################################################
+def AISD_SA_1(arr):
+    """Быстрая сортировка (Quicksort)."""
     if len(arr) <= 1:
         return arr
     else:
@@ -12,10 +14,10 @@ def quick_sort(arr):
                 left.append(arr[i])
             else:
                 right.append(arr[i])
-        return quick_sort(left) + [pivot] + quick_sort(right)
-'''+'abracadabrabibidi' +'''
-# Сортировка выбором
-def selection_sort(arr):
+        return AISD_SA_1(left) + [pivot] + AISD_SA_1(right)
+#######################################################################################################################
+def AISD_SA_2(arr):
+    """Сортировка выбором (Selection Sort)."""
     n = len(arr)
     for i in range(n):
         min_idx = i
@@ -24,9 +26,9 @@ def selection_sort(arr):
                 min_idx = j
         arr[i], arr[min_idx] = arr[min_idx], arr[i]
     return arr
-'''+'abracadabrabibidi' +'''
-# Сортировка вставками
-def insertion_sort(arr):
+#######################################################################################################################
+def AISD_SA_3(arr):
+    """Сортировка вставками (Insertion Sort)."""
     for i in range(1, len(arr)):
         key = arr[i]
         j = i - 1
@@ -35,18 +37,18 @@ def insertion_sort(arr):
             j -= 1
         arr[j + 1] = key
     return arr
-'''+'abracadabrabibidi' +'''
-# Сортировка пузырьком
-def bubble_sort(arr):
+#######################################################################################################################
+def AISD_SA_4(arr):
+    """Сортировка пузырьком (Bubble Sort)."""
     n = len(arr)
     for i in range(n):
         for j in range(n - i - 1):
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j+1], arr[j]
     return arr
-'''+'abracadabrabibidi' +'''
-# Бинарный поиск
-def binary_search(arr, x):
+#######################################################################################################################
+def AISD_SA_5(arr, x):
+    """Бинарный поиск (Binary Search)."""
     low = 0
     high = len(arr) - 1
     while low <= high:
@@ -58,9 +60,9 @@ def binary_search(arr, x):
         else:
             high = mid - 1
     return -1
-'''+'abracadabrabibidi' +'''
-# Шейкерная сортировка
-def cocktail_sort(arr):
+#######################################################################################################################
+def AISD_SA_6(arr):
+    """Шейкерная сортировка (Cocktail Shaker Sort)."""
     n = len(arr)
     start = 0
     end = n - 1
@@ -68,7 +70,7 @@ def cocktail_sort(arr):
     while swapped:
         swapped = False
         for i in range(start, end):
-            if (arr[i] > arr[i + 1]):
+            if arr[i] > arr[i + 1]:
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
         if not swapped:
@@ -76,19 +78,19 @@ def cocktail_sort(arr):
         swapped = False
         end = end - 1
         for i in range(end - 1, start - 1, -1):
-            if (arr[i] > arr[i + 1]):
+            if arr[i] > arr[i + 1]:
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 swapped = True
         start = start + 1
     return arr
-'''+'abracadabrabibidi' +'''
-# Алгоритм расческой
-def comb_sort(arr):
+#######################################################################################################################
+def AISD_SA_7(arr):
+    """Сортировка расческой (Comb Sort)."""
     n = len(arr)
     gap = n
     shrink = 1.3
     swapped = True
-    while swapped:
+    while gap > 1 or swapped:
         gap = int(gap/shrink)
         if gap < 1:
             gap = 1
@@ -100,23 +102,9 @@ def comb_sort(arr):
                 swapped = True
             i += 1
     return arr
-'''+'abracadabrabibidi' +'''
-# Сортировка слиянием
-def merge_sort(arr):
-    if len(arr) <= 1:
-        return arr
-
-    mid = len(arr) // 2
-    left_half = arr[:mid]
-    right_half = arr[mid:]
-
-    left_half = merge_sort(left_half)
-    right_half = merge_sort(right_half)
-
-    return merge(left_half, right_half)
-
-# вспомогательная функция для алгоритма сортировки слиянием
-def merge(left_half, right_half):
+#######################################################################################################################
+def _AISD_SA_8_merge(left_half, right_half):
+    """Вспомогательная функция для сортировки слиянием."""
     result = []
     i = 0
     j = 0
@@ -129,13 +117,27 @@ def merge(left_half, right_half):
             result.append(right_half[j])
             j += 1
 
-    result += left_half[i:]
-    result += right_half[j:]
+    result.extend(left_half[i:])
+    result.extend(right_half[j:])
 
     return result
-'''+'abracadabrabibidi' +'''
-# Сортировка Шелла
-def shell_sort(arr):
+
+def AISD_SA_8(arr):
+    """Сортировка слиянием (Merge Sort)."""
+    if len(arr) <= 1:
+        return arr
+
+    mid = len(arr) // 2
+    left_half = arr[:mid]
+    right_half = arr[mid:]
+
+    left_half = AISD_SA_8(left_half)
+    right_half = AISD_SA_8(right_half)
+
+    return _AISD_SA_8_merge(left_half, right_half)
+#######################################################################################################################
+def AISD_SA_9(arr):
+    """Сортировка Шелла (Shell Sort)."""
     gap = len(arr) // 2
     while gap > 0:
         for i in range(gap, len(arr)):
@@ -147,5 +149,15 @@ def shell_sort(arr):
             arr[j] = temp
         gap //= 2
     return arr
-'''
-
+#######################################################################################################################
+AISD_SA = [
+    AISD_SA_1,
+    AISD_SA_2,
+    AISD_SA_3,
+    AISD_SA_4,
+    AISD_SA_5,
+    AISD_SA_6,
+    AISD_SA_7,
+    AISD_SA_8,
+    AISD_SA_9,
+]

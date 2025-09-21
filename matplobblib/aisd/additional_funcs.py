@@ -1,19 +1,24 @@
-text3 ='''
-# Функция двойного хэширования
-def double_hash_function(self, key):
+from ..forall import *
+from random import shuffle
+from .data_structures import *
+#######################################################################################################################
+# Дополнительные функции для структур данных
+#######################################################################################################################
+def AISD_ADD_1(self, key):
+    """Функция двойного хэширования"""
     return 1 + (hash(key) % (self.size-2))
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения первого четного элемента в стеке
-def find_first_even(stack):
+#######################################################################################################################
+def AISD_ADD_2(stack):
+    """Функция для нахождения первого четного элемента в стеке"""
     current = stack.head
     while current:
         if current.data % 2 == 0:
             return current.data
         current = current.next
     return None
-''' + 'abracadabrabibidi' + '''
-# Альтернативная функция для нахождения первого четного элемента в стеке
-def find_first_even(stack):
+#######################################################################################################################
+def AISD_ADD_3(stack):
+    """Альтернативная функция для нахождения первого четного элемента в стеке"""
     temp_stack = Stack()
     even = None
 
@@ -28,9 +33,9 @@ def find_first_even(stack):
         stack.push(temp_stack.pop())
 
     return even
-''' + 'abracadabrabibidi' + '''
-# Функция для добавления нового элемента в стек после первого нечетного элемента
-def add_after_first_odd(stack, item):
+#######################################################################################################################
+def AISD_ADD_4(stack, item):
+    """Функция для добавления нового элемента в стек после первого нечетного элемента"""
     current = stack.head
     while current:
         if current.data % 2 != 0:
@@ -40,9 +45,9 @@ def add_after_first_odd(stack, item):
             return
         current = current.next
     stack.push(item)
-''' + 'abracadabrabibidi' + '''
-# Функция для проверки сбалансированности скобок в математическом выражении
-def is_balanced(expr):
+#######################################################################################################################
+def AISD_ADD_5(expr):
+    """Функция для проверки сбалансированности скобок в математическом выражении"""
     stack = Stack()
     for char in expr:
         if char in "({[":
@@ -59,9 +64,9 @@ def is_balanced(expr):
             else:
                 return False
     return stack.is_empty()
-''' + 'abracadabrabibidi' + '''
-# Функция для вычисления математических выражений в обратной польской нотации
-def evaluate(expression):
+#######################################################################################################################
+def AISD_ADD_6(expression):
+    """Функция для вычисления математических выражений в обратной польской нотации"""
     stack = Stack()
     for token in expression:
         if token.isdigit():
@@ -79,18 +84,18 @@ def evaluate(expression):
                 result = operand_1 / operand_2
             stack.push(result)
     return stack.pop()
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения первого нечетного элемента очереди
-def find_first_odd(queue):
+#######################################################################################################################
+def AISD_ADD_7(queue):
+    """Функция для нахождения первого нечетного элемента очереди"""
     current = queue.head
     while current:
         if current.data % 2 != 0:
             return current.data
         current = current.next
     return None
-''' + 'abracadabrabibidi' + '''
-# Функция для добавления нового элемента в очередь перед первым четным элементом
-def add_before_first_even(queue, item):
+#######################################################################################################################
+def AISD_ADD_8(queue, item):
+    """Функция для добавления нового элемента в очередь перед первым четным элементом"""
     new_node = Node(item)
     if not queue.head:
         queue.head = new_node
@@ -110,9 +115,9 @@ def add_before_first_even(queue, item):
             current = current.next
         queue.tail.next = new_node
         queue.tail = new_node
-''' + 'abracadabrabibidi' + '''
-# Альтернативная функция для добавления нового элемента в очередь перед первым четным элементом
-def add_before_first_even(queue, data):
+#######################################################################################################################
+def AISD_ADD_9(queue, data):
+    """Альтернативная функция для добавления нового элемента в очередь перед первым четным элементом"""
     temp_queue = Queue()
     even_found = False
 
@@ -125,9 +130,9 @@ def add_before_first_even(queue, data):
 
     while not temp_queue.is_empty():
         queue.enqueue(temp_queue.dequeue())
-''' + 'abracadabrabibidi' + '''
-# Функция для удвоения каждого четного элемента двусвязного списка
-def double_even_nodes(dllist):
+#######################################################################################################################
+def AISD_ADD_10(dllist):
+    """Функция для удвоения каждого четного элемента двусвязного списка"""
     current_node = dllist.head
     while current_node:
         if current_node.data % 2 == 0:
@@ -140,9 +145,9 @@ def double_even_nodes(dllist):
             current_node = new_node.next
         else:
             current_node = current_node.next
-''' + 'abracadabrabibidi' + '''
-# Функция для удаления всех отрицательных элементов из двусвязного списка
-def delete_negative_nodes(dllist):
+#######################################################################################################################
+def AISD_ADD_11(dllist):
+    """Функция для удаления всех отрицательных элементов из двусвязного списка"""
     current_node = dllist.head
     while current_node:
         if current_node.data < 0:
@@ -153,9 +158,9 @@ def delete_negative_nodes(dllist):
             if current_node.next:
                 current_node.next.prev = current_node.prev
         current_node = current_node.next
-''' + 'abracadabrabibidi' + '''
-# Функция, возводящая в квадрат все отрицательные элементы в циклическом двусвязном списке
-def square_negative_values(cdllist):
+#######################################################################################################################
+def AISD_ADD_12(cdllist):
+    """Функция, возводящая в квадрат все отрицательные элементы в циклическом двусвязном списке"""
     current_node = cdllist.head
     while current_node:
         if current_node.data < 0:
@@ -163,9 +168,9 @@ def square_negative_values(cdllist):
         current_node = current_node.next
         if current_node == cdllist.head:
             break
-''' + 'abracadabrabibidi' + '''
-# Функция для удаления всех элементов из циклического двусвязного списка, кратных 5
-def delete_multiples_of_5(cdllist):
+#######################################################################################################################
+def AISD_ADD_13(cdllist):
+    """Функция для удаления всех элементов из циклического двусвязного списка, кратных 5"""
     current_node = cdllist.head
     while current_node:
         if current_node.data % 5 == 0:
@@ -173,9 +178,9 @@ def delete_multiples_of_5(cdllist):
         current_node = current_node.next
         if current_node == cdllist.head:
             break
-''' + 'abracadabrabibidi' + '''
-# Функция для создания случайного дерева заданной глубины (каждый узел имеет два дочерних узла)
-def create_tree(levels):
+#######################################################################################################################
+def AISD_ADD_14(levels):
+    """Функция для создания случайного дерева заданной глубины (каждый узел имеет два дочерних узла)"""
     tree = Tree()
     nodes = 2**(levels+1) - 1
     values = list(range(1,nodes+1))
@@ -191,9 +196,9 @@ def create_tree(levels):
             tree.add_node(value, parent_value)
 
     return tree
-''' + 'abracadabrabibidi' + '''
-# Функция для замены каждого числа в дереве на сумму чисел всех его потомков
-def replace_with_sum_of_children(tree, node=None):
+#######################################################################################################################
+def AISD_ADD_15(tree, node=None):
+    """Функция для замены каждого числа в дереве на сумму чисел всех его потомков"""
     if node is None:
         node = tree.root
     if not node.children:
@@ -201,22 +206,22 @@ def replace_with_sum_of_children(tree, node=None):
     else:
         sum_of_children = 0
         for child in node.children:
-            sum_of_children += replace_with_sum_of_children(tree, child)
+            sum_of_children += AISD_ADD_15(tree, child)
         node.value = sum_of_children
         return sum_of_children
-''' + 'abracadabrabibidi' + '''
-# Функция, удваивающая каждое нечетное число в дереве
-def double_odd_values(tree, node=None):
+#######################################################################################################################
+def AISD_ADD_16(tree, node=None):
+    """Функция, удваивающая каждое нечетное число в дереве"""
     if node is None:
         node = tree.root
     if node.value % 2 == 1:
         node.value *= 2
     for child in node.children:
-        double_odd_values(tree, child)
+        AISD_ADD_16(tree, child)
     return tree
-''' + 'abracadabrabibidi' + '''
-# Функция для определения листьев дерева
-def find_leaves(tree, node=None, leaves=None):
+#######################################################################################################################
+def AISD_ADD_17(tree, node=None, leaves=None):
+    """Функция для определения листьев дерева"""
     if leaves is None:
         leaves = []
     if node is None:
@@ -225,43 +230,43 @@ def find_leaves(tree, node=None, leaves=None):
         leaves.append(node.value)
     else:
         for child in node.children:
-            find_leaves(tree, child, leaves)
+            AISD_ADD_17(tree, child, leaves)
     return leaves
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения количества узлов в бинарном дереве
-def count_nodes(node):
+#######################################################################################################################
+def AISD_ADD_18(node):
+    """Функция для нахождения количества узлов в бинарном дереве"""
     if node is None:
         return 0
-    return 1 + count_nodes(node.left) + count_nodes(node.right)
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения всех узлов, которые являются родительскими для заданного узла в бинарном дереве
-def find_parents(node, target_node):
+    return 1 + AISD_ADD_18(node.left) + AISD_ADD_18(node.right)
+#######################################################################################################################
+def AISD_ADD_19(node, target_node):
+    """Функция для нахождения всех узлов, которые являются родительскими для заданного узла в бинарном дереве"""
     if node is None:
         return []
     if node.left == target_node or node.right == target_node:
         return [node.data]
-    left = find_parents(node.left, target_node)
-    right = find_parents(node.right, target_node)
+    left = AISD_ADD_19(node.left, target_node)
+    right = AISD_ADD_19(node.right, target_node)
     if left:
         return [node.data] + left
     elif right:
         return [node.data] + right
     else:
         return []
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения всех узлов, которые имеют значение больше или равно заданному значению в бинарном дереве
-def find_nodes(node, value):
+#######################################################################################################################
+def AISD_ADD_20(node, value):
+    """Функция для нахождения всех узлов, которые имеют значение больше или равно заданному значению в бинарном дереве"""
     if node is None:
         return []
     result = []
     if node.data >= value:
         result.append(node.data)
-    result += find_nodes(node.left, value)
-    result += find_nodes(node.right, value)
+    result += AISD_ADD_20(node.left, value)
+    result += AISD_ADD_20(node.right, value)
     return result
-''' + 'abracadabrabibidi' + '''
-# Функция для нахождения наиболее часто встречающегося значения в хеш-таблице (по полю species)
-def most_common_species(hash_table):
+#######################################################################################################################
+def AISD_ADD_21(hash_table):
+    """Функция для нахождения наиболее часто встречающегося значения в хеш-таблице (по полю species)"""
     species_count = {}
     for slot in hash_table.table:
         for _, animal in slot:
@@ -270,4 +275,27 @@ def most_common_species(hash_table):
             else:
                 species_count[animal.species] = 1
     return max(species_count, key=species_count.get)
-'''
+#######################################################################################################################
+AISD_ADD = [
+    AISD_ADD_1,
+    AISD_ADD_2,
+    AISD_ADD_3,
+    AISD_ADD_4,
+    AISD_ADD_5,
+    AISD_ADD_6,
+    AISD_ADD_7,
+    AISD_ADD_8,
+    AISD_ADD_9,
+    AISD_ADD_10,
+    AISD_ADD_11,
+    AISD_ADD_12,
+    AISD_ADD_13,
+    AISD_ADD_14,
+    AISD_ADD_15,
+    AISD_ADD_16,
+    AISD_ADD_17,
+    AISD_ADD_18,
+    AISD_ADD_19,
+    AISD_ADD_20,
+    AISD_ADD_21,
+]

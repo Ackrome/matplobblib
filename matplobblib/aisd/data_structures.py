@@ -1,23 +1,45 @@
-text1 = '''
-# Стек через связный список
+#######################################################################################################################
+# Базовые структуры данных
+#######################################################################################################################
+
+# Узел для односвязных списков (Стек, Очередь)
 class Node:
+    """Узел для односвязного списка."""
     def __init__(self, data):
         self.data = data
         self.next = None
 
+# Стек через связный список
 class Stack:
+    """Реализация стека на основе односвязного списка."""
     def __init__(self):
+        """Инициализирует пустой стек."""
         self.head = None
 
     def is_empty(self):
+        """Проверяет, пуст ли стек.
+
+        Returns:
+            bool: True, если стек пуст, иначе False.
+        """
         return self.head is None
 
     def push(self, item):
+        """Добавляет элемент на вершину стека.
+
+        Args:
+            item: Элемент для добавления.
+        """
         new_node = Node(item)
         new_node.next = self.head
         self.head = new_node
 
     def pop(self):
+        """Удаляет и возвращает элемент с вершины стека.
+
+        Returns:
+            Элемент с вершины стека или None, если стек пуст.
+        """
         if self.is_empty():
             return None
         else:
@@ -26,12 +48,18 @@ class Stack:
             return popped_item
 
     def peek(self):
+        """Возвращает элемент с вершины стека, не удаляя его.
+
+        Returns:
+            Элемент с вершины стека или None, если стек пуст.
+        """
         if self.is_empty():
             return None
         else:
             return self.head.data
 
     def __str__(self):
+        """Возвращает строковое представление стека."""
         current = self.head
         stack_str = ""
         while current:
@@ -40,20 +68,27 @@ class Stack:
         return stack_str.rstrip(" → ")
 
 # Очередь через связный список
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
-
 class Queue:
+    """Реализация очереди на основе односвязного списка."""
     def __init__(self):
+        """Инициализирует пустую очередь."""
         self.head = None
         self.tail = None
 
     def is_empty(self):
+        """Проверяет, пуста ли очередь.
+
+        Returns:
+            bool: True, если очередь пуста, иначе False.
+        """
         return not bool(self.head)
 
     def enqueue(self, data):
+        """Добавляет элемент в конец очереди.
+
+        Args:
+            data: Элемент для добавления.
+        """
         new_node = Node(data)
         if not self.head:
             self.head = new_node
@@ -63,6 +98,11 @@ class Queue:
             self.tail = new_node
 
     def dequeue(self):
+        """Удаляет и возвращает элемент из начала очереди.
+
+        Returns:
+            Элемент из начала очереди.
+        """
         data = self.head.data
         self.head = self.head.next
         if not self.head:
@@ -70,6 +110,7 @@ class Queue:
         return data
 
     def __len__(self):
+        """Возвращает количество элементов в очереди."""
         count = 0
         current = self.head
         while current:
@@ -78,26 +119,36 @@ class Queue:
         return count
 
     def __str__(self):
+        """Возвращает строковое представление очереди."""
         current = self.head
         queue_str = ""
         while current:
             queue_str += " → " + str(current.data)
             current = current.next
         return queue_str.lstrip(" → ")
-'''+'abracadabrabibidi' +'''
-# Двусвязнйы список
-class Node:
+
+# Узел для двусвязных списков
+class DLLNode:
+    """Узел для двусвязного списка."""
     def __init__(self, data):
         self.data = data
         self.prev = None
         self.next = None
 
+# Двусвязный список
 class DoublyLinkedList:
+    """Реализация двусвязного списка."""
     def __init__(self):
+        """Инициализирует пустой двусвязный список."""
         self.head = None
 
     def add_node(self, data):
-        new_node = Node(data)
+        """Добавляет узел в конец списка.
+
+        Args:
+            data: Данные для нового узла.
+        """
+        new_node = DLLNode(data)
         if self.head is None:
             self.head = new_node
         else:
@@ -108,6 +159,11 @@ class DoublyLinkedList:
             new_node.prev = current
 
     def delete_node(self, data):
+        """Удаляет узел с заданными данными.
+
+        Args:
+            data: Данные узла для удаления.
+        """
         if self.head is None:
             return
         elif self.head.data == data:
@@ -128,6 +184,7 @@ class DoublyLinkedList:
                     current.next.prev = current
 
     def __len__(self):
+        """Возвращает количество элементов в списке."""
         count = 0
         current = self.head
         while current:
@@ -136,29 +193,31 @@ class DoublyLinkedList:
         return count
 
     def __str__(self):
+        """Возвращает строковое представление списка."""
         if self.head == None:
-            return f"Двусвязный список пустой"
+            return "Двусвязный список пустой"
         current = self.head
         dllist_str = ""
         while current:
             dllist_str += " ⇄ " + str(current.data)
             current = current.next
         return dllist_str.lstrip(" ⇄ ")
-'''+'abracadabrabibidi' +'''
-# Цикличный двусвязный список
-class Node:
-    def __init__(self, data=None):
-        self.data = data
-        self.prev = None
-        self.next = None
 
+# Циклический двусвязный список
 class CircularDoublyLinkedList:
+    """Реализация циклического двусвязного списка."""
     def __init__(self):
+        """Инициализирует пустой циклический двусвязный список."""
         self.head = None
         self.tail = None
 
     def append(self, data):
-        new_node = Node(data)
+        """Добавляет элемент в конец списка.
+
+        Args:
+            data: Элемент для добавления.
+        """
+        new_node = DLLNode(data)
         if self.head is None:
             self.head = new_node
             self.tail = new_node
@@ -172,7 +231,12 @@ class CircularDoublyLinkedList:
             self.tail = new_node
 
     def prepend(self, data):
-        new_node = Node(data)
+        """Добавляет элемент в начало списка.
+
+        Args:
+            data: Элемент для добавления.
+        """
+        new_node = DLLNode(data)
         if self.head is None:
             self.head = new_node
             self.tail = new_node
@@ -186,15 +250,26 @@ class CircularDoublyLinkedList:
             self.head = new_node
 
     def delete(self, key):
+        """Удаляет узел по значению.
+
+        Args:
+            key: Значение узла для удаления.
+        """
+        if self.head is None:
+            return
+
         current_node = self.head
-        while current_node:
+        while True:
             if current_node.data == key:
-                if current_node == self.head:
-                    self.head = current_node.next
+                if self.head == self.tail:
+                    self.head = None
+                    self.tail = None
+                elif current_node == self.head:
+                    self.head = self.head.next
                     self.tail.next = self.head
                     self.head.prev = self.tail
                 elif current_node == self.tail:
-                    self.tail = current_node.prev
+                    self.tail = self.tail.prev
                     self.head.prev = self.tail
                     self.tail.next = self.head
                 else:
@@ -202,11 +277,16 @@ class CircularDoublyLinkedList:
                     current_node.next.prev = current_node.prev
                 return
             current_node = current_node.next
+            if current_node == self.head:
+                break
 
     def __len__(self):
+        """Возвращает количество элементов в списке."""
+        if not self.head:
+            return 0
         count = 0
         current_node = self.head
-        while current_node:
+        while True:
             count += 1
             current_node = current_node.next
             if current_node == self.head:
@@ -214,27 +294,44 @@ class CircularDoublyLinkedList:
         return count
 
     def __str__(self):
+        """Возвращает строковое представление списка."""
+        if not self.head:
+            return "⇄"
         cdllist_str = ""
         current_node = self.head
-        while current_node:
+        while True:
             cdllist_str += str(current_node.data) + " ⇄ "
             current_node = current_node.next
             if current_node == self.head:
                 break
-        return " ⇄ " + cdllist_str
-'''+'abracadabrabibidi' +'''
-# Дерево
-class Node:
+        return "⇄ " + cdllist_str
+
+# Узел для дерева
+class TreeNode:
+    """Узел для общего дерева."""
     def __init__(self, value):
         self.value = value
         self.children = []
 
+# Дерево
 class Tree:
+    """Реализация общего дерева."""
     def __init__(self):
+        """Инициализирует пустое дерево."""
         self.root = None
 
     def add_node(self, value, parent_value=None):
-        node = Node(value)
+        """Добавляет узел в дерево.
+
+        Args:
+            value: Значение нового узла.
+            parent_value (optional): Значение родительского узла. Defaults to None.
+        
+        Raises:
+            ValueError: Если корень уже существует при добавлении нового корня.
+            ValueError: Если родительский узел не найден.
+        """
+        node = TreeNode(value)
         if parent_value is None:
             if self.root is not None:
                 raise ValueError("У дерева уже есть корень")
@@ -246,6 +343,14 @@ class Tree:
             parent_node.children.append(node)
 
     def find_node(self, value):
+        """Находит узел по значению.
+
+        Args:
+            value: Значение для поиска.
+
+        Returns:
+            TreeNode: Найденный узел или None.
+        """
         return self._find_node(value, self.root)
 
     def _find_node(self, value, node):
@@ -260,6 +365,9 @@ class Tree:
         return None
 
     def __str__(self):
+        """Возвращает строковое представление дерева."""
+        if self.root is None:
+            return "Дерево пустое"
         return self._str_tree(self.root)
 
     def _str_tree(self, node, indent=0):
@@ -267,20 +375,29 @@ class Tree:
         for child in node.children:
             result += self._str_tree(child, indent + 2)
         return result
-'''+'abracadabrabibidi' +'''
-# Бинарное дерево
-class Node:
+
+# Узел для бинарного дерева
+class BinaryTreeNode:
+    """Узел для бинарного дерева."""
     def __init__(self, data):
         self.data = data
         self.left = None
         self.right = None
 
+# Бинарное дерево
 class BinaryTree:
+    """Реализация бинарного дерева поиска."""
     def __init__(self):
+        """Инициализирует пустое бинарное дерево."""
         self.root = None
 
     def insert(self, data):
-        new_node = Node(data)
+        """Вставляет элемент в дерево.
+
+        Args:
+            data: Элемент для вставки.
+        """
+        new_node = BinaryTreeNode(data)
         if self.root is None:
             self.root = new_node
         else:
@@ -300,6 +417,14 @@ class BinaryTree:
                         current = current.right
 
     def search(self, data):
+        """Ищет элемент в дереве.
+
+        Args:
+            data: Элемент для поиска.
+
+        Returns:
+            bool: True, если элемент найден, иначе False.
+        """
         current = self.root
         while current is not None:
             if data == current.data:
@@ -311,6 +436,11 @@ class BinaryTree:
         return False
 
     def delete(self, data):
+        """Удаляет элемент из дерева.
+
+        Args:
+            data: Элемент для удаления.
+        """
         if self.root is not None:
             self.root = self._delete(data, self.root)
 
@@ -340,9 +470,14 @@ class BinaryTree:
         return node
 
     def __str__(self):
+        """Возвращает строковое представление дерева для вывода в консоль."""
+        if self.root is None:
+            return "Бинарное дерево пустое"
         return '\n'.join(self._display(self.root)[0])
 
     def _display(self, node):
+        if node is None:
+            return [], 0, 0, 0
         if node.right is None and node.left is None:
             line = str(node.data)
             width = len(line)
@@ -381,17 +516,37 @@ class BinaryTree:
         zipped_lines = zip(left, right)
         lines = [first_line, second_line] + [a + u*' ' + b for a, b in zipped_lines]
         return lines, n + m + u, max(p, q) + 2, n + u // 2
-'''+'abracadabrabibidi' +'''
-# Хэш-таблица методом цеполк (когда данные с одинаковыми ключами хранятся в виде списка)
-class HashTable:
+
+# Хэш-таблица методом цепочек
+class HashTableChaining:
+    """Реализация хэш-таблицы методом цепочек."""
     def __init__(self, size):
+        """Инициализирует хэш-таблицу.
+
+        Args:
+            size (int): Размер таблицы.
+        """
         self.size = size
         self.table = [[] for _ in range(self.size)]
 
     def hash_function(self, key):
+        """Вычисляет хэш для ключа.
+
+        Args:
+            key: Ключ.
+
+        Returns:
+            int: Хэш-значение.
+        """
         return hash(key) % self.size
 
     def insert(self, key, value):
+        """Вставляет пару ключ-значение.
+
+        Args:
+            key: Ключ.
+            value: Значение.
+        """
         slot = self.hash_function(key)
         for pair in self.table[slot]:
             if pair[0] == key:
@@ -400,15 +555,29 @@ class HashTable:
         self.table[slot].append([key, value])
 
     def find(self, key):
+        """Находит значение по ключу.
+
+        Args:
+            key: Ключ для поиска.
+
+        Returns:
+            Значение, связанное с ключом, или None, если ключ не найден.
+        """
         slot = self.hash_function(key)
         for pair in self.table[slot]:
             if pair[0] == key:
                 return pair[1]
         return None
-'''+'abracadabrabibidi' +'''
+
 # Хэш-таблица методом открытой адресации
-class HashTable:
+class HashTableOpenAddressing:
+    """Реализация хэш-таблицы методом открытой адресации (линейное пробирование)."""
     def __init__(self, size):
+        """Инициализирует хэш-таблицу.
+
+        Args:
+            size (int): Размер таблицы.
+        """
         self.size = size
         self.table = [None] * size
 
@@ -416,42 +585,68 @@ class HashTable:
         return hash(key) % self.size
 
     def insert(self, key, value):
+        """Вставляет пару ключ-значение.
+
+        Args:
+            key: Ключ.
+            value: Значение.
+        """
         index = self.hash_function(key)
-        while self.table[index]:
+        while self.table[index] is not None:
             if self.table[index][0] == key:
                 break
             index = (index + 1) % self.size
         self.table[index] = (key, value)
 
     def find(self, key):
+        """Находит значение по ключу.
+
+        Args:
+            key: Ключ для поиска.
+
+        Returns:
+            Значение, связанное с ключом, или None, если ключ не найден.
+        """
         index = self.hash_function(key)
-        while self.table[index]:
+        while self.table[index] is not None:
             if self.table[index][0] == key:
                 return self.table[index][1]
             index = (index + 1) % self.size
         return None
-'''+'abracadabrabibidi' +'''
-# Двоичная куча
-class BinaryHeap():
 
+# Двоичная куча
+class BinaryHeap:
+    """Реализация двоичной кучи (min-heap или max-heap)."""
     def __init__(self, type='max'):
-        #type can be 'max' or 'min'
-        
+        """Инициализирует кучу.
+
+        Args:
+            type (str, optional): Тип кучи ('max' или 'min'). Defaults to 'max'.
+        """
         self.type = type
         self.data = []
-    
-    
+
     def buildHeap(self, arr):
-        data = arr[::]
+        """Строит кучу из массива.
+
+        Args:
+            arr (list): Массив для построения кучи.
+        """
+        data = arr[:]
         n = len(data)
-        for i in range(n, -1, -1):
-            data = self.heapify(data, n, i)
-        
+        for i in range(n // 2 - 1, -1, -1):
+            self.heapify(data, n, i)
         self.data = data
 
-    
     def heapify(self, arr, n, i):
-        f = True if self.type=='max' else False
+        """Поддерживает свойство кучи для поддерева с корнем в узле i.
+
+        Args:
+            arr (list): Массив.
+            n (int): Размер кучи.
+            i (int): Индекс корня поддерева.
+        """
+        f = True if self.type == 'max' else False
         extra = i
         l = 2 * i + 1
         r = 2 * i + 2
@@ -464,101 +659,115 @@ class BinaryHeap():
 
         if extra != i:
             arr[i], arr[extra] = arr[extra], arr[i]
+            self.heapify(arr, n, extra)
 
-            return self.heapify(arr, n, extra)
-        else:
-            return arr
-    
-    
-    def insert(self, data):
-        self.data.append(data)
-        self.buildHeap(self.data)
-        
-    
+    def insert(self, item):
+        """Вставляет новый элемент в кучу.
+
+        Args:
+            item: Элемент для вставки.
+        """
+        self.data.append(item)
+        i = len(self.data) - 1
+        parent = (i - 1) // 2
+        f = True if self.type == 'max' else False
+        while i > 0 and ((self.data[parent] < self.data[i] and f) or (self.data[parent] > self.data[i] and not f)):
+            self.data[parent], self.data[i] = self.data[i], self.data[parent]
+            i = parent
+            parent = (i - 1) // 2
+
     def sorted(self) -> list:
-        data = self.data[::]
-        n = len(data)
+        """Возвращает отсортированный массив (Heapsort).
 
+        Returns:
+            list: Отсортированный список элементов.
+        """
+        temp_arr = self.data[:]
+        n = len(temp_arr)
+        for i in range(n // 2 - 1, -1, -1):
+            self.heapify(temp_arr, n, i)
         for i in range(n-1, 0, -1):
-            data[i], data[0] = data[0], data[i]
-            data = self.heapify(data, i, 0)
-            
-        return data
+            temp_arr[i], temp_arr[0] = temp_arr[0], temp_arr[i]
+            self.heapify(temp_arr, i, 0)
+        if self.type == 'max':
+            return temp_arr
+        else:
+            return temp_arr[::-1]
 
-    
     def del_root(self):
-        root = self.data.pop(0)
+        """Удаляет и возвращает корневой элемент.
+
+        Returns:
+            Корневой элемент.
+        """
+        if not self.data:
+            return None
+        root = self.data[0]
+        last_val = self.data.pop()
+        if self.data:
+            self.data[0] = last_val
+            self.heapify(self.data, len(self.data), 0)
         return root
-''' + 'abracadabrabibidi' + '''
+
 # Базовый декоратор
 def decorator_name(func, decorator_args=None):
+    """Пример базового декоратора.
+
+    Args:
+        func (function): Функция для декорирования.
+        decorator_args (optional): Аргументы для декоратора. Defaults to None.
+
+    Returns:
+        function: обернутая функция.
+    """
     def wrapper(*args, **kwargs): # Параметры, которые хотите передать в функцию func
-        
         print('BEFORE') # То, что выполнится ДО функции
         rez = func(*args, **kwargs)
         print('AFTER') # То, что выполнится ПОСЛЕ функции
-        
         return rez
-        
     return wrapper
-''' + 'abracadabrabibidi' + '''
+
 # Очередь с приоритетом
 class PriorityQueue:
+    """Реализация очереди с приоритетом на основе двоичной кучи."""
     def __init__(self):
-        self.heap = BinaryHeap()
+        """Инициализирует пустую очередь с приоритетом (min-priority)."""
+        self.heap = BinaryHeap(type='min')
 
     def enqueue(self, item, priority):
+        """Добавляет элемент с приоритетом в очередь.
+
+        Args:
+            item: Элемент.
+            priority: Приоритет элемента (меньшее значение - выше приоритет).
+        """
         self.heap.insert((priority, item))
 
     def dequeue(self):
-        return self.heap.delMin()[1]
+        """Удаляет и возвращает элемент с наивысшим приоритетом.
+
+        Returns:
+            Элемент с наивысшим приоритетом.
+        """
+        priority, item = self.heap.del_root()
+        return item
 
     def __str__(self):
-        return self.heap.__str__()
-''' + 'abracadabrabibidi' + '''
-# Очередь через двусвязный список
-class Node:
-    def __init__(self, data):
-        self.data = data
-        self.next = None
+        """Возвращает строковое представление очереди."""
+        return str(self.heap.data)
 
-class Queue:
-    def __init__(self):
-        self.head = None
-        self.tail = None
-
-    def is_empty(self):
-        return not bool(self.head)
-
-    def enqueue(self, data):
-        new_node = Node(data)
-        if not self.head:
-            self.head = new_node
-            self.tail = new_node
-        else:
-            self.tail.next = new_node
-            self.tail = new_node
-
-    def dequeue(self):
-        data = self.head.data
-        self.head = self.head.next
-        if not self.head:
-            self.tail = None
-        return data
-
-    def __len__(self):
-        count = 0
-        current = self.head
-        while current:
-            count += 1
-            current = current.next
-        return count
-
-    def __str__(self):
-        current = self.head
-        queue_str = ""
-        while current:
-            queue_str += " → " + str(current.data)
-            current = current.next
-        return queue_str.lstrip(" → ")
-'''
+#######################################################################################################################
+# Список классов структур данных
+#######################################################################################################################
+AISD_DS = [
+    Stack,
+    Queue,
+    DoublyLinkedList,
+    CircularDoublyLinkedList,
+    Tree,
+    BinaryTree,
+    HashTableChaining,
+    HashTableOpenAddressing,
+    BinaryHeap,
+    PriorityQueue,
+]
