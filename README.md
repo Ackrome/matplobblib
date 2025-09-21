@@ -80,7 +80,6 @@ Main project dependencies:
 * pymupdf
 * graphviz
 * statsmodels
-* fitz
 * cvxopt
 
 A complete list of dependencies can be found in the `setup.py` file.
