@@ -1,0 +1,123 @@
+name: Create and Publish Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_type:
+        description: 'Version type to bump (major, minor, or patch)'
+        required: true
+        default: 'patch'
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+
+jobs:
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install .
+          pip install pytest
+      - name: Run tests with pytest
+        run: pytest
+
+  build:
+    name: Bump version and Build
+    needs: test
+    runs-on: ubuntu-latest
+    outputs:
+      new_version: ${{ steps.build_version.outputs.new_version }}
+      new_tag: ${{ steps.build_version.outputs.new_tag }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip build semver
+      - name: Bump version and build package
+        id: build_version
+        run: |
+          VERSION_FILE="matplobblib/__init__.py"
+          CURRENT_VERSION=$(grep -oP "__version__ = ['\"]\K[^'\"]+" $VERSION_FILE)
+          BUMP_TYPE=${{ github.event.inputs.version_type }}
+          NEW_VERSION=$(python -c "import semver; print(semver.bump_${BUMP_TYPE}('$CURRENT_VERSION'))")
+          echo "Bumping version from $CURRENT_VERSION to $NEW_VERSION"
+          sed -i "s/__version__ = .*/__version__ = \"$NEW_VERSION\"/" $VERSION_FILE
+          python -m build
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "new_tag=v$NEW_VERSION" >> $GITHUB_OUTPUT
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+      - name: Upload version file artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: version-file
+          path: matplobblib/__init__.py
+
+  publish-pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for trusted publishing
+    environment:
+      name: pypi
+      url: https://pypi.org/p/matplobblib
+    steps:
+      - name: Download package artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: python-package
+          path: dist
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+  publish-github:
+    name: Publish to GitHub
+    needs: [build, publish-pypi] # Depends on build for outputs and pypi for success
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Required to push tags and create a release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Download version file artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: version-file
+          path: matplobblib
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Commit, Tag, and Push
+        run: |
+          git add matplobblib/__init__.py
+          git commit -m "chore: Bump version to ${{ needs.build.outputs.new_version }}"
+          git tag ${{ needs.build.outputs.new_tag }}
+          git push --follow-tags
+      - name: Create GitHub Release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ needs.build.outputs.new_tag }}
+          release_name: Release ${{ needs.build.outputs.new_version }}
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
