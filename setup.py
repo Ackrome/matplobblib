@@ -1,17 +1,24 @@
 from setuptools import setup, find_packages
+import re
+import os
 
 
 def readme():
   with open('README.md', 'r', encoding='utf-8') as f:
     return f.read()
 
-with open('version.txt','r') as f:
-    version = f.read().strip()
+def get_version():
+    with open(os.path.join('matplobblib', '__init__.py'), 'r') as f:
+        version_file_content = f.read()
+    version_match = re.search(r"^__version__ = ['\"]([^'\"]*)['\"]", version_file_content, re.M)
+    if version_match:
+        return version_match.group(1)
+    raise RuntimeError("Unable to find version string.")
 
 
 setup(
     name='matplobblib',
-    version=version,
+    version=get_version(),
     packages=find_packages(),
     description='Just a library for some subjects',
     author='Ackrome',
@@ -36,17 +43,16 @@ setup(
         "PyMuPDF",
         "graphviz",
         "statsmodels",
-        "fitz",
         "cvxopt",
         "beautifulsoup4",
         "matplotlib",
         "numba",
-        "tools",
-        "frontend",
         "IPython",
         "tqdm",
         "scikit-learn",
-        "scikit-image"
+        "scikit-image",
+        "requests",
+        "Pillow"
     ],
     license='MIT'
 )
