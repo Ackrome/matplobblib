@@ -1,5 +1,5 @@
 <center>
-    <img src="https://github.com/Ackrome/matplobblib/blob/master/image/notes/icon.svg" alt="icon" width="400" />
+    <img src="https://github.com/Ackrome/matplobblib/blob/master/image/icons/icon.svg" alt="icon" width="400" />
 </center>
 
 # matplobblib
