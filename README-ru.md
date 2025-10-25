@@ -1,14 +1,15 @@
-<center>
-    <img src="https://github.com/Ackrome/matplobblib/blob/master/image/icons/icon.svg" alt="icon" width="400" />
-</center>
-
-# matplobblib
-
-Замечательная библиотека разных структур для реализации на языке python
-
-[![PyPI version](https://badge.fury.io/py/matplobblib.svg)](https://badge.fury.io/py/matplobblib)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python Version](https://img.shields.io/pypi/pyversions/matplobblib.svg)](https://pypi.org/project/matplobblib/)
+<div align="center">
+<img src="image/icons/icon.png" alt="matplobblib logo" width="400" />
+<h1>matplobblib</h1>
+<strong>Комплексная образовательная библиотека Python для численных методов, машинного обучения и многого другого с реализациями с нуля и автоматизированными рабочими процессами выпуска.</strong>
+<br></br>
+<body align="center">
+    <img src="https://badge.fury.io/py/matplobblib.svg">
+    <img src="https://img.shields.io/pypi/dm/matplobblib.svg?label=PyPI%20downloads">
+    <img src="https://img.shields.io/pypi/pyversions/matplobblib.svg">
+    <img src="https://img.shields.io/pypi/l/matplobblib.svg">
+</body>
+</div>
 
 ## Выберите язык:
 
