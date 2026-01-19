@@ -13,18 +13,22 @@ def plot_classification_2d(
     legend_kwargs=None
 ):
     """
-    Визуализация классификации в 2D пространстве с плотностями
-    
-    Параметры:
-        X (array-like): Матрица признаков
-        y (array-like): Вектор меток классов
-        model: Обученная модель с методом predict_proba или decision_function
-        feature_indices (tuple): Индексы двух признаков для визуализации
-        feature_names (list): Названия признаков (для подписей)
-        class_names (list): Названия классов (для легенды)
-        cmap (str): Цветовая карта для контуров
-        scatter_kwargs (dict): Параметры для точек (размер, прозрачность)
-        legend_kwargs (dict): Параметры легенды
+    Визуализирует результаты 2D классификации с границами принятия решений и распределениями признаков.
+
+    Args:
+        X (array-like): Матрица признаков.
+        y (array-like): Вектор меток классов.
+        model: Обученная модель классификации, имеющая метод `predict_proba` или `decision_function`.
+        feature_indices (tuple, optional): Индексы двух признаков для визуализации.
+            Defaults to (0, 1).
+        feature_names (list, optional): Названия признаков для подписей осей.
+            Defaults to None.
+        class_names (list, optional): Названия классов для легенды. Defaults to None.
+        cmap (str, optional): Цветовая карта для областей решений. Defaults to 'viridis'.
+        scatter_kwargs (dict, optional): Дополнительные аргументы для `plt.scatter`.
+            Defaults to None.
+        legend_kwargs (dict, optional): Дополнительные аргументы для `plt.legend`.
+            Defaults to None.
     """
     # Проверка корректности feature_names
     if feature_names is not None:

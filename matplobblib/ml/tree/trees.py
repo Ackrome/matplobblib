@@ -8,27 +8,30 @@ import matplotlib.pyplot as plt
 # Реализация дерева решений
 #######################################################################################################################
 class DecisionTree:
-    """Класс дерева решений
+    """
+    Реализация дерева решений для задач классификации и регрессии.
     """
     def __init__(self,model_type = 'Classifier', max_depth=None, min_samples_leaf=1, max_leaves=None, criterion="gini", check_k_threshold=0, min_gain=0.01, class_weights=None, chek_k_features=0):
         """
-        Класс дерева решений
-        --------------------------
-        Params:
-        :param model_type: `'Classifier'` or `'Regressor'`
-        :param max_depth: Максимальная глубина дерева
-        :param min_samples_leaf: Минимальное количество объектов в листе
-        :param max_leaves: Максимальное количество листьев
-        :param criterion: Критерий для оценки качества разбиения из [`gini`,`entropy`,`misclassification`,`mae`,`mse`]
-            - gini - критерий Жини
-            - entropy - критерий энтропии
-            - misclassification - критерий ошибок классификации
-            - mae - критерий средней абсолютной ошибки
-            - mse - критерий средней квадратичной ошибки
-        :param check_k_threshold: Параметр для оценки качества разбиения<br>- k=0 - проверка на всех уникальных объектах в листе<br> - k>=1 - проверка на k уникальных объектах в листе.
-        :param min_gain: Минимальное улучшение качества разбиения.
-        :param class_weights: Словарь вида {class: weight}, определяющий веса для классов.
-        :param chek_k_features: Сколько случайных столбцов проверять при каждом разделении.
+        Инициализация дерева решений.
+
+        Args:
+            model_type (str, optional): Тип модели: 'Classifier' или 'Regressor'. Defaults to 'Classifier'.
+            max_depth (int, optional): Максимальная глубина дерева. Defaults to None.
+            min_samples_leaf (int, optional): Минимальное количество объектов в листе. Defaults to 1.
+            max_leaves (int, optional): Максимальное количество листьев. Defaults to None.
+            criterion (str, optional): Критерий для оценки качества разбиения.
+                Для классификации: 'gini', 'entropy', 'misclassification'.
+                Для регрессии: 'mse', 'mae'.
+                Defaults to "gini".
+            check_k_threshold (int, optional): Количество порогов для проверки при поиске лучшего разбиения.
+                Если 0, проверяются все уникальные значения. Defaults to 0.
+            min_gain (float, optional): Минимальное улучшение качества разбиения для совершения разделения.
+                Defaults to 0.01.
+            class_weights (dict, optional): Веса для классов в формате {class: weight}.
+                Используется только для классификации. Defaults to None.
+            chek_k_features (int, optional): Количество случайных признаков для проверки при каждом разделении.
+                Если 0, используются все признаки. Defaults to 0.
         """
         self.model_type = model_type
         self.max_depth = max_depth
@@ -64,13 +67,11 @@ class DecisionTree:
         
     def fit(self, X, y):
         """
-        Обучает модель дерева решений на заданных данных.
+        Обучение модели дерева решений на заданных данных.
 
         Args:
-            X (array-like): Матрица признаков, где каждая строка соответствует одному образцу,
-                            а каждый столбец - одному признаку.
-            y (array-like): Вектор целевых значений, где каждый элемент соответствует целевому 
-                            значению для соответствующей строки в X.
+            X (np.ndarray): Матрица признаков формы (n_samples, n_features).
+            y (np.ndarray): Вектор целевых значений формы (n_samples,).
 
         Построение дерева начинается с вызова рекурсивной функции `build_tree`.
         """
@@ -93,18 +94,16 @@ class DecisionTree:
 
     def build_tree(self, X, y, depth=0):
         """
-        Построение дерева решений
-        --------------------------
-        
-        Рекурсивная функция, которая строит дерево решений.
+        Рекурсивно строит дерево решений.
         
         Args:
-            X (array-like): Матрица признаков.
-            y (array-like): Вектор целевых значений.
+            X (np.ndarray): Матрица признаков для текущего узла.
+            y (np.ndarray): Вектор целевых значений для текущего узла.
             depth (int, optional): Текущая глубина дерева. Defaults to 0.
         
         Returns:
-            dict: Словарь, содержащий информацию о текущей вершине дерева.
+            dict or object: Словарь, представляющий узел дерева (если не лист),
+                            или значение листа (класс/среднее).
         """
         # Условие остановки рекурсии
         if (
@@ -132,17 +131,15 @@ class DecisionTree:
         return {"feature": feature, "threshold": threshold, "left": left_child, "right": right_child}
 
     def best_split(self, X, y):
-        # Найти лучшее разбиение
         """
-        Вычисляет лучшее разбиение данных, чтобы минимизировать или максимизировать указанный критерий.
+        Находит лучшее разбиение данных по одному из признаков.
 
         Args:
-            X (array-like): Матрица признаков, где каждая строка представляет объект, а каждый столбец - признак.
-                            
-            y (array-like): Целевые значения, соответствующие каждому объекту в X.
+            X (np.ndarray): Матрица признаков.
+            y (np.ndarray): Вектор целевых значений.
 
         Returns:
-            tuple: Кортеж, содержащий индекс лучшего признака и значение порога для разбиения данных.
+            tuple: (индекс лучшего признака, значение порога).
         """
 
         best_feature, best_threshold = None, None
@@ -199,11 +196,11 @@ class DecisionTree:
         Вычисляет критерий для разделения.
         
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Вектор целевых значений для левого поддерева.
+            right_y (np.ndarray): Вектор целевых значений для правого поддерева.
         
         Returns:
-            numerical: Критерий для разделения.
+            float: Значение метрики для данного разделения.
         """
         if self.criterion == "gini":
             return self.gini_index(left_y, right_y)
@@ -219,14 +216,14 @@ class DecisionTree:
     
     def gini_index(self, left_y, right_y):
         """
-        Вычисляет критерий Джини для измерения неоднородности
+        Вычисляет взвешенный индекс Джини для разделения.
 
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Целевые значения левого поддерева.
+            right_y (np.ndarray): Целевые значения правого поддерева.
 
         Returns:
-            numerical: Критерий Джини.
+            float: Индекс Джини.
         """
         def gini(y):
             counts = Counter(y)
@@ -241,14 +238,14 @@ class DecisionTree:
 
     def entropy_index(self, left_y, right_y):
         """
-        Вычисляет энтропийный индекс для измерения неоднородности.
+        Вычисляет взвешенную энтропию для разделения.
 
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Целевые значения левого поддерева.
+            right_y (np.ndarray): Целевые значения правого поддерева.
 
         Returns:
-            numerical: Энтропийный индекс.
+            float: Энтропия.
         """
         def entropy(y):
             counts = Counter(y)
@@ -265,14 +262,14 @@ class DecisionTree:
 
     def misclassification_error(self, left_y, right_y):
         """
-        Вычисляет критерий ошибки классификации (misclassification error)
+        Вычисляет взвешенную ошибку классификации для разделения.
 
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Целевые значения левого поддерева.
+            right_y (np.ndarray): Целевые значения правого поддерева.
 
         Returns:
-            numerical: Критерий ошибки классификации.
+            float: Ошибка классификации.
         """
         def misclass_error(y):
             # Считаем количество объектов каждого класса
@@ -293,14 +290,14 @@ class DecisionTree:
 
     def mean_absolute_error(self, left_y, right_y):
         """
-        Вычисляет критерий средней абсолютной ошибки (MAE)
+        Вычисляет взвешенную среднюю абсолютную ошибку (MAE) для разделения.
 
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Целевые значения левого поддерева.
+            right_y (np.ndarray): Целевые значения правого поддерева.
 
         Returns:
-            numerical: Критерий средней абсолютной ошибки.
+            float: Средняя абсолютная ошибка.
         """
         def mae(y):
             mean = np.mean(y)
@@ -312,14 +309,14 @@ class DecisionTree:
 
     def mean_squared_error(self, left_y, right_y):
         """
-        Вычисляет критерий средней квадратичной ошибки (MSE)
+        Вычисляет взвешенную среднюю квадратичную ошибку (MSE) для разделения.
 
         Args:
-            left_y (array-like): Вектор целевых значений для левого поддерева.
-            right_y (array-like): Вектор целевых значений для правого поддерева.
+            left_y (np.ndarray): Целевые значения левого поддерева.
+            right_y (np.ndarray): Целевые значения правого поддерева.
 
         Returns:
-            numerical: Критерий средней квадратичной ошибки.
+            float: Средняя квадратичная ошибка.
         """
         def mse(y):
             mean = np.mean(y)
@@ -331,13 +328,13 @@ class DecisionTree:
      
     def majority_class(self, y):
         """
-        Определяет большинственный класс
+        Определяет преобладающий класс или среднее значение в листе.
 
         Args:
-            y (array-like): Массив целевых значений
+            y (np.ndarray): Вектор целевых значений в листе.
 
         Returns:
-            object: Большинственный класс
+            object: Преобладающий класс (для классификации) или среднее значение (для регрессии).
         """
         counts = Counter(y)
         weighted_counts = {cls: count * self.class_weights.get(cls, 1) for cls, count in counts.items()}
@@ -346,13 +343,13 @@ class DecisionTree:
 
     def predict(self, X):
         """
-        Проводит предсказание по каждому образцу из `X`
+        Предсказывает целевые значения для входных данных.
 
         Args:
-            X (array-like): Матрица признаков
+            X (np.ndarray): Матрица признаков для предсказания.
 
         Returns:
-            array-like: Предсказанные значения
+            np.ndarray: Вектор предсказанных значений.
         """
         return np.array([self._predict(sample, self.tree) for sample in X])
 
@@ -361,8 +358,8 @@ class DecisionTree:
         Рекурсивное предсказание для каждого узла дерева
 
         Args:
-            sample (array-like): Образец, для которого нужно предсказать значение.
-            tree (dict): Словарь, содержащий информацию о текущей вершине дерева.
+            sample (np.ndarray): Один образец данных.
+            tree (dict or object): Текущий узел дерева.
 
         Returns:
             object: Предсказанное значение.
@@ -379,7 +376,7 @@ class DecisionTree:
 
     def visualize_tree(self):
         """
-        Возвращает граф, изображающий дерево решений.
+        Визуализирует и сохраняет дерево решений в виде графа.
 
         Returns:
             graphviz.Digraph: Граф, изображающий дерево решений.
@@ -395,15 +392,9 @@ class DecisionTree:
 
         Args:
             dot (graphviz.Digraph): Граф, в который добавляются узлы и ребра.
-            tree (dict or object): Информация о текущей вершине дерева.
-                Если это листовой узел, то tree - объект, представляющий класс.
-                Если это внутренний узел, то tree - словарь, содержащий 
-                    "feature" (int): индекс признака, по которому происходит разбиение,
-                    "threshold" (float): порог разбиения,
-                    "left" (dict or object): левое поддерево,
-                    "right" (dict or object): правое поддерево.
-            parent (str or None): Идентификатор родительского узла.
-            edge_label (str): Метка для ребра, соединяющего текущий узел с родительским.
+            tree (dict or object): Текущий узел дерева.
+            parent (str, optional): Идентификатор родительского узла. Defaults to None.
+            edge_label (str, optional): Метка для ребра. Defaults to "".
         """
         # Если это листовой узел, добавляем его как конечный класс
         if not isinstance(tree, dict):
@@ -430,20 +421,16 @@ class DecisionTree:
 
     def plot_decision_boundaries(self, X, y, feature_indices=(0, 1), resolution=100, figsize=(8, 6)):
         """
-        Визуализирует области пространства, принадлежащие различным классам (поддержка нескольких классов).
-        
-        Параметры:
-        ----------
-        X : ndarray
-            Матрица признаков (n_samples, n_features).
-        y : ndarray
-            Вектор меток классов (n_samples,).
-        feature_indices : tuple (default=(0, 1))
-            Индексы признаков, которые будут использоваться для построения областей.
-        resolution : int (default=100)
-            Количество точек на единицу длины сетки (для сглаживания).
-        figsize : tuple (default=(8, 6))
-            Размер изображения.
+        Визуализирует границы принятия решений для 2D-данных.
+
+        Args:
+            X (np.ndarray): Матрица признаков (n_samples, n_features).
+            y (np.ndarray): Вектор меток классов (n_samples,).
+            feature_indices (tuple, optional): Индексы двух признаков для визуализации.
+                Defaults to (0, 1).
+            resolution (int, optional): Плотность сетки для построения областей.
+                Defaults to 100.
+            figsize (tuple, optional): Размер изображения. Defaults to (8, 6).
         """
         if len(feature_indices) != 2:
             raise ValueError("Для визуализации выберите ровно 2 признака.")
@@ -494,17 +481,14 @@ class DecisionTree:
     
     def plot_regr(self, y_true, y_pred):
         """
-        Нарисовать график рассеяния истинных и предсказанных значений для моделей регрессии.
+        Строит график рассеяния истинных и предсказанных значений для регрессии.
 
-        Аргументы:
-            y_true (array-like): истинные целевые значения.
-            y_pred (array-like): предсказанные целевые значения.
+        Args:
+            y_true (np.ndarray): Истинные целевые значения.
+            y_pred (np.ndarray): Предсказанные целевые значения.
 
-        Примечания:
-            Эта функция применяется только для моделей регрессии (т.е., `self.model_type == 'Regressor'`).
-
-        Возвращает:
-            None
+        Notes:
+            - Эта функция доступна только для моделей регрессии (`self.model_type == 'Regressor'`).
         """
         assert self.model_type == 'Regressor', 'Эта функция только для регрессии'
         plt.scatter(y_true, y_pred)

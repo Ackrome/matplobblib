@@ -5,47 +5,51 @@ import matplotlib.pyplot as plt
 # Модификации линейной регрессионной модели
 #######################################################################################################################
 class LinearRegression:
-    """Линейная регрессия с градиентным спуском
+    """
+    Реализация линейной регрессии с пакетным градиентным спуском.
     """
     def __init__(self):
-        """Линейная регрессия с градиентным спуском
-        """
+        """Инициализация модели."""
         self.w = None
         
     def predict(self, X):
-        """Предсказывает значения эндогенной переменной(Y)
+        """
+        Предсказывает целевые значения для входных данных.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
+            X (pd.DataFrame): Матрица признаков.
+
         Returns:
-            pandas.DataFrame: Предсказанные значения эндогенной переменной(Y)
+            pd.DataFrame: Вектор предсказанных значений.
         """
         return X @ self.w
     
     def error(self, X, y):
-        """Считает значение ошибки MSE
+        """
+        Вычисляет ошибку MSE (не используется напрямую в `fit`, но может быть полезна).
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
 
         Returns:
-            numpy.array: MSE
+            np.ndarray: Значение MSE.
         """
         N = X.shape[0]
         return 1/N * (X.T @ (self.predict(X) - y))**2
     
     def fit(self, X, y, a=0.1, n=1000):
-        """Функция обучения модели.
+        """
+        Обучает модель линейной регрессии с помощью пакетного градиентного спуска.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
-            a (float, optional): Скорость обучения. Defaults to 0.1.
-            n (int, optional): Количество итераций(Шагов). Defaults to 1000.
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
+            a (float, optional): Скорость обучения (learning rate). Defaults to 0.1.
+            n (int, optional): Количество итераций. Defaults to 1000.
             
         Returns:
-            errors(list): Ошибки на каждую итерацию
+            np.ndarray: Массив ошибок на каждой итерации.
         """
         errors = []
         self.w = pd.DataFrame(np.ones((X.shape[1], 1)))        # Вектор-столбец весов
@@ -60,26 +64,25 @@ class LinearRegression:
         return self.errors
         
     def score(self, y, y_):
-        """Interpretation
-        - R^2 = 1: The model perfectly predicts the values of y.
-        - R^2 = 0: The model performs no better than simply predicting the mean of y  for all observations.
-        - R^2 < 0: The model performs worse than predicting the mean, indicating a poor fit.
+        """
+        Вычисляет коэффициент детерминации (R^2).
 
         Args:
-            y (pandas.DataFrame): Истинные значения эндогенной переменной (Y-True)
-            y_ (pandas.DataFrame): Предсказанные значения эндогенной переменной (Y-Pred)
+            y (pd.DataFrame): Вектор истинных значений.
+            y_ (pd.DataFrame): Вектор предсказанных значений.
 
         Returns:
-            numerical: Коэффициент детерминации (R^2 score)
+            float: Значение R^2.
         """
         return (1 - ((y - y_)**2).sum()/((y - y.mean())**2).sum())[0]
     
     def plot(self, X, y):
-        """Строит график
+        """
+        Строит график рассеяния "предсказание vs истинное значение".
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
         """
         yy = self.predict(X)
         plt.scatter(yy,y)
@@ -89,10 +92,12 @@ class LinearRegression:
         plt.show()
     
     def study_plot(self,errors = None):
-        """Строит график обучения для одной фичи
+        """
+        Строит график изменения ошибки в процессе обучения.
 
         Args:
-            errors (array-like, optional): список ошибок. Defaults to None.
+            errors (array-like, optional): Массив ошибок. Если None, используются
+                ошибки, сохраненные после `fit`. Defaults to None.
         """
         if errors == None:
             errors = self.errors[:,0,0]
@@ -103,46 +108,50 @@ class LinearRegression:
         plt.show()
 #######################################################################################################################
 class LinearRegressionStoh:
-    """Линейная регрессия с стохастическим градиентным спуском
+    """
+    Реализация линейной регрессии с стохастическим (батч) градиентным спуском.
     """
     def __init__(self):
-        """Линейная регрессия с стохастическим градиентным спуском
-        """
+        """Инициализация модели."""
         self.w = None
         
     def predict(self, X):
-        """Предсказывает значения эндогенной переменной(Y)
+        """
+        Предсказывает целевые значения для входных данных.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
+            X (pd.DataFrame): Матрица признаков.
+
         Returns:
-            pandas.DataFrame: Предсказанные значения эндогенной переменной(Y)
+            pd.DataFrame: Вектор предсказанных значений.
         """
         return X @ self.w
     
     def error(self, X, y):
-        """Считает значение ошибки MSE
+        """
+        Вычисляет ошибку MSE.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
 
         Returns:
-            numpy.array: MSE
+            np.ndarray: Значение MSE.
         """
         N = X.shape[0]
         return 1/N * (X.T @ (self.predict(X) - y))**2
     
     def fit(self, X, y, B, E, a=0.1, n=1000):
-        """_summary_
+        """
+        Обучает модель с помощью стохастического градиентного спуска.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
-            B (numerical): Размер подвыборки
-            E (numerical): Эпохи
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
+            B (int): Размер батча (подвыборки).
+            E (int): Количество эпох.
             a (float, optional): Скорость обучения. Defaults to 0.1.
-            n (int, optional): Количество итераций(Шагов). Defaults to 1000.
+            n (int, optional): Не используется в этой реализации.
         """
         errors = []
         self.w = pd.DataFrame(np.ones((X.shape[1], 1)))     # Вектор-столбец весов
@@ -162,26 +171,25 @@ class LinearRegressionStoh:
         return self.errors
     
     def score(self, y, y_):
-        """Interpretation
-        - R^2 = 1: The model perfectly predicts the values of y.
-        - R^2 = 0: The model performs no better than simply predicting the mean of y  for all observations.
-        - R^2 < 0: The model performs worse than predicting the mean, indicating a poor fit.
+        """
+        Вычисляет коэффициент детерминации (R^2).
 
         Args:
-            y (pandas.DataFrame): Истинные значения эндогенной переменной (Y-True)
-            y_ (pandas.DataFrame): Предсказанные значения эндогенной переменной (Y-Pred)
+            y (pd.DataFrame): Вектор истинных значений.
+            y_ (pd.DataFrame): Вектор предсказанных значений.
 
         Returns:
-            numerical: Коэффициент детерминации (R^2 score)
+            float: Значение R^2.
         """
         return (1 - ((y - y_)**2).sum()/((y - y.mean())**2).sum())[0]
     
     def plot(self, X, y):
-        """Строит график
+        """
+        Строит график рассеяния "предсказание vs истинное значение".
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
         """
         yy = self.predict(X)
         plt.scatter(yy,y)
@@ -191,10 +199,12 @@ class LinearRegressionStoh:
         plt.show()
     
     def study_plot(self,errors = None):
-        """Строит график обучения для одной фичи
+        """
+        Строит график изменения ошибки в процессе обучения.
 
         Args:
-            errors (array-like, optional): список ошибок. Defaults to None.
+            errors (array-like, optional): Массив ошибок. Если None, используются
+                ошибки, сохраненные после `fit`. Defaults to None.
         """
         if errors == None:
             errors = self.errors[:,0,0]
@@ -205,49 +215,53 @@ class LinearRegressionStoh:
         plt.show()
 #######################################################################################################################
 class LinearRegressionL2:
-    """Линейная регрессия с L2-регуляризацией
+    """
+    Реализация линейной регрессии с L2-регуляризацией (Ridge регрессия).
     """
     def __init__(self):
-        """Линейная регрессия с L2-регуляризацией
-        """
+        """Инициализация модели."""
         self.w = None # веса
         
     def predict(self, X):
-        """Предсказывает значения эндогенной переменной(Y)
+        """
+        Предсказывает целевые значения для входных данных.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
+            X (pd.DataFrame): Матрица признаков.
+
         Returns:
-            pandas.DataFrame: Предсказанные значения эндогенной переменной(Y)
+            pd.DataFrame: Вектор предсказанных значений.
         """        
         return X @ self.w
     
     def error(self, X, y, lambd):
-        """Считает значение ошибки MSE с добавлением `penalty` члена выражения
+        """
+        Вычисляет ошибку MSE с L2-штрафом.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
-            lambd (numerical): Параметр Регуляризации (λ)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
+            lambd (float): Коэффициент L2-регуляризации (λ).
 
         Returns:
-            numpy.array: MSE + λ* sum(w_i^2)
+            np.ndarray: Значение функции потерь.
         """
         N = X.shape[0]
         return 1/N * (X.T @ (self.predict(X) - y))**2 + lambd*((self.w**2).sum())
     
     def fit(self, X, y, lambd, a=0.1, n=1000):
-        """Функция обучения модели.
+        """
+        Обучает модель с помощью градиентного спуска.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
-            lambd (numerical): Параметр Регуляризации (λ)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
+            lambd (float): Коэффициент L2-регуляризации (λ).
             a (float, optional): Скорость обучения. Defaults to 0.1.
-            n (int, optional): Количество итераций(Шагов). Defaults to 1000.
+            n (int, optional): Количество итераций. Defaults to 1000.
 
         Returns:
-            pandas.DataFrame: Таблица изменения весов на каждой итерации градиаентного спуска
+            pd.DataFrame: DataFrame с историей изменения весов на каждой итерации.
         """
         self.b = [] ##
         errors = []
@@ -264,26 +278,25 @@ class LinearRegressionL2:
         return self.b
     
     def score(self, y, y_):
-        """Interpretation
-        - R^2 = 1: The model perfectly predicts the values of y.
-        - R^2 = 0: The model performs no better than simply predicting the mean of y  for all observations.
-        - R^2 < 0: The model performs worse than predicting the mean, indicating a poor fit.
+        """
+        Вычисляет коэффициент детерминации (R^2).
 
         Args:
-            y (pandas.DataFrame): Истинные значения эндогенной переменной (Y-True)
-            y_ (pandas.DataFrame): Предсказанные значения эндогенной переменной (Y-Pred)
+            y (pd.DataFrame): Вектор истинных значений.
+            y_ (pd.DataFrame): Вектор предсказанных значений.
 
         Returns:
-            numerical: Коэффициент детерминации (R^2 score)
+            float: Значение R^2.
         """
         return (1 - ((y - y_)**2).sum()/((y - y.mean())**2).sum())[0]
     
     def plot(self, X, y):
-        """Строит график
+        """
+        Строит график рассеяния "предсказание vs истинное значение".
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
         """
         yy = self.predict(X)
         plt.scatter(yy,y)
@@ -293,47 +306,51 @@ class LinearRegressionL2:
         plt.show()
 #######################################################################################################################
 class LinearRegressionMAE:
-    """Линейная регрессия с MAE
+    """
+    Реализация линейной регрессии с функцией потерь MAE (Mean Absolute Error).
     """
     def __init__(self):
-        """Линейная регрессия с MAE
-        """
+        """Инициализация модели."""
         self.w = None   #Веса
         
     def predict(self, X):
-        """Предсказывает значения эндогенной переменной(Y)
+        """
+        Предсказывает целевые значения для входных данных.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
+            X (pd.DataFrame): Матрица признаков.
+
         Returns:
-            pandas.DataFrame: Предсказанные значения эндогенной переменной(Y)
+            pd.DataFrame: Вектор предсказанных значений.
         """
         return X @ self.w
     
     def error(self, X, y):
-        """Считает значение ошибки MAE
+        """
+        Вычисляет ошибку MAE.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
 
         Returns:
-            numpy.array: MAE
+            np.ndarray: Значение MAE.
         """
         N = X.shape[0]
         return 1/N * abs(self.predict(X) - y)
     
     def fit(self, X, y, a=0.1, n=1000):
-        """Функция обучения модели.
+        """
+        Обучает модель с помощью градиентного спуска.
 
         Args:
-            X (pandas.DataFrame): Экзогенная переменная (X)
-            y (pandas.DataFrame): Эндогенная переменная (Y)
+            X (pd.DataFrame): Матрица признаков.
+            y (pd.DataFrame): Вектор истинных значений.
             a (float, optional): Скорость обучения. Defaults to 0.1.
-            n (int, optional): Количество итераций(Шагов). Defaults to 1000.
+            n (int, optional): Количество итераций. Defaults to 1000.
             
         Returns:
-            errors(list): Ошибки на каждую итерацию
+            np.ndarray: Массив ошибок на каждой итерации.
         """
         errors = []
         self.w = pd.DataFrame(np.ones((X.shape[1], 1)))         # Вектор-столбец весов

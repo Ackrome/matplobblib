@@ -4,19 +4,22 @@ from ..additional_funcs.math_funcs import sigm
 # Логистическая регрессия
 #######################################################################################################################
 class LogisticRegression:
-    """Логистическая регрессия с использованием градиентного спуска."""
+    """
+    Реализация логистической регрессии с использованием градиентного спуска.
+    """
     def __init__(self):
+        """Инициализация модели."""
         self.w = None  # Вектор весов (numpy array, shape: (n_features, 1))
     
     def predict_proba(self, X):
         """
         Вычисляет вероятность принадлежности к классу 1.
         
-        Аргументы:
-          X (array-like): Матрица признаков размера (n_samples, n_features).
+        Args:
+            X (array-like): Матрица признаков размера (n_samples, n_features).
           
-        Возвращает:
-          numpy.array: Вероятности для каждого объекта, shape (n_samples,).
+        Returns:
+            np.ndarray: Вероятности для каждого объекта, shape (n_samples,).
         """
         X = np.array(X)
         z = X @ self.w  # Линейная комбинация, shape: (n_samples, 1)
@@ -24,28 +27,28 @@ class LogisticRegression:
     
     def predict(self, X, threshold=0.5):
         """
-        Предсказывает классы (0 или 1) для объектов.
+        Предсказывает метки классов (0 или 1) для объектов.
         
-        Аргументы:
-          X (array-like): Матрица признаков размера (n_samples, n_features).
-          threshold (float): Порог классификации, по умолчанию 0.5.
+        Args:
+            X (array-like): Матрица признаков размера (n_samples, n_features).
+            threshold (float, optional): Порог для бинарной классификации. Defaults to 0.5.
           
-        Возвращает:
-          numpy.array: Вектор предсказанных классов (0 или 1).
+        Returns:
+            np.ndarray: Вектор предсказанных меток классов (0 или 1).
         """
         proba = self.predict_proba(X)
         return np.where(proba >= threshold, 1, 0)
     
     def loss(self, X, y):
         """
-        Вычисляет логарифмическую функцию потерь (log loss).
+        Вычисляет бинарную кросс-энтропию (log loss).
         
-        Аргументы:
-          X (array-like): Матрица признаков размера (n_samples, n_features).
-          y (array-like): Вектор истинных меток (0 или 1), shape (n_samples,).
+        Args:
+            X (array-like): Матрица признаков размера (n_samples, n_features).
+            y (array-like): Вектор истинных меток (0 или 1), shape (n_samples,).
           
-        Возвращает:
-          float: Среднее значение логарифмической потери.
+        Returns:
+            float: Среднее значение функции потерь.
         """
         proba = self.predict_proba(X)
         # Для избежания log(0) ограничим значения вероятностей eps
@@ -56,13 +59,13 @@ class LogisticRegression:
     
     def fit(self, X, y, learning_rate=0.1, n_iter=1000):
         """
-        Обучение модели с помощью градиентного спуска.
+        Обучает модель с помощью градиентного спуска.
         
-        Аргументы:
-          X (array-like): Матрица признаков размера (n_samples, n_features).
-          y (array-like): Вектор истинных меток (0 или 1), shape (n_samples,).
-          learning_rate (float): Скорость обучения.
-          n_iter (int): Количество итераций обучения.
+        Args:
+            X (array-like): Матрица признаков размера (n_samples, n_features).
+            y (array-like): Вектор истинных меток (0 или 1), shape (n_samples,).
+            learning_rate (float, optional): Скорость обучения. Defaults to 0.1.
+            n_iter (int, optional): Количество итераций. Defaults to 1000.
         """
         X = np.array(X)
         y = np.array(y).reshape(-1, 1)  # Приводим к вектору-столбцу
@@ -83,14 +86,14 @@ class LogisticRegression:
     
     def accuracy_score(self, X, y):
         """
-        Вычисляет точность модели (accuracy).
+        Вычисляет долю правильных ответов (accuracy).
         
-        Аргументы:
-          X (array-like): Матрица признаков.
-          y (array-like): Вектор истинных меток (0 или 1).
+        Args:
+            X (array-like): Матрица признаков.
+            y (array-like): Вектор истинных меток (0 или 1).
           
-        Возвращает:
-          float: Доля правильно предсказанных объектов.
+        Returns:
+            float: Значение точности (от 0 до 1).
         """
         y_pred = self.predict(X)
         y = np.array(y)
@@ -98,11 +101,11 @@ class LogisticRegression:
     
     def plot(self, X, y):
         """
-        Визуализирует разделяющую границу для двумерных данных.
+        Визуализирует границу принятия решений для 2D-данных.
         
-        Аргументы:
-          X (array-like): Матрица признаков размера (n_samples, 2).
-          y (array-like): Вектор истинных меток (0 или 1).
+        Args:
+            X (array-like): Матрица признаков размера (n_samples, 2).
+            y (array-like): Вектор истинных меток (0 или 1).
         """
         X = np.array(X)
         y = np.array(y)

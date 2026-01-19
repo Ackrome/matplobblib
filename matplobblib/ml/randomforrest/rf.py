@@ -5,7 +5,7 @@ from collections import Counter
 
 class RandomForest:
     """
-    Класс для реализации алгоритма Random Forest.
+    Реализация ансамблевого алгоритма "Случайный лес" для классификации и регрессии.
     """
 
     def __init__(
@@ -22,20 +22,20 @@ class RandomForest:
             chek_k_features=0,
             bootstrap=True):
         """
-        Инициализация параметров случайного леса.
+        Инициализация случайного леса.
 
         Args:
-            n_trees (int): Количество деревьев в лесу.
-            model_type (str): Тип модели ('Classifier' или 'Regressor').
-            max_depth (int): Максимальная глубина каждого дерева.
-            min_samples_leaf (int): Минимальное количество объектов в листе.
-            max_leaves (int): Максимальное количество листьев.
-            criterion (str): Критерий разбиения ('gini', 'entropy', 'mse', и т.д.).
-            check_k_threshold (int): Параметр для проверки качества разбиения.
-            min_gain (float): Минимальное улучшение качества разбиения.
-            class_weights (dict): Веса классов для задачи классификации.
-            chek_k_features (int): Количество случайных признаков для разбиения.
-            bootstrap (bool): Использовать ли бутстрэп (случайные подвыборки с повторением).
+            n_trees (int, optional): Количество деревьев в лесу. Defaults to 100.
+            model_type (str, optional): Тип модели: 'Classifier' или 'Regressor'. Defaults to 'Classifier'.
+            max_depth (int, optional): Максимальная глубина каждого дерева. Defaults to None.
+            min_samples_leaf (int, optional): Минимальное количество объектов в листе. Defaults to 1.
+            max_leaves (int, optional): Максимальное количество листьев. Defaults to None.
+            criterion (str, optional): Критерий для оценки качества разбиения. Defaults to "gini".
+            check_k_threshold (int, optional): Количество порогов для проверки. Defaults to 0.
+            min_gain (float, optional): Минимальное улучшение для совершения разделения. Defaults to 0.01.
+            class_weights (dict, optional): Веса классов для классификации. Defaults to None.
+            chek_k_features (int, optional): Количество случайных признаков для проверки при каждом разделении. Defaults to 0.
+            bootstrap (bool, optional): Использовать ли бутстрэп-выборки. Defaults to True.
         """
         self.n_trees = n_trees
         self.model_type = model_type
@@ -52,7 +52,7 @@ class RandomForest:
 
     def fit(self, X, y):
         """
-        Обучение случайного леса.
+        Обучает модель случайного леса на заданных данных.
 
         Args:
             X (array-like): Матрица признаков.
@@ -88,13 +88,13 @@ class RandomForest:
 
     def predict(self, X):
         """
-        Предсказание случайного леса.
+        Предсказывает целевые значения для входных данных.
 
         Args:
             X (array-like): Матрица признаков.
 
         Returns:
-            array-like: Предсказанные значения.
+            np.ndarray: Вектор предсказанных значений.
         """
         if self.model_type == 'Classifier':
             return self._predict_classifier(X)
@@ -103,13 +103,13 @@ class RandomForest:
 
     def _predict_classifier(self, X):
         """
-        Предсказание для задачи классификации (голосование).
+        Предсказание для задачи классификации путем голосования.
 
         Args:
             X (array-like): Матрица признаков.
 
         Returns:
-            array-like: Предсказанные метки классов.
+            np.ndarray: Предсказанные метки классов.
         """
         tree_predictions = np.array([tree.predict(X) for tree in self.trees])
         majority_vote = np.apply_along_axis(lambda x: Counter(x).most_common(1)[
@@ -118,28 +118,28 @@ class RandomForest:
 
     def _predict_regressor(self, X):
         """
-        Предсказание для задачи регрессии (усреднение).
+        Предсказание для задачи регрессии путем усреднения.
 
         Args:
             X (array-like): Матрица признаков.
 
         Returns:
-            array-like: Усредненные предсказанные значения.
+            np.ndarray: Усредненные предсказанные значения.
         """
         tree_predictions = np.array([tree.predict(X) for tree in self.trees])
         return np.mean(tree_predictions, axis=0)
 
     def feature_importances(self, X, y):
         """
-        Вычисление важности признаков на основе суммарного снижения неоднородности (impurity decrease)
+        Вычисляет важность признаков на основе суммарного снижения неоднородности (impurity decrease)
         по всем деревьям случайного леса.
 
-        Аргументы:
-            X (numpy.ndarray): Матрица признаков (n_samples, n_features), желательно те данные, на которых обучалась модель.
-            y (numpy.ndarray): Истинные метки (или значения) целевой переменной, соответствующие X.
+        Args:
+            X (np.ndarray): Матрица признаков (n_samples, n_features).
+            y (np.ndarray): Вектор истинных меток (или значений) целевой переменной.
 
-        Возвращает:
-            numpy.ndarray: Вектор важностей признаков, сумма которого равна 1.
+        Returns:
+            np.ndarray: Вектор важностей признаков, нормализованный так, что сумма равна 1.
         """
         total_samples = len(y)
         n_features = X.shape[1]

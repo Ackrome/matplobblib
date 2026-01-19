@@ -1,16 +1,19 @@
 import numpy as np
 def Kfold_split(n_samples, n_splits=5, shuffle=True, random_state=None):
         """
-        Реализация KFold-разбиения.
+        Генерирует индексы для разделения данных на обучающие и тестовые наборы (K-Fold).
         
-        Параметры:
-          n_samples: общее число образцов
-          n_splits: число фолдов
-          shuffle: перемешивать ли индексы перед разбиением
-          random_state: зерно генератора случайных чисел
+        Args:
+            n_samples (int): Общее количество образцов в данных.
+            n_splits (int, optional): Количество фолдов (частей). Defaults to 5.
+            shuffle (bool, optional): Перемешивать ли данные перед разбиением.
+                Defaults to True.
+            random_state (int, optional): Зерно для генератора случайных чисел
+                для воспроизводимости перемешивания. Defaults to None.
           
-        Возвращает:
-          Генератор кортежей (train_indices, test_indices)
+        Yields:
+            tuple[np.ndarray, np.ndarray]: Кортеж, содержащий индексы для
+            обучающего и тестового наборов для каждой итерации.
         """
         indices = np.arange(n_samples)
         if shuffle:

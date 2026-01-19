@@ -4,11 +4,11 @@ import numpy as np
 #########################################################################
 def mean_absolute_error(y_true, y_pred):
     """
-    Вычисляет среднюю абсолютную ошибку (MAE) между предсказанными и фактическими значениями.
+    Вычисляет среднюю абсолютную ошибку (Mean Absolute Error, MAE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
         float: Средняя абсолютная ошибка.
@@ -29,11 +29,11 @@ def mean_absolute_error(y_true, y_pred):
 #########################################################################
 def mean_squared_error(y_true, y_pred):
     """
-    Вычисляет среднеквадратичную ошибку (MSE) между предсказанными и фактическими значениями.
+    Вычисляет среднеквадратичную ошибку (Mean Squared Error, MSE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
         float: Среднеквадратичная ошибка.
@@ -54,11 +54,11 @@ def mean_squared_error(y_true, y_pred):
 #########################################################################
 def mean_absolute_percentage_error(y_true, y_pred):
     """
-    Вычисляет среднюю абсолютную процентную ошибку (MAPE) между предсказанными и фактическими значениями.
+    Вычисляет среднюю абсолютную процентную ошибку (Mean Absolute Percentage Error, MAPE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
         float: Средняя абсолютная процентная ошибка.
@@ -79,11 +79,11 @@ def mean_absolute_percentage_error(y_true, y_pred):
 #########################################################################
 def symmetric_mean_absolute_percentage_error(y_true, y_pred):
     """
-    Вычисляет симметричную среднюю абсолютную процентную ошибку (SMAPE).
+    Вычисляет симметричную среднюю абсолютную процентную ошибку (Symmetric Mean Absolute Percentage Error, SMAPE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
         float: Симметричная средняя абсолютная процентная ошибка.
@@ -104,11 +104,11 @@ def symmetric_mean_absolute_percentage_error(y_true, y_pred):
 #########################################################################
 def weighted_average_percentage_error(y_true, y_pred):
     """
-    Вычисляет взвешенную среднюю процентную ошибку (WAPE).
+    Вычисляет взвешенную среднюю процентную ошибку (Weighted Average Percentage Error, WAPE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
         float: Взвешенная средняя процентная ошибка.
@@ -129,15 +129,15 @@ def weighted_average_percentage_error(y_true, y_pred):
 #########################################################################
 def mean_squared_logarithmic_error(y_true, y_pred, c=1):
     """
-    Вычисляет среднеквадратичную логарифмическую ошибку (MSLE).
+    Вычисляет среднеквадратичную логарифмическую ошибку (Mean Squared Logarithmic Error, MSLE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
-        c (float, optional): Смещение, добавляемое к значениям для избежания логарифма отрицательных чисел. По умолчанию 1.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
+        c (float, optional): Смещение, добавляемое к значениям для избежания логарифма от нуля или отрицательных чисел. Defaults to 1.
 
     Returns:
-        float: среднеквадратичная логарифмическая ошибка.
+        float: Среднеквадратичная логарифмическая ошибка.
 
     Raises:
         ValueError: Если y_true или y_pred (с учетом c) имеют недопустимые значения.
@@ -162,15 +162,15 @@ def mean_squared_logarithmic_error(y_true, y_pred, c=1):
 #########################################################################
 def root_mean_squared_logarithmic_error(y_true, y_pred, c=1):
     """
-    Вычисляет корень среднеквадратичной логарифмической ошибки (RMSLE).
+    Вычисляет корень из среднеквадратичной логарифмической ошибки (Root Mean Squared Logarithmic Error, RMSLE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
-        c (float, optional): Смещение, добавляемое к значениям для избежания логарифма отрицательных чисел. По умолчанию 1.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
+        c (float, optional): Смещение, добавляемое к значениям для избежания логарифма от нуля или отрицательных чисел. Defaults to 1.
 
     Returns:
-        float: Корень среднеквадратичной логарифмической ошибки.
+        float: Корень из среднеквадратичной логарифмической ошибки.
 
     Raises:
         ValueError: Если y_true или y_pred (с учетом c) имеют недопустимые значения.
@@ -195,16 +195,16 @@ def root_mean_squared_logarithmic_error(y_true, y_pred, c=1):
 #########################################################################
 def median_absolute_error(y_true, y_pred, multioutput = "uniform_average"):
     """
-    Вычисляет медианную абсолютную ошибку (MedAE).
+    Вычисляет медианную абсолютную ошибку (Median Absolute Error, MedAE).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
-        multioutput (str, optional): {'raw_values', 'uniform_average'}\
-            Defines aggregating of multiple output values.
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
+        multioutput (str, optional): Способ агрегации ошибок для многомерного вывода.
+            'raw_values' - возвращает ошибки для каждого выхода, 'uniform_average' - усредняет. Defaults to "uniform_average".
 
     Returns:
-        float: медианная абсолютная ошибка.
+        float or np.ndarray: Медианная абсолютная ошибка.
     """
     assert len(y_true) == len(y_pred) > 1, 'Предсказанные и реальные значения должны быть представлены одномерными итерируемыми объектами, содержащими более 1 элемента'
     
@@ -229,15 +229,14 @@ def median_absolute_error(y_true, y_pred, multioutput = "uniform_average"):
 #########################################################################
 def max_error(y_true, y_pred):
     """
-    Вычисляет максимальную ошибку (ME).
+    Вычисляет максимальную абсолютную ошибку (Max Error).
 
     Args:
-        y_true (iterable): Реальные значения.
-        y_pred (iterable): Предсказанные значения.
-
+        y_true (array-like): Истинные значения.
+        y_pred (array-like): Предсказанные значения.
 
     Returns:
-        float: максимальная ошибка.
+        float: Максимальная абсолютная ошибка.
     """
     assert len(y_true) == len(y_pred) > 1, 'Предсказанные и реальные значения должны быть представлены одномерными итерируемыми объектами, содержащими более 1 элемента'
     

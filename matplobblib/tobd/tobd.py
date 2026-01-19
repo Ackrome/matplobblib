@@ -1,81 +1,48 @@
-#######################################################################################################################
 import re
-import pandas as pd
-import matplotlib.pyplot as plt
 from ..forall import *
-#######################################################################################################################
-from .rm import *                       # Модификации линейной регрессионной модели
-from .logreg import *                       # Модификации модели классификации
-from .additional_funcs import *         # Дополнительные функции
-from .tree import *                     # Деревья
-from .svc import *                      # Классификатор методом опорных векторов
-from .knn import *                       # K-nn
-from .randomforrest import *            # Случайный лес
-from .nbc import *                      # Наивный байесовский классификатор
+# Импорт модулей и списков функций из соответствующих подпакетов
 
-pattern = r'"""\s*(.*?)\s*(?=def __init__|Args|Параметры)'
 
+
+
+def printcolab():
+    """Выводит ссылку на знакомый гугл колаб(google colab)"""
+    print(r'https://colab.research.google.com/drive/1YPZ4Pnzke8GHrXiajIJ1kpK4m6rl9sRn?usp=sharing')
+    return r'https://colab.research.google.com/drive/1YPZ4Pnzke8GHrXiajIJ1kpK4m6rl9sRn?usp=sharing'
+
+def printgdoc():
+    """Выводит ссылку на знакомый гугл колаб(google colab)"""
+    print(r'https://docs.google.com/document/d/1w66joyUgMUQlMCXqrtl-nnYdd2vHQ3qdwdwmjotyNcI/edit?usp=sharing')
+    return r'https://docs.google.com/document/d/1w66joyUgMUQlMCXqrtl-nnYdd2vHQ3qdwdwmjotyNcI/edit?usp=sharing'
+
+
+# Словарь, сопоставляющий названия тем со списками функций
 files_dict ={
-    'Дополнительные функции' : AF,
-    'Модификации линейной регрессионной модели': RM,
-    'Модель Логистической регрессии': CM,
-    'Реализация дерева решений' : TREES,
-    'Классификатор методом опорных векторов' : SVCS,
-    'К-ближайших соседей': KNNS,
-    'Случайный лес': RF,
-    'Наивный байесовский классификатор': NBC
+
 }
 
+
+# Получение списков названий тем и соответствующих модулей (списков функций)
 names = list(files_dict.keys())
 modules = list(files_dict.values())
 
-def imports():
-    return '''
-    
-    from scipy.integrate import quad
-    import math
-    import numpy a np
-    import sympy
-    import itertools
-    sympy.init_printing(use_unicode=True,use_latex=True)
-    '''
-    
-def enable_ppc():
-    return'''
-import pyperclip
-
-#Делаем функцию которая принимает переменную text
-def write(name):
-    pyperclip.copy(name) #Копирует в буфер обмена информацию
-    pyperclip.paste()'''
-    
-
-
-funcs_dicts = [
-    dict([
-        (task, func) for func in module
-        if (task := get_task_from_func(func)) is not None
-    ])
-    for module in modules
-]
-funcs_dicts_ts = [
-    dict([
-        (task, func) for func in module
-        if (task := get_task_from_func(func, True)) is not None
-    ])
-    for module in modules
-]
+# Создание словарей функций для каждой темы
+# funcs_dicts: {описание_задачи: функция}
+funcs_dicts = [dict([(get_task_from_func(i), i) for i in module]) for module in modules]
+# funcs_dicts_ts: {описание_задачи_без_пробелов_и_переносов: функция} (ts - to_search)
+funcs_dicts_ts = [dict([(get_task_from_func(i,True), i) for i in module]) for module in modules]
+# funcs_dicts_full: {имя_функции: исходный_код_функции}
 funcs_dicts_full = [dict([(i.__name__, getsource(i)) for i in module]) for module in modules]
+# funcs_dicts_full_nd: {имя_функции: исходный_код_функции_без_документации}
 funcs_dicts_full_nd = [dict([(i.__name__, getsource_no_docstring(i)) for i in module]) for module in modules]
 
-
-themes_list_funcs = dict([(names[i],list(funcs_dicts[i].values()) ) for i in range(len(names))]) # Название темы : список функций по теме
-themes_list_dicts = dict([(names[i],funcs_dicts[i]) for i in range(len(names))])                 # Название темы : словарь по теме, где ЗАДАНИЕ: ФУНКЦИИ
-themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len(names))])       # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ
+# Создание словарей, группирующих функции по темам
+themes_list_funcs = dict([(names[i],list(funcs_dicts[i].values()) ) for i in range(len(names))])        # Название темы : список функций по теме
+themes_list_dicts = dict([(names[i],funcs_dicts[i]) for i in range(len(names))])                        # Название темы : словарь по теме, где ЗАДАНИЕ: ФУНКЦИИ
+themes_list_dicts_full = dict([(names[i],funcs_dicts_full[i]) for i in range(len(names))])              # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ
 themes_list_dicts_full_nd = dict([(names[i],funcs_dicts_full_nd[i]) for i in range(len(names))])        # Название темы : словарь по теме, где НАЗВАНИЕ ФУНКЦИИ: ТЕКСТ ФУНКЦИИ БЕЗ ДОКУМЕНТАЦИИ
 
 
-# Тема -> Функция -> Задание
 
 def description(
     dict_to_show=themes_list_funcs,
@@ -86,7 +53,7 @@ def description(
     to_print: bool = True,
     show_doc = False):
     """
-    Отображает информацию о доступных функциях и темах в модуле ML.
+    Отображает информацию о доступных функциях и темах в модуле NM.
 
     Функция предоставляет несколько режимов для просмотра содержимого модуля:
     - Показать все темы и функции в них.
@@ -113,14 +80,14 @@ def description(
             В противном случае None.
 
     Examples:
-        >>> # Показать только названия тем в модуле ML
+        >>> # Показать только названия тем в модуле NM
         >>> description(show_only_keys=True)
 
-        >>> # Показать функции и их краткое описание для темы 'Реализация дерева решений'
-        >>> description('Реализация дерева решений')
+        >>> # Показать функции и их краткое описание для темы 'Решение уравнений'
+        >>> description('Решение уравнений')
 
-        >>> # Показать исходный код класса 'DecisionTree'
-        >>> description('Реализация дерева решений', key='DecisionTree', show_doc=True)
+        >>> # Показать исходный код функции 'newton_method'
+        >>> description('Решение уравнений', key='newton_method', show_doc=True)
 
     Notes:
         - Функция использует предопределенные словари `themes_list_funcs`, `themes_list_dicts` и др.
@@ -187,7 +154,7 @@ def description(
 
 def search(query: str, to_print: bool = True, data: str = description(n_symbols=10000, to_print=False)):
     """
-    Ищет функции и классы в модуле ML по ключевым словам в их описаниях.
+    Ищет функции в модуле NM по ключевым словам в их описаниях.
 
     Функция выполняет регистронезависимый поиск по описаниям всех доступных
     элементов и выводит найденные совпадения.
@@ -205,11 +172,11 @@ def search(query: str, to_print: bool = True, data: str = description(n_symbols=
             если `to_print` равно False. В противном случае None.
 
     Examples:
-        >>> # Найти все, что связано с регрессией
-        >>> search("регрессия")
+        >>> # Найти все, что связано с матрицами
+        >>> search("матриц")
 
-        >>> # Найти реализации деревьев и вернуть результат в виде списка
-        >>> results = search("дерево", to_print=False)
+        >>> # Найти методы решения уравнений и вернуть результат в виде списка
+        >>> results = search("уравнен", to_print=False)
         >>> print(results)
 
     Notes:

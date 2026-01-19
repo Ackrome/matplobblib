@@ -5,17 +5,21 @@ import pandas as pd
 class KNN:
     def __init__(self, kernel_type='Gaussian', distance_metric='euclidean', k=3, h=0.1, task="classification"):
         """
-        k-NN алгоритм для классификации или регрессии.
+        Реализация алгоритма k-ближайших соседей (k-NN) для классификации и регрессии.
         
         Args:
-            kernel_type (str or None): Тип ядерной функции. Возможные значения: 
+            kernel_type (str or None, optional): Тип ядерной функции для взвешивания соседей.
+                Возможные значения:
                 'Rectangular', 'Triangular', 'Epanechnikov', 'Quartic', 
                 'Triweight', 'Tricube', 'Gaussian', 'Cosine', 'Logistic', 
-                'Sigmoid', 'Silverman' или None для невзвешенного k-NN.
-            distance_metric (str): Метрика расстояния ('euclidean' или 'manhattan').
-            k (int): Число соседей.
-            h (float): Ширина ядра (для ядрового взвешивания).
-            task (str): 'classification' или 'regression'.
+                'Sigmoid', 'Silverman'. Если None, используется невзвешенный k-NN.
+                Defaults to 'Gaussian'.
+            distance_metric (str, optional): Метрика расстояния. 'euclidean' или 'manhattan'.
+                Defaults to 'euclidean'.
+            k (int, optional): Количество соседей. Defaults to 3.
+            h (float, optional): Ширина окна (bandwidth) для ядерной функции. Defaults to 0.1.
+            task (str, optional): Тип задачи: 'classification' или 'regression'.
+                Defaults to "classification".
         """
         self.kernel_type = kernel_type
         self.distance_metric = distance_metric
@@ -62,11 +66,11 @@ class KNN:
     
     def fit(self, X, y):
         """
-        Сохраняет обучающую выборку.
+        Обучает модель, сохраняя обучающую выборку.
         
         Args:
-            X (pandas.DataFrame или array-like): Матрица признаков.
-            y (pandas.Series, pandas.DataFrame или array-like): Целевая переменная.
+            X (array-like): Матрица признаков обучающей выборки.
+            y (array-like): Вектор целевых значений.
         """
         if isinstance(X, pd.DataFrame):
             self.X_train = X.values
@@ -81,10 +85,14 @@ class KNN:
     
     def predict_proba(self, X):
         """
-        Для задач классификации: возвращает вероятностные оценки принадлежности к классам.
+        Вычисляет вероятности принадлежности к каждому классу для задачи классификации.
+
+        Args:
+            X (array-like): Матрица признаков для предсказания.
         
         Returns:
-            DataFrame размера (n_samples, n_classes) с вероятностями.
+            pd.DataFrame: DataFrame размера (n_samples, n_classes) с вероятностями
+            принадлежности к каждому классу.
         """
         if self.task != "classification":
             raise ValueError("predict_proba доступен только для задачи классификации")
@@ -121,7 +129,16 @@ class KNN:
     
     def predict(self, X):
         """
-        Предсказывает классы (для классификации) или числовые значения (для регрессии).
+        Предсказывает метки классов или значения для входных данных.
+
+        Для классификации используется голосование (взвешенное или простое).
+        Для регрессии используется усреднение (взвешенное или простое).
+
+        Args:
+            X (array-like): Матрица признаков для предсказания.
+
+        Returns:
+            np.ndarray: Массив предсказанных значений.
         """
         X = np.array(X)
         distances = self._compute_distances(X)
@@ -180,21 +197,21 @@ class KNN:
     
     def tune_parameters(self, X, y, param_grid, cv=5, scoring=None):
         """
-        Автоматический подбор гиперпараметров k и h с использованием k-fold кросс-валидации.
+        Подбирает оптимальные гиперпараметры `k` и `h` с помощью k-fold кросс-валидации.
         
         Args:
-            X (array-like): Обучающие данные.
-            y (array-like): Целевая переменная.
-            param_grid (dict): Словарь с параметрами, например:
+            X (array-like): Матрица признаков.
+            y (array-like): Вектор целевых значений.
+            param_grid (dict): Словарь с сеткой параметров для перебора, например:
                 {'k': [3, 5, 7, 9], 'h': [0.1, 0.5, 1.0, 2.0]}
-            cv (int): Число фолдов кросс-валидации.
-            scoring (callable): Функция оценки качества. Если None, используется accuracy для классификации 
-                                и отрицательное MSE для регрессии.
-        
-        После подбора устанавливает оптимальные значения self.k и self.h.
+            cv (int, optional): Количество фолдов для кросс-валидации. Defaults to 5.
+            scoring (callable, optional): Функция для оценки качества модели.
+                Если None, используется accuracy для классификации и отрицательное
+                MSE для регрессии. Defaults to None.
         
         Returns:
-            dict: Оптимальные параметры и соответствующая оценка.
+            tuple[dict, float]: Кортеж, содержащий словарь с лучшими параметрами
+            и соответствующее им значение метрики.
         """
         X = np.array(X)
         if isinstance(y, (pd.Series, pd.DataFrame)):
@@ -251,13 +268,23 @@ class KNN:
         return best_params, best_score
     
     def accuracy_score(self, y_true, y_pred):
+        """
+        Вычисляет точность (accuracy) для задачи классификации.
+
+        Args:
+            y_true (array-like): Истинные метки.
+            y_pred (array-like): Предсказанные метки.
+
+        Returns:
+            float: Значение точности.
+        """
         y_true = np.array(y_true).flatten()
         y_pred = np.array(y_pred).flatten()
         return np.mean(y_true == y_pred)
     
     def plot(self, X, y):
         """
-        Визуализирует обучающую выборку и целевые точки (для двумерных данных).
+        Визуализирует обучающую выборку и тестовые точки (для 2D данных).
         """
         if self.X_train is None:
             raise ValueError("Необходимо вызвать fit для установки обучающей выборки.")
