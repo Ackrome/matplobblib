@@ -19,17 +19,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      # ИЗМЕНЕНИЕ: Ставим стабильный Python 3.12
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.12" 
       
-      # --- ДОБАВЛЕНО: Установка системных библиотек для cvxopt ---
+      # Этот шаг можно оставить на всякий случай, или убрать, если cvxopt скачается как wheel
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libblas-dev liblapack-dev libsuitesparse-dev
-      # -----------------------------------------------------------
 
       - name: Install dependencies
         run: |
@@ -48,19 +48,16 @@ jobs:
       new_tag: ${{ steps.build_version.outputs.new_tag }}
     steps:
       - uses: actions/checkout@v4
+      # ИЗМЕНЕНИЕ: Ставим стабильный Python 3.12
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.x'
+          python-version: '3.12'
 
-      # --- ДОБАВЛЕНО: Установка системных библиотек для cvxopt ---
-      # Это нужно, даже если мы просто собираем wheel, 
-      # так как build может проверять зависимости
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libblas-dev liblapack-dev libsuitesparse-dev
-      # -----------------------------------------------------------
 
       - name: Install dependencies
         run: python -m pip install --upgrade pip build semver
@@ -92,7 +89,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      id-token: write # Required for trusted publishing
+      id-token: write
     environment:
       name: pypi
       url: https://pypi.org/p/matplobblib
@@ -107,10 +104,10 @@ jobs:
 
   publish-github:
     name: Publish to GitHub
-    needs: [build, publish-pypi] # Depends on build for outputs and pypi for success
+    needs: [build, publish-pypi]
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Required to push tags and create a release
+      contents: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
