@@ -51,3 +51,59 @@ print(getsource(norm)) # Ровно то же самое, что description('М
 from matplobblib.nm import *
 print(getsource_no_docstring(norm)) # Ровно то же самое, что description('Матричные операции','norm')
 ```
+
+# nlp.call_model
+
+Вызывает OpenAI-совместимую языковую модель через ProxyAPI Responses API.
+
+Сначала задайте ключ ProxyAPI в переменной окружения:
+
+```python
+import os
+os.environ["PROXYAPI_API_KEY"] = "your_proxyapi_key"
+```
+
+Пример вызова:
+
+```python
+from matplobblib.nlp import *
+
+answer = call_model(
+    "Объясни, что такое бинарное дерево, в одном абзаце.",
+    model="gpt-5-mini"
+)
+print(answer)
+```
+
+Ключ можно передать напрямую:
+
+```python
+answer = call_model("Привет!", api_key="your_proxyapi_key")
+```
+
+Дополнительные параметры: `system`, `temperature`, `max_output_tokens`,
+`timeout`, `base_url`, `return_json` и любые другие параметры Responses API.
+Если нужно посмотреть исходный JSON-ответ ProxyAPI, укажите `return_json=True`.
+
+# nlp.description
+
+Показывает доступные темы и функции в модуле `nlp`. Интерфейс такой же,
+как у `description()` в `matplobblib.nm`.
+
+```python
+from matplobblib.nlp import *
+
+description()
+```
+
+Показать только названия тем:
+
+```python
+description(show_only_keys=True)
+```
+
+Показать исходный код функции `call_model`:
+
+```python
+description("Вызовы языковых моделей", key="call_model", show_doc=True)
+```

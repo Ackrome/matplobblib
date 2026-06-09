@@ -161,4 +161,3 @@ html_path = r"C:\Users\ivant\Desktop\proj\matplobblib\htmls\NM\index.html" # п�
 output_dir = r"C:\Users\ivant\Desktop\proj\matplobblib\matplobblib\nm\theory\htmls" # папка вывода
 
 outputs = save_h1_sections_for_browser_view(html_path, output_dir)
-

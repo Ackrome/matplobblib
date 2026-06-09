@@ -181,3 +181,7 @@ repomix-output.xml
 *.svg
 *.md
 *.html
+
+# Graphify generated artifacts
+graphify-out/
+.graphify_*
