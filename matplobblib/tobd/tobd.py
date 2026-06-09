@@ -94,12 +94,21 @@ def description(
           для доступа к метаданным функций.
         - Для корректного отображения длинных описаний используется автоматический перенос строк.
     """
+    if not dict_to_show:
+        text = ""
+        if to_print == True:
+            return print(text)
+        return text
     
     # Если dict_to_show - строка (название темы) и не указан конкретный ключ (key)
     if type(dict_to_show) == str and key == None:
         dict_to_show = themes_list_dicts[dict_to_show]
         dict_to_show = invert_dict(dict_to_show)
         text = ""
+        if not dict_to_show:
+            if to_print == True:
+                return print(text)
+            return text
         length1 = 1 + max([len(x.__name__) for x in list(dict_to_show.keys())])
         
         for key in dict_to_show.keys():
