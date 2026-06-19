@@ -10,7 +10,7 @@
 
 Для веса w в каком-либо слое сети градиент ошибки L вычисляется так:
 
-![image](../assets/ticket-021-21__img-001--c0c6d73d54b6.png)
+$$ \\frac{\\partial L}{\\partial w} = \\frac{\\partial L}{\\partial y} \\cdot \\frac{\\partial y}{\\partial h} \\cdot \\frac{\\partial h}{\\partial w} $$
 
 где:
 
@@ -30,6 +30,6 @@ w — вес.
 
 4.  Обновление весов: Вычисленные градиенты используются для корректировки весов:
 
-![image](../assets/ticket-021-21__img-002--3090491cfc45.png)
+![image](../assets/ticket-021-21__img-001--3090491cfc45.png)
 
-![image](../assets/ticket-021-21__img-003--15924ec2254c.png)
+![image](../assets/ticket-021-21__img-002--15924ec2254c.png)

@@ -14,21 +14,21 @@
 
 Accuracy: Доля правильных ответов
 
-![image](../assets/ticket-031-31__img-001--7c1f5e4a2027.png)
+$$\\text{Accuracy} = \\frac{TP + TN}{TP + TN + FP + FN}$$
 
 Precision: Точность; Какая доля среди изображений, которые модель отнесла к целевому классу, реально ему принадлежит
 
-![image](../assets/ticket-031-31__img-002--a72fc50ddcdc.png)
+$$\\text{Precision} = \\frac{TP}{TP + FP}$$
 
 Recall: Полнота; Какую долю объектов целевого класса из всех реально существующих модель смогла найти; используют в медицинской диагностике по снимкам
 
-![image](../assets/ticket-031-31__img-003--18ef7234ef87.png)
+$$\\text{Recall} = \\frac{TP}{TP + FN}$$
 
 F1-score: Гармоническое среднее между точностью и полнотой
 
-![image](../assets/ticket-031-31__img-004--2a3924d85baf.png)
+$$F\_1 = 2 \\cdot \\frac{\\text{Precision} \\cdot \\text{Recall}}{\\text{Precision} + \\text{Recall}}$$
 
-Top-k вариации этих метрик (Например, ![image](../assets/ticket-031-31__img-005--86f5c61665ae.png))
+Top-k вариации этих метрик (Например, $$\\text{Top-5 Accuracy}$$)
 
 Если классов больше двух, для подсчета метрик используют стратегии усреднения:
 
