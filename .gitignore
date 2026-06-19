@@ -182,6 +182,12 @@ repomix-output.xml
 *.md
 *.html
 
+# Offline CV ticket data is intentionally versioned package data.
+!matplobblib/cv/data/tickets/**
+!matplobblib/cv/data/assets/**
+
 # Graphify generated artifacts
 graphify-out/
 .graphify_*
+
+idea.ipynb

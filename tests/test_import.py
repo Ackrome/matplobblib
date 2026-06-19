@@ -9,7 +9,7 @@ def test_package_import():
 
 def test_submodule_imports():
     """Tests that all major submodules can be imported."""
-    submodules = ['aisd', 'ml', 'nm', 'tvims', 'tod', 'tobd', 'nlp']
+    submodules = ['aisd', 'ml', 'nm', 'tvims', 'tod', 'tobd', 'nlp', 'cv']
     for module in submodules:
         try:
             # Dynamically import submodule from matplobblib

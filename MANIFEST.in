@@ -1,3 +1,6 @@
 include README.md
 include LICENSE.txt
 include icon.png
+include scripts/export_google_doc_tabs_to_cv_markdown.gs
+recursive-include matplobblib/cv/data *
+global-exclude *.py[cod]

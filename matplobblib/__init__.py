@@ -10,7 +10,8 @@ submodules = [
     'nm',
     'tod',
     'tobd',
-    'nlp'
+    'nlp',
+    'cv'
     ]
 def __dir__():
     return submodules

@@ -52,7 +52,8 @@ setup(
         "scikit-learn",
         "scikit-image",
         "requests",
-        "Pillow"
+        "Pillow",
+        "importlib_resources; python_version<'3.9'"
     ],
     license='MIT'
 )
