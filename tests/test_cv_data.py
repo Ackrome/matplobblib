@@ -1,3 +1,4 @@
+import importlib
 import re
 from pathlib import Path
 
@@ -127,9 +128,16 @@ def test_math_sanitizer_preserves_images_text_and_valid_latex():
     assert cv.sanitize_markdown_math(markdown) == markdown
 
 
-def test_render_sanitizes_existing_ticket_math_with_opt_out():
-    raw = cv.ticket(10).markdown()
-    assert "\\subscript" in raw
+def test_render_sanitizes_legacy_math_with_opt_out(monkeypatch):
+    cv_module = importlib.import_module("matplobblib.cv.CV")
+    item = cv.ticket(10)
+    assert item.assets
+    legacy_markdown = (
+        "# 10\n\n"
+        r"Legacy ($\subscriptG_x$), $\superscriptG_y + \DeltaI$."
+        "\n\n![image](../%s)\n" % item.assets[0]
+    )
+    monkeypatch.setattr(cv_module, "_ticket_markdown", lambda meta: legacy_markdown)
 
     sanitized = cv.render(10, mode="text")
     assert "\\subscript" not in sanitized
@@ -137,7 +145,7 @@ def test_render_sanitizes_existing_ticket_math_with_opt_out():
     assert "\\sbracelr" not in sanitized
     assert "\\DeltaI" not in sanitized
     assert "![image](../assets/" in sanitized
-    assert cv.render(10, mode="text", sanitize_math=False) == raw
+    assert cv.render(10, mode="text", sanitize_math=False) == legacy_markdown
 
     notebook_markdown = cv.render(10, mode="jupyter")
     assert "\\subscript" not in notebook_markdown
