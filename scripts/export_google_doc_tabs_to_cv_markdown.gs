@@ -23,10 +23,10 @@ const CFG = {
   DOCUMENT_ID: '1d_njw2OubPsmc3V9h3maa4B40PPNPK4iqDKj1F51KRo',
   EXPORT_PARENT_FOLDER_ID: 'PUT_DRIVE_FOLDER_ID_HERE',
   EXPORT_FOLDER_NAME: 'cv-export',
-  EXPORTER_VERSION: 'apps-script-tabs-md@1.3.0',
+  EXPORTER_VERSION: 'apps-script-tabs-md@1.4.0',
   BATCH_SIZE: 3,
   MAX_BATCH_RUNTIME_MS: 4 * 60 * 1000,
-  EQUATION_MODE: 'plain', // plain | placeholder | latex
+  EQUATION_MODE: 'safe-latex', // safe-latex | plain | placeholder
   FIRST_TICKET_NUMBER: 1,
   LAST_TICKET_NUMBER: 48,
   EXCLUDED_SERVICE_TABS: ['вопросы', 'практика'],
@@ -765,24 +765,144 @@ function stringifyEquation_(equation, modeOverride) {
   const mode = equationMode_(modeOverride);
   if (mode === 'placeholder') return '[formula]';
 
+  if (mode === 'safe-latex') {
+    const latex = collectEquationLatex_(equation).trim();
+    if (
+      !latex ||
+      /fractext|pcap|pcup|subscript|superscript|Equation/i.test(latex)
+    ) {
+      return '[formula]';
+    }
+    return '$' + latex + '$';
+  }
+
   const raw = collectEquationText_(equation).trim();
   if (!raw || raw.indexOf('[formula]') !== -1) return '[formula]';
-
-  if (mode === 'plain') return escapePlainEquationMarkdown_(raw);
-
-  const latex = conservativeLatexEquation_(raw);
-  return latex ? `$${latex}$` : '[formula]';
+  return escapePlainEquationMarkdown_(raw);
 }
 
 function equationMode_(modeOverride) {
   const requested = String(
-    modeOverride || CFG.EQUATION_MODE || 'plain'
+    modeOverride || CFG.EQUATION_MODE || 'safe-latex'
   ).toLowerCase();
-  return ['plain', 'placeholder', 'latex'].indexOf(requested) !== -1
+  if (requested === 'latex') return 'safe-latex';
+  return ['safe-latex', 'plain', 'placeholder'].indexOf(requested) !== -1
     ? requested
-    : 'plain';
+    : 'safe-latex';
 }
 
+function collectEquationLatex_(element, depth) {
+  const currentDepth = depth || 0;
+  if (!element || currentDepth > 64) return '';
+
+  try {
+    const typeName = safeTypeName_(element).toUpperCase();
+    if (typeName.indexOf('EQUATION_FUNCTION_ARGUMENT_SEPARATOR') !== -1) {
+      return ',';
+    }
+
+    const count = safeChildCount_(element);
+    const children = [];
+    for (let index = 0; index < count; index++) {
+      const child = safeGetChild_(element, index);
+      const childText = child
+        ? collectEquationLatex_(child, currentDepth + 1)
+        : '';
+      if (!childText) return '';
+      children.push(childText);
+    }
+
+    const code = safeGetCode_(element).trim();
+    if (children.length) {
+      return formatSafeLatexStructure_(typeName, code, children) || '';
+    }
+
+    const text = safeGetText_(element).trim();
+    if (text) return safeLatexEquationLeaf_(text);
+
+    return safeLatexSymbolFromCode_(code);
+  } catch (error) {
+    return '';
+  }
+}
+
+function formatSafeLatexStructure_(typeName, code, children) {
+  const name = equationCodeName_(code);
+  if (name === 'subscript') {
+    return children.length >= 2
+      ? children[0] + '_{' + children.slice(1).join('') + '}'
+      : '';
+  }
+  if (name === 'superscript') {
+    return children.length >= 2
+      ? children[0] + '^{' + children.slice(1).join('') + '}'
+      : '';
+  }
+  if (name === 'sbracelr' || name === 'bracelr') {
+    return '\\left(' + children.join('') + '\\right)';
+  }
+  if (name === 'frac') {
+    return children.length >= 2
+      ? '\\frac{' + children[0] + '}{' + children.slice(1).join('') + '}'
+      : '';
+  }
+  if (name === 'sqrt') {
+    return children.length ? '\\sqrt{' + children.join('') + '}' : '';
+  }
+  if (name === 'text') {
+    const value = children.join('');
+    return /^[A-Za-z0-9 ]+$/.test(value)
+      ? '\\mathrm{' + value.trim() + '}'
+      : '';
+  }
+
+  const symbol = safeLatexSymbolFromCode_(code);
+  if (symbol) return symbol + children.join('');
+  if (!code && typeName.indexOf('EQUATION') !== -1) {
+    return children.join('');
+  }
+  return '';
+}
+
+function safeLatexEquationLeaf_(value) {
+  const text = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!text) return '';
+  if (
+    /fractext|pcap|pcup|subscript|superscript|Equation/i.test(text)
+  ) {
+    return '';
+  }
+  if (text.indexOf('\\') === 0) return safeLatexSymbolFromCode_(text);
+  if (!/^[A-Za-z0-9+\-*/=<>()[\],.^_ ]+$/.test(text)) return '';
+  return text;
+}
+
+function safeLatexSymbolFromCode_(code) {
+  const value = String(code || '').trim();
+  const symbols = {
+    '≤': '\\leq ', '≥': '\\geq ', '≠': '\\neq ', '≈': '\\approx ',
+    '→': '\\to ', '∞': '\\infty ', 'α': '\\alpha ', 'β': '\\beta ',
+    'γ': '\\gamma ', 'δ': '\\delta ', 'Δ': '\\Delta ', 'θ': '\\theta ',
+    'Θ': '\\Theta ', 'λ': '\\lambda ', 'μ': '\\mu ', 'σ': '\\sigma ',
+    'Σ': '\\Sigma ', 'π': '\\pi ', '√': '\\sqrt ', '×': '\\times ',
+    '·': '\\cdot ', '±': '\\pm ',
+    '\\leq': '\\leq ', '\\geq': '\\geq ', '\\neq': '\\neq ',
+    '\\approx': '\\approx ', '\\to': '\\to ',
+    '\\rightarrow': '\\rightarrow ', '\\infty': '\\infty ',
+    '\\alpha': '\\alpha ', '\\beta': '\\beta ', '\\gamma': '\\gamma ',
+    '\\delta': '\\delta ', '\\Delta': '\\Delta ', '\\theta': '\\theta ',
+    '\\Theta': '\\Theta ', '\\lambda': '\\lambda ', '\\mu': '\\mu ',
+    '\\sigma': '\\sigma ', '\\Sigma': '\\Sigma ', '\\pi': '\\pi ',
+    '\\times': '\\times ', '\\cdot': '\\cdot ', '\\pm': '\\pm ',
+    '\\cap': '\\cap ', '\\cup': '\\cup ', '\\int': '\\int ',
+    '\\sum': '\\sum ',
+  };
+  if (Object.prototype.hasOwnProperty.call(symbols, value)) {
+    return symbols[value];
+  }
+  if (/^[+\-*/=<>()[\],.^_]+$/.test(value)) return value;
+  return '';
+}
 function collectEquationText_(element, depth) {
   const currentDepth = depth || 0;
   if (!element || currentDepth > 64) return '[formula]';
@@ -894,50 +1014,6 @@ function plainEquationSymbolFromCode_(code) {
 
 function escapePlainEquationMarkdown_(value) {
   return escapeMdText_(String(value || '')).replace(/\$/g, '\\$');
-}
-
-function conservativeLatexEquation_(value) {
-  let latex = String(value || '')
-    .replace(/≤/g, '\\leq ')
-    .replace(/≥/g, '\\geq ')
-    .replace(/≠/g, '\\neq ')
-    .replace(/≈/g, '\\approx ')
-    .replace(/→/g, '\\to ')
-    .replace(/∞/g, '\\infty ')
-    .replace(/α/g, '\\alpha ')
-    .replace(/β/g, '\\beta ')
-    .replace(/γ/g, '\\gamma ')
-    .replace(/δ/g, '\\delta ')
-    .replace(/Δ/g, '\\Delta ')
-    .replace(/θ/g, '\\theta ')
-    .replace(/Θ/g, '\\Theta ')
-    .replace(/λ/g, '\\lambda ')
-    .replace(/μ/g, '\\mu ')
-    .replace(/σ/g, '\\sigma ')
-    .replace(/Σ/g, '\\Sigma ')
-    .replace(/π/g, '\\pi ')
-    .replace(/√/g, '\\sqrt ')
-    .replace(/×/g, '\\times ')
-    .replace(/·/g, '\\cdot ')
-    .replace(/±/g, '\\pm ')
-    .replace(/\s+/g, ' ')
-    .trim();
-
-  if (!latex || !/^[A-Za-z0-9+\-*/=<>()[\],.^_\\\s]+$/.test(latex)) {
-    return '';
-  }
-  const allowedCommands = {
-    alpha: true, beta: true, gamma: true, delta: true, Delta: true,
-    theta: true, Theta: true, lambda: true, mu: true, sigma: true,
-    Sigma: true, pi: true, leq: true, geq: true, neq: true,
-    approx: true, to: true, infty: true, sqrt: true, times: true,
-    cdot: true, pm: true,
-  };
-  const commands = latex.match(/\\([A-Za-z]+)/g) || [];
-  for (let index = 0; index < commands.length; index++) {
-    if (!allowedCommands[commands[index].slice(1)]) return '';
-  }
-  return latex;
 }
 
 function stringifyTable_(table, context) {
@@ -1323,32 +1399,36 @@ function testEquationStringifier_() {
     getType: () => 'TEXT',
     getText: () => value,
   });
-  const functionChildren = [textNode('a'), textNode('b')];
-  const functionNode = {
+  const functionNode = (code, children) => ({
     getType: () => 'EQUATION_FUNCTION',
-    getCode: () => '\\subscript',
-    getNumChildren: () => functionChildren.length,
-    getChild: index => functionChildren[index],
-  };
+    getCode: () => code,
+    getNumChildren: () => children.length,
+    getChild: index => children[index],
+  });
+  const equationNode = children => ({
+    getType: () => 'EQUATION',
+    getNumChildren: () => children.length,
+    getChild: index => children[index],
+  });
+
+  const subscript = functionNode(
+    '\\subscript',
+    [textNode('a'), textNode('b')]
+  );
   const symbolWithoutGetText = {
     getType: () => 'EQUATION_SYMBOL',
     getCode: () => '≤',
   };
-  const children = [functionNode, symbolWithoutGetText];
-  const equation = {
-    getType: () => 'EQUATION',
-    getNumChildren: () => children.length,
-    getChild: index => children[index],
-  };
+  const equation = equationNode([subscript, symbolWithoutGetText]);
 
   const collected = collectEquationText_(equation);
   if (collected !== 'a_b≤') {
-    throw new Error(`Unexpected equation test output: ${collected}`);
+    throw new Error('Unexpected equation test output: ' + collected);
   }
 
   const plain = stringifyEquation_(equation, 'plain');
   if (plain !== 'a\\_b≤' || plain.indexOf('$') !== -1) {
-    throw new Error(`Plain equations must not emit math delimiters: ${plain}`);
+    throw new Error('Plain equations must not emit math delimiters: ' + plain);
   }
   if (plain.indexOf('\\subscript') !== -1) {
     throw new Error('Plain equations must not expose Google pseudo-LaTeX.');
@@ -1356,15 +1436,56 @@ function testEquationStringifier_() {
   if (stringifyEquation_(equation, 'placeholder') !== '[formula]') {
     throw new Error('Placeholder equation mode must always emit [formula].');
   }
-  const latex = stringifyEquation_(equation, 'latex');
-  if (latex !== '$a_b\\leq$') {
-    throw new Error(`Unexpected conservative LaTeX output: ${latex}`);
+
+  const latex = stringifyEquation_(equation, 'safe-latex');
+  if (latex !== '$a_{b}\\leq$') {
+    throw new Error('Unexpected safe LaTeX output: ' + latex);
+  }
+
+  const predicted = functionNode(
+    '\\subscript',
+    [textNode('B'), textNode('p')]
+  );
+  const groundTruth = functionNode(
+    '\\subscript',
+    [textNode('B'), textNode('gt')]
+  );
+  const intersection = equationNode([
+    predicted,
+    { getType: () => 'EQUATION_SYMBOL', getCode: () => '\\cap' },
+    groundTruth,
+  ]);
+  const union = equationNode([
+    predicted,
+    { getType: () => 'EQUATION_SYMBOL', getCode: () => '\\cup' },
+    groundTruth,
+  ]);
+  const areaOf = expression => equationNode([
+    functionNode('\\text', [textNode('Area')]),
+    textNode('('),
+    expression,
+    textNode(')'),
+  ]);
+  const iouEquation = equationNode([
+    functionNode('\\text', [textNode('IoU')]),
+    textNode('='),
+    functionNode('\\frac', [areaOf(intersection), areaOf(union)]),
+  ]);
+  const iouLatex = stringifyEquation_(iouEquation, 'safe-latex');
+  ['\\mathrm{IoU}', '\\frac', '\\mathrm{Area}', '\\cap', '\\cup']
+    .forEach(token => {
+      if (iouLatex.indexOf(token) === -1) {
+        throw new Error('IoU safe LaTeX is missing ' + token + ': ' + iouLatex);
+      }
+    });
+  if (/fractext|pcap|pcup|subscript|superscript/i.test(iouLatex)) {
+    throw new Error('IoU safe LaTeX leaked an artifact: ' + iouLatex);
   }
 
   const unknownNode = {
     getType: () => 'FUTURE_EQUATION_NODE',
   };
-  if (stringifyEquation_(unknownNode, 'plain') !== '[formula]') {
+  if (stringifyEquation_(unknownNode, 'safe-latex') !== '[formula]') {
     throw new Error('Unknown equation nodes must degrade to [formula].');
   }
 
@@ -1374,14 +1495,13 @@ function testEquationStringifier_() {
     getText: () => { throw new Error('getText failed'); },
     getNumChildren: () => { throw new Error('getNumChildren failed'); },
   };
-  if (collectEquationText_(throwingNode) !== '[formula]') {
-    throw new Error('Throwing equation nodes must degrade to [formula].');
+  if (collectEquationLatex_(throwingNode) !== '') {
+    throw new Error('Throwing equation nodes must not emit LaTeX.');
   }
 
-  Logger.log('Equation stringifier regression test passed: %s', plain);
+  Logger.log('Equation stringifier regression test passed: %s', iouLatex);
   return true;
 }
-
 /** Regression test for resumable state, sharded entries, and selective reset. */
 function testCvExportCheckpoint() {
   return testCvExportCheckpoint_();

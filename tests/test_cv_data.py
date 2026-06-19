@@ -103,6 +103,97 @@ def test_markdown_image_links_resolve_to_package_assets():
     assert resolved_count > 0
 
 
+def test_repair_iou_formula():
+    bad = "textIoU =\nfractextArea(B_pcapB_gt)textArea(B_pcupB_gt)"
+    fixed = cv.repair_markdown_math(bad)
+
+    assert "\\mathrm{IoU}" in fixed
+    assert "\\frac" in fixed
+    assert "\\cap" in fixed
+    assert "\\cup" in fixed
+    assert "fractext" not in fixed
+    assert "pcap" not in fixed
+    assert "pcup" not in fixed
+
+
+def test_repair_known_equation_tokens():
+    bad = "\n".join(
+        (
+            "textArea",
+            "fracAB",
+            "pcap",
+            "pcup",
+            "subscriptG_x",
+            "superscriptG_y",
+        )
+    )
+    fixed = cv.repair_markdown_math(bad)
+
+    assert "\\mathrm{Area}" in fixed
+    assert "\\frac{A}{B}" in fixed
+    assert "\\cap" in fixed
+    assert "\\cup" in fixed
+    assert "$G_x$" in fixed
+    assert "$G^y$" in fixed
+    assert not any(
+        token in fixed
+        for token in ("textArea", "fracAB", "pcap", "pcup", "subscript", "superscript")
+    )
+
+def test_repair_ap_formula():
+    bad = "AP =\nint_0^1 p(r)dr"
+    fixed = cv.repair_markdown_math(bad)
+
+    assert "\\int_0^1" in fixed
+    assert "\\,dr" in fixed
+
+
+def test_repair_map_formula():
+    bad = "mAP =\nfrac1N\nsum_i = 1^N AP_i"
+    fixed = cv.repair_markdown_math(bad)
+
+    assert "\\frac{1}{N}" in fixed
+    assert "\\sum_{i=1}^{N}" in fixed
+
+
+def test_repair_preserves_images_fenced_code_and_prose():
+    fence = chr(96) * 3
+    code = (
+        fence
+        + "text\ntextIoU =\n"
+        + "fractextArea(B_pcapB_gt)textArea(B_pcupB_gt)\n"
+        + fence
+    )
+    image = "![image](../assets/example.png)"
+    prose = "This normal text mentions Area and union without being a formula."
+    markdown = code + "\n\n" + image + "\n\n" + prose
+
+    assert cv.repair_markdown_math(markdown) == markdown
+
+
+def test_repair_real_ticket_35():
+    raw = cv.ticket(35).markdown()
+    fixed = cv.repair_markdown_math(raw)
+    rendered = cv.render(35, mode="text")
+
+    forbidden = (
+        "fractext",
+        "textArea",
+        "textIoU",
+        "pcap",
+        "pcup",
+        "subscript",
+        "superscript",
+    )
+    assert not any(token in fixed for token in forbidden)
+    assert not any(token in rendered for token in forbidden)
+    assert "\\mathrm{IoU}" in rendered
+    assert "\\frac" in rendered
+    assert "\\cap" in rendered
+    assert "\\cup" in rendered
+    assert "\\\\mathrm" not in rendered
+    assert "\\\\frac" not in rendered
+
 def test_math_sanitizer_neutralizes_google_docs_pseudo_latex():
     markdown = (
         r"Horizontal ($\subscriptG_x$), vertical ($\superscriptG_y$), "

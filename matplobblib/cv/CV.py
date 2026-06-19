@@ -67,6 +67,18 @@ _PLAIN_MATH_SYMBOLS = {
     "pm": "±",
 }
 
+_IOU_ARTIFACT_RE = re.compile(
+    r"(?im)^[ \t]*textIoU[ \t]*=[ \t]*\n"
+    r"[ \t]*fractextArea\(B_pcapB_gt\)textArea\(B_pcupB_gt\)[ \t]*$"
+)
+_AP_ARTIFACT_RE = re.compile(
+    r"(?im)^[ \t]*AP[ \t]*=[ \t]*\n[ \t]*int_0\^1[ \t]+p\(r\)dr[ \t]*$"
+)
+_MAP_ARTIFACT_RE = re.compile(
+    r"(?im)^[ \t]*mAP[ \t]*=[ \t]*\n[ \t]*frac1N[ \t]*\n"
+    r"[ \t]*sum_i[ \t]*=[ \t]*1\^N[ \t]+AP_i[ \t]*$"
+)
+
 
 def _data_root():
     """Return the resource root without assuming a filesystem-backed package."""
@@ -268,6 +280,161 @@ def _asset_path_from_markdown_target(target):
     return target
 
 
+def _protect_markdown_regions(markdown):
+    protected = []
+
+    def protect(match):
+        protected.append(match.group(0))
+        return "\x00CVPROTECTED%s\x00" % (len(protected) - 1)
+
+    return _PROTECTED_MARKDOWN_RE.sub(protect, markdown), protected
+
+
+def _restore_markdown_regions(markdown, protected):
+    for index, original in enumerate(protected):
+        markdown = markdown.replace("\x00CVPROTECTED%s\x00" % index, original)
+    return markdown
+
+
+def _repair_math_body(fragment):
+    text = str(fragment)
+
+    previous = None
+    while previous != text:
+        previous = text
+        text = re.sub(r"\\\\(?=[A-Za-z_{}])", lambda match: "\\", text)
+    text = text.replace(r"\_", "_")
+
+    text = re.sub(
+        r"\bfractextArea\(([^()\n]+)\)textArea\(([^()\n]+)\)",
+        lambda match: (
+            r"\frac{\mathrm{Area}(%s)}{\mathrm{Area}(%s)}"
+            % (match.group(1), match.group(2))
+        ),
+        text,
+    )
+    text = re.sub(
+        r"\b([A-Za-z])_pcap",
+        lambda match: match.group(1) + r"_p \cap ",
+        text,
+    )
+    text = re.sub(
+        r"\b([A-Za-z])_pcup",
+        lambda match: match.group(1) + r"_p \cup ",
+        text,
+    )
+    text = text.replace("pcap", r"\cap ").replace("pcup", r"\cup ")
+    text = re.sub(
+        r"\\?subscript([A-Za-z]+)_([A-Za-z0-9{}]+)",
+        lambda match: "%s_%s" % (match.group(1), match.group(2)),
+        text,
+    )
+    text = re.sub(
+        r"\\?superscript([A-Za-z]+)_([A-Za-z0-9{}]+)",
+        lambda match: "%s^%s" % (match.group(1), match.group(2)),
+        text,
+    )
+    text = re.sub(r"\bfrac1N\b", r"\\frac{1}{N}", text)
+    text = re.sub(
+        r"\bfrac([A-Za-z0-9])([A-Za-z0-9])\b",
+        lambda match: r"\frac{%s}{%s}" % (match.group(1), match.group(2)),
+        text,
+    )
+    text = re.sub(r"\bint_0\^1\b", r"\\int_0^1", text)
+    text = re.sub(
+        r"\bsum_i\s*=\s*1\^N\b",
+        lambda match: r"\sum_{i=1}^{N}",
+        text,
+    )
+    text = re.sub(
+        r"\\?text([A-Za-z][A-Za-z0-9]*)",
+        lambda match: r"\mathrm{%s}" % match.group(1),
+        text,
+    )
+    text = re.sub(
+        r"\\text\{([^{}\n]+)\}",
+        lambda match: r"\mathrm{%s}" % match.group(1),
+        text,
+    )
+    text = re.sub(r"(?<=\))\s*dr\b", r"\\,dr", text)
+    text = re.sub(
+        r"\b([A-Za-z])_([A-Za-z]{2,})\b",
+        lambda match: "%s_{%s}" % (match.group(1), match.group(2)),
+        text,
+    )
+    return text.strip()
+
+
+def _repair_undelimited_artifact_lines(markdown):
+    artifact = re.compile(
+        r"text[A-Z]|fractext|frac[A-Za-z0-9]|int_|sum_|pcap|pcup|"
+        r"subscript|superscript"
+    )
+    safe_line = re.compile(r"^[A-Za-z0-9_\\=+\-*/^().,\[\]{} \t]+$")
+
+    repaired_lines = []
+    for line in markdown.splitlines(True):
+        ending = "\n" if line.endswith("\n") else ""
+        content = line[:-1] if ending else line
+        stripped = content.strip()
+        if (
+            not stripped
+            or "$" in stripped
+            or "\x00CVPROTECTED" in stripped
+            or not artifact.search(stripped)
+            or not safe_line.fullmatch(stripped)
+            or len(stripped) > 240
+        ):
+            repaired_lines.append(line)
+            continue
+        if " " in stripped and not re.search(r"[=_^()+\-*/]", stripped):
+            repaired_lines.append(line)
+            continue
+
+        fixed = _repair_math_body(stripped)
+        if fixed != stripped and not artifact.search(fixed):
+            indent = content[: len(content) - len(content.lstrip())]
+            repaired_lines.append(indent + "$" + fixed + "$" + ending)
+        else:
+            repaired_lines.append(line)
+    return "".join(repaired_lines)
+
+
+def repair_markdown_math(markdown: str) -> str:
+    """Repair conservative, known Google Docs equation-export artifacts."""
+    if not isinstance(markdown, str):
+        raise TypeError("markdown must be a string")
+
+    text, protected = _protect_markdown_regions(markdown)
+
+    iou = (
+        "$$\n"
+        r"\mathrm{IoU} ="
+        "\n"
+        r"\frac{\mathrm{Area}(B_p \cap B_{gt})}"
+        "\n"
+        r"     {\mathrm{Area}(B_p \cup B_{gt})}"
+        "\n$$"
+    )
+    ap = "$$\n" + r"AP = \int_0^1 p(r)\,dr" + "\n$$"
+    map_formula = (
+        "$$\n" + r"mAP = \frac{1}{N}\sum_{i=1}^{N} AP_i" + "\n$$"
+    )
+    text = _IOU_ARTIFACT_RE.sub(lambda match: iou, text)
+    text = _AP_ARTIFACT_RE.sub(lambda match: ap, text)
+    text = _MAP_ARTIFACT_RE.sub(lambda match: map_formula, text)
+    text = _repair_undelimited_artifact_lines(text)
+
+    def repair_fragment(match):
+        repaired = _repair_math_body(match.group(1))
+        return match.group(0).replace(match.group(1), repaired, 1)
+
+    for pattern in _MATH_FRAGMENT_PATTERNS:
+        text = pattern.sub(repair_fragment, text)
+
+    return _restore_markdown_regions(text, protected)
+
+
 def _malformed_math_to_plain_text(fragment):
     text = str(fragment)
     text = _BAD_GOOGLE_MATH_RE.sub("", text)
@@ -280,7 +447,7 @@ def _malformed_math_to_plain_text(fragment):
         return "[formula]"
 
     text = text.replace("\\", "\\\\")
-    for character in ("`", "*", "_", "[", "]", "$"):
+    for character in (chr(96), "*", "_", "[", "]", "$"):
         text = text.replace(character, "\\" + character)
     return text
 
@@ -290,13 +457,7 @@ def sanitize_markdown_math(markdown: str) -> str:
     if not isinstance(markdown, str):
         raise TypeError("markdown must be a string")
 
-    protected = []
-
-    def protect(match):
-        protected.append(match.group(0))
-        return "\x00CVPROTECTED%s\x00" % (len(protected) - 1)
-
-    text = _PROTECTED_MARKDOWN_RE.sub(protect, markdown)
+    text, protected = _protect_markdown_regions(markdown)
 
     def sanitize_fragment(match):
         fragment = match.group(1)
@@ -310,9 +471,7 @@ def sanitize_markdown_math(markdown: str) -> str:
     for pattern in _MATH_FRAGMENT_PATTERNS:
         text = pattern.sub(sanitize_fragment, text)
 
-    for index, original in enumerate(protected):
-        text = text.replace("\x00CVPROTECTED%s\x00" % index, original)
-    return text
+    return _restore_markdown_regions(text, protected)
 
 
 def _embed_or_resolve_images(markdown_text, mode="dataurl"):
@@ -637,6 +796,7 @@ def render(ref, mode="auto", sanitize_math=True, file=None):
 
     text = item.markdown(image_mode="relative")
     if sanitize_math:
+        text = repair_markdown_math(text)
         text = sanitize_markdown_math(text)
 
     if mode == "jupyter":
@@ -762,6 +922,7 @@ __all__ = [
     "random_ticket",
     "short",
     "flashcards",
+    "repair_markdown_math",
     "sanitize_markdown_math",
     "render",
     "main",
